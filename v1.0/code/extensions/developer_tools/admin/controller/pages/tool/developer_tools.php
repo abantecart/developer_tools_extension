@@ -182,6 +182,7 @@ class ControllerPagesToolDeveloperTools extends AController {
 						'payment' => $this->language->get('text_type_payment'),
 						'shipping' => $this->language->get('text_type_shipping'),
 						'language' => $this->language->get('text_type_language'),
+						'total' => $this->language->get('text_type_total'),
 						'preset' => $this->language->get('text_type_preset'),
 						'other' => $this->language->get('text_type_other')),
 					'required' => true,
@@ -774,12 +775,9 @@ class ControllerPagesToolDeveloperTools extends AController {
 
 		if ($this->request->server[ 'REQUEST_METHOD' ] == 'POST') {
 			$this->loadModel('tool/developer_tools');
-			$result = $this->model_tools_developer_tools->generatePackage($this->request->post);
+			$result = $this->model_tool_developer_tools->generatePackage($this->request->post);
 
 			if(!$result){
-				/*$this->session->data['success'] = $this->language->get('text_success_generated_package');
-				$this->redirect('tool/developer_tools');
-			}else{*/
 				foreach($this->request->post as $key=>$value){
 					$this->data[$key] = $value;
 				}

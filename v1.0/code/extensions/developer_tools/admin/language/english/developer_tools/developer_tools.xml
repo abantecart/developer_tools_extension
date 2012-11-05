@@ -218,6 +218,10 @@
 		<value><![CDATA[ Preset ]]></value>
 	</definition>
 	<definition>
+		<key>text_type_total</key>
+		<value><![CDATA[ Total ]]></value>
+	</definition>
+	<definition>
 		<key>text_type_other</key>
 		<value><![CDATA[ Other ]]></value>
 	</definition>

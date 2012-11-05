@@ -558,28 +558,15 @@ class ModelToolDeveloperTools extends Model {
 	}
 
 	private function _save_base_language_xml($data=array(), $language_name){
-		$dir = DIR_EXT.$data['extension_txt_id'].'/admin/language/'.$language_name.'/'.$data['extension_txt_id'].'/';
-		$xml_data = array('definition' =>
-								array(
-									array('key' => $data['extension_txt_id'].'_name', 'value' => array('@cdata' => $data['extension_title'])),
-									array('key' => $data['extension_txt_id'].'_status', 'value' => array('@cdata' => 'Status')),
-									array('key' => $data['extension_txt_id'].'_note', 'value' => array('@cdata' => $data['help_note']))
-								));
-		$xml = Array2XML::createXML('definitions', $xml_data);
-		$file_name = $data['extension_txt_id'].'.xml';
-		$xml = $xml->saveXML();
-		if($xml){
-			$result = file_put_contents($dir.$file_name,$xml);
-			if($result){
-				return true;
-			}else{
-				$this->error = "Can't save extension '.$file_name.'. Unknown cause.";
-				return false;
-			}
-		}else{
-			return false;
-		}
+		$path = DIR_EXT.$data['extension_txt_id'].'/admin/language/'.$language_name.'/'.$data['extension_txt_id'].'/'.$data['extension_txt_id'].'.xml';
+		$content = array(
+					$data['extension_txt_id'].'_name' =>  $data['extension_title'],
+					$data['extension_txt_id'].'_status' => 'Status',
+					$data['extension_txt_id'].'_note' => $data['help_note']);
+		return $this->saveLanguageXML($path, $content);
 	}
+
+
 	public function saveLanguageXML($path, $data=array()){
 		$xml_data = array('definition' => array());
 		foreach($data as $key=>$value){
@@ -751,27 +738,26 @@ class ModelToolDeveloperTools extends Model {
 		mkdir($package_directory.'/code/extensions/'.$extension_name,0777);
 		$this->_copyDir(DIR_EXT.$extension_name,$package_directory.'/code/extensions/'.$extension_name);
 
-		// build config.xml
-		$xml ="<?xml version=\"1.0\"?>
-	<package>
-		<id>".$extension_name."</id>
-		<type>extension</type>
-		<version>".$data['version']."</version>
-		<minversion>".$data['version']."</minversion>
-		<cartversions>\n";
-						foreach($data['cartversions'] as $ver){
-							$xml .= "				<item>".$ver."</item>\n";
-						}
-		$xml .= "		</cartversions>\n";
+		// build package.xml
+		$xml_data = array(
+			'id' => $extension_name,
+			'type' => 'extension',
+			'version' => $data['version'],
+			'minversion' => $data['version']
+		);
+		if($data['cartversions']){
+			foreach($data['cartversions'] as &$ver){
+				$ver = explode('.',$ver);
+				$ver = $ver[0].".".$ver[1];
+			}unset($ver);
 
-		$xml .= "		<package_content>
-				<extensions>
-						<extension>".$extension_name."</extension>
-				</extensions>
-		</package_content>\n";
+			$xml_data['cartversions'] = array('item'=>$data['cartversions']);
+		}
+		$xml_data['package_content'] = array('extensions'=> array('extension' => $extension_name));
+		$xml = Array2XML::createXML('package', $xml_data);
+		$xml = $xml->saveXML();
 
-		$xml .= "</package>";
-		file_put_contents($package_directory.'config.xml',$xml);
+		file_put_contents($package_directory.'package.xml',$xml);
 
 		if($data['license']){
 			file_put_contents($package_directory.'license.txt',$data['license']);

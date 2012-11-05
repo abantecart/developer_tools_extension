@@ -170,7 +170,28 @@
 	$('#extFrm_extension_type').change(function(){
 		if($(this).val()=='template' || $(this).val()=='language'){
 			$('#tr_copy_default').show();
-		}else{
+		}else if($(this).val()=='payment' || $(this).val()=='shipping'){
+			$('#extFrm_storefront_model_routes\\\[\\\], ' +
+			  '#extFrm_storefront_page_controller_routes\\\[\\\], ' +
+			  '#extFrm_storefront_response_controller_routes\\\[\\\], ' +
+			  '#extFrm_storefront_view_routes\\\[\\\], ' +
+			  '#extFrm_storefront_page_view_routes\\\[\\\], ' +
+			  '#extFrm_storefront_response_view_routes\\\[\\\]')
+			.each(function(){
+					$(this).val('extension');
+			});
+		}else if($(this).val()=='total'){
+			$('#extFrm_storefront_model_routes\\\[\\\], ' +
+						  '#extFrm_storefront_page_controller_routes\\\[\\\], ' +
+						  '#extFrm_storefront_response_controller_routes\\\[\\\], ' +
+					      '#extFrm_storefront_view_routes\\\[\\\], ' +
+						  '#extFrm_storefront_page_view_routes\\\[\\\], ' +
+						  '#extFrm_storefront_response_view_routes\\\[\\\]')
+			.each(function(){
+					$(this).val('total');
+			});
+		}
+		else{
 			$('#tr_copy_default').hide();
 		}
     });
