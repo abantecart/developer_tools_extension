@@ -258,7 +258,7 @@ class ControllerPagesToolDeveloperTools extends AController {
 
 		$add_button = $this->dispatch('responses/tool/developer_tools/addbutton',array('id'=>'cartversions'));
 		$this->data[ 'form' ][ 'fields' ]['common'][ 'cartversions' ]['field'] .= $add_button->dispatchGetOutput();
-		$this->data[ 'form' ][ 'fields' ]['common'][ 'cartversions' ]['text'] = $this->language->get('entry_cartversions');
+		$this->data[ 'form' ][ 'fields' ]['common'][ 'cartversions' ]['text'] = $this->language->get('entry_cart_versions');
 
 		$this->data[ 'form' ][ 'fields' ]['common'][ 'priority' ]['field'] = $form->getFieldHtml(
 			array(  'type' => 'input',

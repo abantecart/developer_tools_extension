@@ -51,8 +51,8 @@
 			$('#'+id).parents('.afield').last().after($('#'+id).parents('.afield').last().clone()).after('<br>');
 	}
 
-	$('#add_cart_versions').click(function(){
-		clone_and_push('extFrm_cart_versions\\\[\\\]');
+	$('#add_cartversions').click(function(){
+		clone_and_push('extFrm_cartversions\\\[\\\]');
 	} );
 	// fill default rt
 	$('#extFrm_extension_txt_id').blur(function(){
@@ -180,6 +180,7 @@
 			.each(function(){
 					$(this).val('extension');
 			});
+			$('#tr_copy_default').hide();
 		}else if($(this).val()=='total'){
 			$('#extFrm_storefront_model_routes\\\[\\\], ' +
 						  '#extFrm_storefront_page_controller_routes\\\[\\\], ' +
@@ -190,6 +191,7 @@
 			.each(function(){
 					$(this).val('total');
 			});
+			$('#tr_copy_default').hide();
 		}
 		else{
 			$('#tr_copy_default').hide();
