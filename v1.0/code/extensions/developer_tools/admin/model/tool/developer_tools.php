@@ -76,7 +76,13 @@ class ModelToolDeveloperTools extends Model {
 				if (!is_dir($extension_directory . '/core')) {
 					mkdir($extension_directory . '/core', 0777);
 				}
-				$content = "class Extension" . $extension_name . " extends Extension {\n\n }\n";
+				$t = explode('_', $extension_name);
+				foreach ($t as &$r) {
+					$r = ucfirst($r);
+				}
+				unset($r);
+				$class_name .= implode('', $t);
+				$content = "class Extension" . $class_name . " extends Extension {\n\n }\n";
 				file_put_contents($extension_directory . '/core/' . $data[ 'hook_file' ], $data[ 'header_comment' ] . $content);
 			}
 		}
