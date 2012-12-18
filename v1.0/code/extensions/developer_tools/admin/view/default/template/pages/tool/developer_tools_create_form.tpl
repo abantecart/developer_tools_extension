@@ -57,6 +57,9 @@
 	// fill default rt
 	$('#extFrm_extension_txt_id').blur(function(){
 		$('#extFrm_route').val()=='' ? $('#extFrm_route').val($('#extFrm_extension_txt_id').val()) : null;
+		if($('#extFrm_hook_file').val()=='' && $('#extFrm_extension_type').val()== 'template' ){
+			$('#extFrm_hook_file').val($('#extFrm_extension_txt_id').val()+'_hooks.php');
+		}
 	} );
 	
 	$('#extFrm_route').blur(function(){

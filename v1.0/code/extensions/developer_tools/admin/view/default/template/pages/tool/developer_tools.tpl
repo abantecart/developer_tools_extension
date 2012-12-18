@@ -22,7 +22,7 @@
 		  <div class="top_left"><div class="top_right"><div class="top_mid"></div></div></div>
 		  <div class="cont_left"><div class="cont_right"><div class="cont_mid">
 			<table>
-			<?php foreach ($projects as $project) { ?>
+			<?php foreach ((array)$projects as $project) { ?>
 			<tr style="text-align: center;">
 				<td style="min-width: 300px;"><?php echo $project['id'] ?></td>
 				<td style="min-width: 100px;"><?php echo $project['update_date']; ?></td>

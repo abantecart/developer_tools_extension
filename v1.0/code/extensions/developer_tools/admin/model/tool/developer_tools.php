@@ -81,8 +81,9 @@ class ModelToolDeveloperTools extends Model {
 					$r = ucfirst($r);
 				}
 				unset($r);
-				$class_name .= implode('', $t);
+				$class_name = implode('', $t);
 				$content = "class Extension" . $class_name . " extends Extension {\n\n }\n";
+				$hook_class_name = "Extension" . $class_name;
 				file_put_contents($extension_directory . '/core/' . $data[ 'hook_file' ], $data[ 'header_comment' ] . $content);
 			}
 		}
@@ -94,6 +95,7 @@ class ModelToolDeveloperTools extends Model {
 		//MODELS
 		$models = array( 'admin' => array(), 'storefront' => array() );
 		foreach (array( 'admin', 'storefront' ) as $section) {
+			if(!isset($data[ $section . '_model_routes' ])) continue;
 			foreach ($data[ $section . '_model_routes' ] as $k => $route) {
 				$file = trim($data[ $section . '_model_files' ][ $k ], '\/ ');
 				if ($route && $file) {
@@ -140,6 +142,7 @@ class ModelToolDeveloperTools extends Model {
 		$views = array( 'admin' => array(), 'storefront' => array() );
 		foreach (array( 'admin', 'storefront' ) as $section) {
 			foreach (array( 'page', 'response' ) as $controller_type) {
+				if(!isset($data[ $section . '_' . $controller_type . '_view_routes' ])) continue;
 				foreach ($data[ $section . '_' . $controller_type . '_view_routes' ] as $k => $route) {
 					$file = trim($data[ $section . '_' . $controller_type . '_view_files' ][ $k ], '\/ ');
 					if ($route && $file) {
@@ -163,6 +166,7 @@ class ModelToolDeveloperTools extends Model {
 		$controllers = array( 'admin' => array(), 'storefront' => array() );
 		foreach (array( 'admin', 'storefront' ) as $section) {
 			foreach (array( 'page', 'response' ) as $controller_type) {
+				if(!isset($data[ $section . '_' . $controller_type . '_controller_routes' ])) continue;
 				foreach ($data[ $section . '_' . $controller_type . '_controller_routes' ] as $k => $route) {
 					$file = trim($data[ $section . '_' . $controller_type . '_controller_files' ][ $k ], '\/ ');
 					if ($route && $file) {
@@ -208,9 +212,7 @@ class ModelToolDeveloperTools extends Model {
 		// LANGUAGE files for extension translates
 		$languages = array( 'admin' => array(), 'storefront' => array() );
 		foreach (array( 'admin', 'storefront' ) as $section) {
-			if (!$data[ 'extension_' . $section . '_language_files' ]) {
-				continue;
-			}
+			if (!isset($data[ 'extension_' . $section . '_language_files' ])) 	continue;
 			foreach ($data[ 'extension_' . $section . '_language_files' ] as $language_name) {
 				if ($language_name) {
 					$language_name = strtolower($language_name);
@@ -290,7 +292,7 @@ class ModelToolDeveloperTools extends Model {
 		$project_xml[ 'version' ] = $config_xml[ 'version' ] = $data[ 'version' ];
 		$project_xml[ 'category' ] = $config_xml[ 'category' ] = $data[ 'extension_category' ];
 
-		$data[ 'cartversions' ] = array_unique($data[ 'cartversions' ]);
+		$data[ 'cartversions' ] = array_unique((array)$data[ 'cartversions' ]);
 		$project_xml[ 'cartversions' ] = $config_xml[ 'cartversions' ] = $data[ 'cartversions' ];
 		$project_xml[ 'priority' ] = $config_xml[ 'priority' ] = (int)$data[ 'priority' ];
 
@@ -353,13 +355,13 @@ class ModelToolDeveloperTools extends Model {
 		$controllers[ 'admin' ] = array_merge($controllers[ 'admin' ][ 'page' ], $controllers[ 'admin' ][ 'response' ]);
 
 		$main_file_params = array( 'extension_name' => $extension_name,
-			'header_comment' => $data[ 'header_comment' ],
-			'hook_class_name' => $hook_class_name,
-			'hook_file' => $data[ 'hook_file' ],
-			'controllers' => $controllers,
-			'models' => $models,
-			'views' => $views,
-			'languages' => $languages );
+									'header_comment' => $data[ 'header_comment' ],
+									'hook_class_name' => $hook_class_name,
+									'hook_file' => $data[ 'hook_file' ],
+									'controllers' => $controllers,
+									'models' => $models,
+									'views' => $views,
+									'languages' => $languages );
 		$this->_write_main_file($main_file_params);
 
 		return true;
@@ -411,7 +413,7 @@ class ModelToolDeveloperTools extends Model {
 		$content = $data[ 'header_comment' ];
 		$tab = '    ';
 		$content .= $data[ 'hook_file' ] ? "\nif(!class_exists('" . $data[ 'hook_class_name' ] . "')){\n" .
-				$tab . "include('core/" . $data[ 'hook_file' ] . "');\n"
+				$tab . "include_once('core/" . $data[ 'hook_file' ] . "');\n"
 				. "}\n" : "";
 
 		$content .= "\$controllers = array(\n" . $tab . "'storefront' => array(";
@@ -479,6 +481,7 @@ class ModelToolDeveloperTools extends Model {
 			$this->copied = array();
 			$this->_copyDir(DIR_STOREFRONT . '/view/default', DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/storefront/view/' . $extension_data[ 'extension_txt_id' ], $copy);
 			// get tpl list
+			$extension_data[ 'view' ][ 'storefront' ] = array();
 			foreach ($this->copied as $item) {
 				if (!$item[ 'result' ]) {
 					$this->error[ ] = 'file or directory "' . $item[ 'filename' ] . '"not copied';
@@ -848,7 +851,7 @@ class ModelToolDeveloperTools extends Model {
 
 
 	public function getProjectList() {
-		$projects = array();
+		$projects = $prj = array();
 		if (is_dir(DIR_APP_SECTION . 'system/temp/developer_tools')) {
 			$projects = glob(DIR_APP_SECTION . 'system/temp/developer_tools/*.xml');
 			foreach ($projects as $project) {

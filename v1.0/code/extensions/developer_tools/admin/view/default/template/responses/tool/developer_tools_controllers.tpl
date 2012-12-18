@@ -16,7 +16,7 @@
 
 				<tr><td align="center" valign="middle" style="height: 400px;"><h1>functionality will be available in the future</h1></td></tr>
 
-            <?php foreach ($form['fields'] as $name => $field) { ?>
+            <?php foreach ((array)$form['fields'] as $name => $field) { ?>
 			<tr id="tr_<?php echo $name; ?>">
 				<td><?php echo $field['text']; ?></td>
 				<td class="ml_field">
