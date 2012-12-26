@@ -24,11 +24,16 @@
 			<div class="cbox_cc" style="overflow: hidden;">
 				<div class="flt_left">
 					<ul id="page_links">
-						<?php foreach ($menu as $item) { ?>
-						<li>
-							<a href="<?php echo $item[ 'href' ]; ?>" <?php echo ($item[ 'active' ] ? 'class="shover"' : '')?>><?php echo $item[ 'text' ]; ?></a>
-						</li>
-						<?php } ?>
+						<?php
+						$locks = array('General','Controllers','Models','Views','Hooks'); ////TODO temporary locked
+						foreach ($menu as $item) {
+							if(!in_array($item[ 'text' ],$locks)){
+							echo '<li><a href="'.$item[ 'href' ].'" '.($item[ 'active' ] ? 'class="shover"' : '').'>'.$item[ 'text' ].'</a></li>';
+							}else{
+								echo '<li><i style="color: grey;" >'.$item[ 'text' ].'</i></li>';
+							}
+
+						} ?>
 					</ul>
 				</div>
 				<div id="page_layout" style="min-height: 500px; overflow: hidden;">

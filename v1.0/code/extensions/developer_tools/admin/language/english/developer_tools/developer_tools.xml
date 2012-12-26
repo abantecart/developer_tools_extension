@@ -296,4 +296,62 @@
 		<key>text_language_file_edit_success</key>
 		<value><![CDATA[ Success: You have modified language file!]]></value>
 	</definition>
+	<definition>
+		<key>text_view_layout_xml</key>
+		<value><![CDATA[ View Layout XML]]></value>
+	</definition>
+	<definition>
+		<key>text_save_layout_xml</key>
+		<value><![CDATA[ Save Layout XML]]></value>
+	</definition>
+	<definition>
+		<key>text_layout_xml_tab</key>
+		<value><![CDATA[ Layout XML]]></value>
+	</definition>
+	<definition>
+		<key>text_select_template</key>
+		<value><![CDATA[ Select template from database : ]]></value>
+	</definition>
+	<definition>
+		<key>text_success_layout_xml</key>
+		<value>
+			<![CDATA[ Layout XML saved successfully. Now you can <a href="#admin#rt=extension/extensions/template" target="_blank">install</a> your template extension. ]]></value>
+	</definition>
+	<definition>
+		<key>text_error_layout_xml</key>
+		<value>
+			<![CDATA[ Error has occurred during Layout XML saving. Please check <a href="#admin#rt=tool/error_log" target="_blank">error log</a> for details. ]]></value>
+	</definition>
+	<definition>
+		<key>text_generic_block</key>
+		<value><![CDATA[ Generic Block ]]></value>
+	</definition>
+	<definition>
+		<key>entry_block_txt_id</key>
+		<value><![CDATA[ Block Text Id ]]></value>
+	</definition>
+	<definition>
+		<key>entry_block_controller</key>
+		<value><![CDATA[ Block Controller ]]></value>
+	</definition>
+	<definition>
+		<key>entry_block_templates</key>
+		<value><![CDATA[ Block Wrappers (tpl) ]]></value>
+	</definition>
+	<definition>
+		<key>text_create_block</key>
+		<value><![CDATA[ Create Generic Block ]]></value>
+	</definition>
+	<definition>
+		<key>text_select_placeholder</key>
+		<value><![CDATA[ -- Select Placeholder -- ]]></value>
+	</definition>
+	<definition>
+		<key>text_select_block_template</key>
+		<value><![CDATA[ -- Select Block Template -- ]]></value>
+	</definition>
+	<definition>
+		<key>error_empty_templates</key>
+		<value><![CDATA[ You need to set at least one template for block! ]]></value>
+	</definition>
 </definitions>

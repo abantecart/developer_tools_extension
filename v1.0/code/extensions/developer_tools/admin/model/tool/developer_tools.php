@@ -21,7 +21,7 @@ if (!defined('DIR_CORE')) {
 	header('Location: static_pages/');
 }
 
-require(DIR_EXT . 'developer_tools/core/lib/array2xml.php');
+require_once(DIR_EXT . 'developer_tools/core/lib/array2xml.php');
 
 class ModelToolDeveloperTools extends Model {
 	public $error = array();
@@ -95,7 +95,7 @@ class ModelToolDeveloperTools extends Model {
 		//MODELS
 		$models = array( 'admin' => array(), 'storefront' => array() );
 		foreach (array( 'admin', 'storefront' ) as $section) {
-			if(!isset($data[ $section . '_model_routes' ])) continue;
+			if (!isset($data[ $section . '_model_routes' ])) continue;
 			foreach ($data[ $section . '_model_routes' ] as $k => $route) {
 				$file = trim($data[ $section . '_model_files' ][ $k ], '\/ ');
 				if ($route && $file) {
@@ -142,7 +142,7 @@ class ModelToolDeveloperTools extends Model {
 		$views = array( 'admin' => array(), 'storefront' => array() );
 		foreach (array( 'admin', 'storefront' ) as $section) {
 			foreach (array( 'page', 'response' ) as $controller_type) {
-				if(!isset($data[ $section . '_' . $controller_type . '_view_routes' ])) continue;
+				if (!isset($data[ $section . '_' . $controller_type . '_view_routes' ])) continue;
 				foreach ($data[ $section . '_' . $controller_type . '_view_routes' ] as $k => $route) {
 					$file = trim($data[ $section . '_' . $controller_type . '_view_files' ][ $k ], '\/ ');
 					if ($route && $file) {
@@ -166,7 +166,7 @@ class ModelToolDeveloperTools extends Model {
 		$controllers = array( 'admin' => array(), 'storefront' => array() );
 		foreach (array( 'admin', 'storefront' ) as $section) {
 			foreach (array( 'page', 'response' ) as $controller_type) {
-				if(!isset($data[ $section . '_' . $controller_type . '_controller_routes' ])) continue;
+				if (!isset($data[ $section . '_' . $controller_type . '_controller_routes' ])) continue;
 				foreach ($data[ $section . '_' . $controller_type . '_controller_routes' ] as $k => $route) {
 					$file = trim($data[ $section . '_' . $controller_type . '_controller_files' ][ $k ], '\/ ');
 					if ($route && $file) {
@@ -212,7 +212,7 @@ class ModelToolDeveloperTools extends Model {
 		// LANGUAGE files for extension translates
 		$languages = array( 'admin' => array(), 'storefront' => array() );
 		foreach (array( 'admin', 'storefront' ) as $section) {
-			if (!isset($data[ 'extension_' . $section . '_language_files' ])) 	continue;
+			if (!isset($data[ 'extension_' . $section . '_language_files' ])) continue;
 			foreach ($data[ 'extension_' . $section . '_language_files' ] as $language_name) {
 				if ($language_name) {
 					$language_name = strtolower($language_name);
@@ -355,13 +355,13 @@ class ModelToolDeveloperTools extends Model {
 		$controllers[ 'admin' ] = array_merge($controllers[ 'admin' ][ 'page' ], $controllers[ 'admin' ][ 'response' ]);
 
 		$main_file_params = array( 'extension_name' => $extension_name,
-									'header_comment' => $data[ 'header_comment' ],
-									'hook_class_name' => $hook_class_name,
-									'hook_file' => $data[ 'hook_file' ],
-									'controllers' => $controllers,
-									'models' => $models,
-									'views' => $views,
-									'languages' => $languages );
+			'header_comment' => $data[ 'header_comment' ],
+			'hook_class_name' => $hook_class_name,
+			'hook_file' => $data[ 'hook_file' ],
+			'controllers' => $controllers,
+			'models' => $models,
+			'views' => $views,
+			'languages' => $languages );
 		$this->_write_main_file($main_file_params);
 
 		return true;
@@ -541,6 +541,9 @@ class ModelToolDeveloperTools extends Model {
 			'priority' => $data[ 'priority' ],
 			'dependencies' => $data[ 'dependencies' ],
 			'settings' => $data[ 'settings' ] );
+		if ($data[ 'extension_type' ] == 'template') {
+			$xml_data[ 'additional_settings' ] = array( '@cdata' => 'setting/setting&active=appearance' );
+		}
 		if ($data[ 'preview' ]) {
 			$xml_data[ 'preview' ] = array( 'item' => $data[ 'preview' ] );
 		}
@@ -553,8 +556,8 @@ class ModelToolDeveloperTools extends Model {
 				$xml_data[ 'uninstall' ][ 'sql' ] = 'uninstall.sql';
 			}
 			if ($data[ 'install_php' ]) {
-				$xml_data[ 'install' ][ 'php' ] = 'install.php';
-				$xml_data[ 'uninstall' ][ 'php' ] = 'uninstall.php';
+				$xml_data[ 'install' ][ 'trigger' ] = 'install.php';
+				$xml_data[ 'uninstall' ][ 'trigger' ] = 'uninstall.php';
 			}
 		}
 
@@ -606,7 +609,7 @@ class ModelToolDeveloperTools extends Model {
 			if ($result) {
 				return true;
 			} else {
-				$this->error = "Can't save extension '.$path.'. Unknown cause.";
+				$this->error = "Can't save extension " . $path . ". Unknown cause.";
 				return false;
 			}
 		} else {
@@ -798,8 +801,8 @@ class ModelToolDeveloperTools extends Model {
 		if (is_dir($path)) {
 			if (!chmod($path, $dirmode)) {
 				$dirmode_str = decoct($dirmode);
-				$error = "Developer Tool: Failed applying filemode '" . $dirmode_str . "' on directory '" . $path . "\n -> the directory '" . $path . "' will be skipped from recursive chmod\n";
-				$this->message->SaveNotice($error);
+				$error = "Failed applying filemode '" . $dirmode_str . "' on directory '" . $path . "\n -> the directory '" . $path . "' will be skipped from recursive chmod\n";
+				$this->messages->SaveNotice('Developer Tool Error', $error);
 				$this->error[ ] = $error;
 				return;
 			}
@@ -817,8 +820,8 @@ class ModelToolDeveloperTools extends Model {
 			}
 			if (!chmod($path, $filemode)) {
 				$filemode_str = decoct($filemode);
-				$error = "Developer Tool:  Failed applying filemode " . $filemode_str . " on file " . $path . "\n";
-				$this->message->SaveNotice($error);
+				$error = "Failed applying filemode " . $filemode_str . " on file " . $path . "\n";
+				$this->messages->SaveNotice('Developer Tool Error!', $error);
 				$this->error[ ] = $error;
 				return;
 			}
@@ -837,7 +840,9 @@ class ModelToolDeveloperTools extends Model {
 					$this->_copyDir($src . "/" . $file, $dst . "/" . $file, $copy_file_content);
 				}
 		} elseif (file_exists($src) && !file_exists($dst)) {
-			if ($copy_file_content || !in_array(pathinfo($src, PATHINFO_EXTENSION), array( 'xml', 'tpl' ))) {
+			if ($copy_file_content
+				//|| !in_array(pathinfo($src, PATHINFO_EXTENSION), array( 'xml', 'tpl' ))
+			) {
 				$result = copy($src, $dst);
 				$this->copied[ ] = array( 'result' => $result, 'filename' => $dst );
 			} else {
@@ -946,6 +951,59 @@ class ModelToolDeveloperTools extends Model {
 		}
 		return $files;
 	}
+
+	public function getGenericBlocksLIst(){
+		$sql = "SELECT block_id, block_txt_id
+				FROM ".DB_PREFIX."blocks
+				WHERE block_id NOT IN (SELECT block_id FROM ".DB_PREFIX."custom_blocks)
+				ORDER BY block_id";
+		$result = $this->db->query($sql);
+		$output = array();
+		foreach($result->rows as $row){
+			$output[$row['block_id']] = $row['block_txt_id'];
+		}
+		return $output;
+	}
+/*
+ * function search template files for block on filesystem
+ * When we find new tpl, that not listed in main.php - we will add it
+ */
+	public function getGenericBlocksTemplates($path){
+		$files = $this->_glob_recursive($path.'*');
+		foreach($files as $k=>$file){
+			if(is_dir($file) || (!is_int(strpos($file,'/template/blocks')) && !is_int(strpos($file,'/template/common')) ) ){
+				unset($files[$k]);
+			}else{
+				$rt = str_replace($path,'',$file);
+				$output[$rt] = $rt;
+			}
+		}
+		return $output;
+	}
+
+	private function _glob_recursive($pattern){
+		$files = glob($pattern);
+		foreach (glob(dirname($pattern).'/*', GLOB_NOSORT) as $dir){
+			$files = array_merge($files, $this->_glob_recursive($dir.'/'.basename($pattern), $flags));
+		}
+
+		return $files;
+	}
+	public function getDefaultGenericBlocksTemplates(){
+		$path = DIR_ROOT.'/storefront/view/default/template/';
+		$files = $this->_glob_recursive($path.'*');
+		foreach($files as $k=>$file){
+			if(is_dir($file) || (!is_int(strpos($file,'/template/blocks')) && !is_int(strpos($file,'/template/common')) ) ){
+				unset($files[$k]);
+			}else{
+				$rt = str_replace($path,'',$file);
+				$output[$rt] = $rt;
+			}
+		}
+		return $output;
+	}
+
+
 
 
 }

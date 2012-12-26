@@ -21,6 +21,10 @@ if (! defined ( 'DIR_CORE' )) {
         header ( 'Location: static_pages/' );
 }
 
+if(!class_exists('ExtensionDeveloperTools')){
+	include_once('core/hooks.php');
+}
+
 $controllers = array(
     'storefront' => array(),
     'admin' => array(
@@ -38,7 +42,8 @@ $controllers = array(
 
 $models = array(
     'storefront' => array(),
-    'admin' => array( 'tool/developer_tools' ),
+    'admin' => array( 'tool/developer_tools',
+					  'tool/developer_tools_layout_xml'	),
 );
 
 $languages = array(
@@ -53,6 +58,7 @@ $templates = array(
 	    'pages/tool/developer_tools_package_form.tpl',
 	    'pages/tool/developer_tools_create_form.tpl',
 	    'pages/tool/developer_tools_edit_form.tpl',
+	    'pages/tool/developer_tools_generic_block_form.tpl',
 	    'responses/tool/developer_tools.tpl',
 	    'responses/tool/developer_tools_add_button.tpl',
 	    'responses/tool/developer_tools_general.tpl',
