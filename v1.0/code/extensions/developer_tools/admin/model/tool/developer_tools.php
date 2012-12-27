@@ -21,12 +21,12 @@ if (!defined('DIR_CORE')) {
 	header('Location: static_pages/');
 }
 
-require_once(DIR_EXT . 'developer_tools/core/lib/array2xml.php');
+require_once(DIR_EXT . "developer_tools/core/lib/array2xml.php");
 
 class ModelToolDeveloperTools extends Model {
 	public $error = array();
 	private $copied = array(); // array with copied files or directories by method _copyDir. do not forget reset it after method call!!!
-
+	private $sections = array('admin','storefront');
 	public function generateExtension($data = array()) {
 		$project_xml = $config_xml = array();
 
@@ -39,8 +39,7 @@ class ModelToolDeveloperTools extends Model {
 		$project_xml[ 'extension_txt_id' ] = $config_xml[ 'extension_txt_id' ] = $extension_name;
 
 		if (file_exists(DIR_EXT . $extension_name)) {
-			exit('Extension with text id "' . $extension_name . '" is already exists!');
-
+			exit('Extension with text id "' . $extension_name . '" is already exists! Delete it first and refresh page.');
 		}
 
 
@@ -57,6 +56,8 @@ class ModelToolDeveloperTools extends Model {
 		$data[ 'header_comment' ] = "<?php\n" . $data[ 'header_comment' ];
 		$data[ 'header_comment' ] .= "\n\n";
 		$data[ 'header_comment' ] .= "if (! defined ( 'DIR_CORE' )) {\nheader ( 'Location: static_pages/' );\n}\n\n";
+
+		$project_xml['header_comment'] = $data[ 'header_comment' ];
 
 		if ($data[ 'extension_admin_language_files' ]) {
 			$data[ 'extension_admin_language_files' ] = $this->_prepareData('extension_admin_language_files', $data[ 'extension_admin_language_files' ]);
@@ -84,6 +85,7 @@ class ModelToolDeveloperTools extends Model {
 				$class_name = implode('', $t);
 				$content = "class Extension" . $class_name . " extends Extension {\n\n }\n";
 				$hook_class_name = "Extension" . $class_name;
+				$project_xml['hook_class_name'] = $hook_class_name;
 				file_put_contents($extension_directory . '/core/' . $data[ 'hook_file' ], $data[ 'header_comment' ] . $content);
 			}
 		}
@@ -94,7 +96,7 @@ class ModelToolDeveloperTools extends Model {
 		// go by letters MVC order :)
 		//MODELS
 		$models = array( 'admin' => array(), 'storefront' => array() );
-		foreach (array( 'admin', 'storefront' ) as $section) {
+		foreach ($this->sections as $section) {
 			if (!isset($data[ $section . '_model_routes' ])) continue;
 			foreach ($data[ $section . '_model_routes' ] as $k => $route) {
 				$file = trim($data[ $section . '_model_files' ][ $k ], '\/ ');
@@ -132,7 +134,7 @@ class ModelToolDeveloperTools extends Model {
 					}
 					$rt = str_replace('.php', '', $file);
 					$models[ $section ][ ] = $route . '/' . $rt;
-					$project_xml[ 'model' ][ $section ][ ] = array( 'route' => $route, 'file' => $rt );
+					$project_xml[ 'models' ][ $section ][ ] = array( 'route' => $route, 'file' => $rt );
 				}
 			}
 		}
@@ -140,23 +142,25 @@ class ModelToolDeveloperTools extends Model {
 
 		// VIEWS (tpl-files)
 		$views = array( 'admin' => array(), 'storefront' => array() );
-		foreach (array( 'admin', 'storefront' ) as $section) {
-			foreach (array( 'page', 'response' ) as $controller_type) {
-				if (!isset($data[ $section . '_' . $controller_type . '_view_routes' ])) continue;
-				foreach ($data[ $section . '_' . $controller_type . '_view_routes' ] as $k => $route) {
-					$file = trim($data[ $section . '_' . $controller_type . '_view_files' ][ $k ], '\/ ');
+		foreach ($this->sections as $section) {
+			foreach (array( 'page', 'response' ) as $ctrl_type) {
+				if (!isset($data[ $section . '_' . $ctrl_type . '_view_routes' ])) continue;
+				foreach ($data[ $section . '_' . $ctrl_type . '_view_routes' ] as $k => $route) {
+					$file = trim($data[ $section . '_' . $ctrl_type . '_view_files' ][ $k ], '\/ ');
 					if ($route && $file) {
 						$route = trim($route, '\/ ');
 						$file = substr($file, -4) != '.tpl' ? $file . '.tpl' : $file;
-						$dir = $extension_directory . '/' . $section . '/view/default/template/' . $controller_type . 's/' . $route;
+						$route_prefix = $this->getRtPrefixByControllerType($ctrl_type);
+						$template_name = $data[ 'extension_type' ]=='template' ? $extension_name : 'default';
+						$dir = $extension_directory . '/' . $section . '/view/'.$template_name.'/template/' . $route_prefix . '/' . $route;
 						if (!file_exists($dir)) {
 							mkdir($dir, 0777, true);
 						}
 						if (!file_exists($dir . '/' . $file)) {
 							file_put_contents($dir . '/' . $file, '');
 						}
-						$views[ $section ][ $controller_type ][ ] = $controller_type . 's/' . $route . '/' . $file;
-						$project_xml[ 'view' ][ $section ][ $controller_type ][ ] = array( 'route' => $route, 'file' => $file );
+						$views[ $section ][ $ctrl_type ][ ] = $route_prefix . '/' . $route . '/' . $file;
+						$project_xml[ 'views' ][ $section ][ ] = array( 'route' => $route_prefix . '/' .$route, 'file' => $file );
 					}
 				}
 			}
@@ -164,19 +168,19 @@ class ModelToolDeveloperTools extends Model {
 
 		// Controllers
 		$controllers = array( 'admin' => array(), 'storefront' => array() );
-		foreach (array( 'admin', 'storefront' ) as $section) {
-			foreach (array( 'page', 'response' ) as $controller_type) {
-				if (!isset($data[ $section . '_' . $controller_type . '_controller_routes' ])) continue;
-				foreach ($data[ $section . '_' . $controller_type . '_controller_routes' ] as $k => $route) {
-					$file = trim($data[ $section . '_' . $controller_type . '_controller_files' ][ $k ], '\/ ');
+		foreach ($this->sections  as $section) {
+			foreach (array( 'page','response','block','form','common') as $ctrl_type) {
+				if (!isset($data[ $section . '_' . $ctrl_type . '_controller_routes' ])) continue;
+				foreach ($data[ $section . '_' . $ctrl_type . '_controller_routes' ] as $k => $route) {
+					$file = trim($data[ $section . '_' . $ctrl_type . '_controller_files' ][ $k ], '\/ ');
 					if ($route && $file) {
 						$route = trim($route, '\/ ');
 						$file = substr($file, -4) != '.php' ? $file . '.php' : $file;
 
 						$content = $data[ 'header_comment' ];
-
+						$route_prefix = $this->getRtPrefixByControllerType($ctrl_type);
 						// build class name
-						$class_name = 'Controller' . ucfirst($controller_type . 's');
+						$class_name = 'Controller' . ucfirst($route_prefix);
 						$rt = str_replace('/', '_', $route);
 						$rt = explode('_', $rt);
 						foreach ($rt as &$r) {
@@ -195,7 +199,7 @@ class ModelToolDeveloperTools extends Model {
 		public \$data = array ();
 		private \$error = array ();\n }\n";
 
-						$dir = $extension_directory . '/' . $section . '/controller/' . $controller_type . 's/' . $route;
+						$dir = $extension_directory . '/' . $section . '/controller/' . $route_prefix . '/' . $route;
 						if (!file_exists($dir)) {
 							mkdir($dir, 0777, true);
 						}
@@ -203,22 +207,22 @@ class ModelToolDeveloperTools extends Model {
 							file_put_contents($dir . '/' . $file, $content);
 						}
 						$rt = str_replace('.php', '', $file);
-						$controllers[ $section ][ $controller_type ][ ] = $controller_type . 's/' . $route . '/' . $rt;
-						$project_xml[ 'controller' ][ $section ][ $controller_type ][ ] = array( 'route' => $route, 'file' => $file );
+						$controllers[ $section ][ $ctrl_type ][ ] = $route_prefix . '/' . $route . '/' . $rt;
+						$project_xml[ 'controllers' ][ $section ][ ] = array( 'route' => $route_prefix . '/' .$route, 'file' => $file );
 					}
 				}
 			}
 		}
 		// LANGUAGE files for extension translates
 		$languages = array( 'admin' => array(), 'storefront' => array() );
-		foreach (array( 'admin', 'storefront' ) as $section) {
+		foreach ($this->sections as $section) {
 			if (!isset($data[ 'extension_' . $section . '_language_files' ])) continue;
 			foreach ($data[ 'extension_' . $section . '_language_files' ] as $language_name) {
 				if ($language_name) {
 					$language_name = strtolower($language_name);
 					$file = $extension_name . '.xml';
 					$languages[ $section ][ $extension_name . '/' . $extension_name ] = $extension_name . '/' . $extension_name;
-					$project_xml[ 'language' ][ $section ][ ] = $language_name;
+					$project_xml[ 'languages' ][ $section ][ ] = $extension_name . '/' . $extension_name;
 
 					if (file_exists($extension_directory . '/' . $section . '/language/' . strtolower($language_name) . '/' . $extension_name . '/' . $file)) {
 						continue;
@@ -327,44 +331,48 @@ class ModelToolDeveloperTools extends Model {
 
 		$config_xml[ 'install_sql' ] = $data[ 'install_sql' ];
 		$config_xml[ 'install_php' ] = $data[ 'install_php' ];
-		$this->_save_config_xml($config_xml);
+		$this->saveConfigXml($config_xml);
 
 		// change mode recurcive
 		$this->_chmod_R($extension_directory, 0777, 0777);
-		// save project xml
-		$this->_save_project_xml($project_xml);
 		$this->_replicate_default_dir_tree_($project_xml);
 
+		// save project xml
+		$this->saveProjectXml($project_xml);
+
+		$this->saveMainFileByProjectConfig($project_xml);
+		return true;
+	}
+
+	public function saveMainFileByProjectConfig($prj_config){
 		// make parameters for main.php build
 		$views = array();
-		if (is_array($project_xml[ 'view' ])) {
-			foreach ($project_xml[ 'view' ] as $section => $item) {
-				foreach ($item as $tpls) {
-					foreach ($tpls as $tpl) {
-						$views[ $section ][ ] = $tpl[ 'route' ] . '/' . $tpl[ 'file' ];
+		$mvcs= array('models','views','controllers','languages');
+		foreach($this->sections as $section){
+			foreach($mvcs as $mvc){
+				$list = (array)$prj_config[$mvc][$section];
+				if($list){
+					foreach($list as $item){
+						if($mvc!='languages'){
+							${$mvc}[ $section ][] = $item['route'].'/'.$item['file'];
+						}else{
+							${$mvc}[ $section ][] = $item;
+						}
 					}
 				}
 			}
 		}
-		$controllers[ 'storefront' ][ 'page' ] = !is_array($controllers[ 'storefront' ][ 'page' ]) ? array() : $controllers[ 'storefront' ][ 'page' ];
-		$controllers[ 'storefront' ][ 'response' ] = !is_array($controllers[ 'storefront' ][ 'response' ]) ? array() : $controllers[ 'storefront' ][ 'response' ];
-		$controllers[ 'storefront' ] = array_merge($controllers[ 'storefront' ][ 'page' ], $controllers[ 'storefront' ][ 'response' ]);
 
-		$controllers[ 'admin' ][ 'page' ] = !is_array($controllers[ 'admin' ][ 'page' ]) ? array() : $controllers[ 'admin' ][ 'page' ];
-		$controllers[ 'admin' ][ 'response' ] = !is_array($controllers[ 'admin' ][ 'response' ]) ? array() : $controllers[ 'admin' ][ 'response' ];
-		$controllers[ 'admin' ] = array_merge($controllers[ 'admin' ][ 'page' ], $controllers[ 'admin' ][ 'response' ]);
-
-		$main_file_params = array( 'extension_name' => $extension_name,
-			'header_comment' => $data[ 'header_comment' ],
-			'hook_class_name' => $hook_class_name,
-			'hook_file' => $data[ 'hook_file' ],
+		$main_file_params = array( 'extension_name' => $prj_config['extension_txt_id'],
+			'header_comment' => $prj_config[ 'header_comment' ],
+			'hook_class_name' => $prj_config[ 'hook_class_name'],
+			'hook_file' => $prj_config[ 'hook_file' ],
 			'controllers' => $controllers,
 			'models' => $models,
 			'views' => $views,
 			'languages' => $languages );
 		$this->_write_main_file($main_file_params);
 
-		return true;
 	}
 
 	// method prepares data before save
@@ -466,71 +474,117 @@ class ModelToolDeveloperTools extends Model {
 	/*
 	 * method copy(or clone) directory structure of default template(language)for extension
 	 * */
-	private function _replicate_default_dir_tree_(&$extension_data) {
-		$type = $extension_data[ 'extension_type' ];
-		$copy = $extension_data[ 'copy_default' ];
+	private function _replicate_default_dir_tree_(&$project_xml) {
+		$type = $project_xml[ 'extension_type' ];
+		$copy = $project_xml[ 'copy_default' ];
 		if (!in_array($type, array( 'template', 'language' ))) {
 			return false;
 		}
 		if ($type == 'template') {
-			$result = mkdir(DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/storefront/view/' . $extension_data[ 'extension_txt_id' ], 0777, true);
+			$result = mkdir(DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/storefront/view/' . $project_xml[ 'extension_txt_id' ], 0777, true);
 			if (!$result) {
-				$this->error = 'cannot create directory ' . DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/storefront/view/' . $extension_data[ 'extension_txt_id' ];
+				$this->error = 'cannot create directory ' . DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/storefront/view/' . $project_xml[ 'extension_txt_id' ];
 			}
-			$this->_chmod_R(DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/storefront/view/' . $extension_data[ 'extension_txt_id' ], 0777, 0777);
+			$this->_chmod_R(DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/storefront/view/' . $project_xml[ 'extension_txt_id' ], 0777, 0777);
 			$this->copied = array();
-			$this->_copyDir(DIR_STOREFRONT . '/view/default', DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/storefront/view/' . $extension_data[ 'extension_txt_id' ], $copy);
+			$this->_copyDir(DIR_STOREFRONT . '/view/default', DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/storefront/view/' . $project_xml[ 'extension_txt_id' ], $copy);
 			// get tpl list
-			$extension_data[ 'view' ][ 'storefront' ] = array();
+			$exists_views = array();
+			$project_xml[ 'views' ][ 'storefront' ] = (array)$project_xml[ 'views' ][ 'storefront' ];
+			foreach($project_xml[ 'views' ][ 'storefront' ] as $item){
+				$exists_views[] = $item['route'].'/'.$item['file'];
+			}
+
 			foreach ($this->copied as $item) {
 				if (!$item[ 'result' ]) {
 					$this->error[ ] = 'file or directory "' . $item[ 'filename' ] . '"not copied';
 				} elseif (is_file($item[ 'filename' ]) && pathinfo($item[ 'filename' ], PATHINFO_EXTENSION) == 'tpl') {
-					$rt = str_replace(DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/storefront/view/' . $extension_data[ 'extension_txt_id' ] . '/template/', '', $item[ 'filename' ]);
-					if (!in_array($rt, $extension_data[ 'view' ][ 'storefront' ])) {
-						// detect type of tpl
-						if (strpos($rt, 'pages') === 0) {
-							$tpl_type = 'page';
-						} else if (strpos($rt, 'responses') === 0) {
-							$tpl_type = 'response';
-						} else if (strpos($rt, 'blocks') === 0) {
-							$tpl_type = 'block';
-						} else if (strpos($rt, 'form') === 0) {
-							$tpl_type = 'form';
-						} else {
-							$tpl_type = 'common';
-						}
-						$extension_data[ 'view' ][ 'storefront' ][ $tpl_type ][ ] = array( 'route' => str_replace(array( 'pages', 'responses', 'blocks', 'form', 'common' ) . '/', '', pathinfo($rt, PATHINFO_DIRNAME)),
-							'file' => pathinfo($rt, PATHINFO_BASENAME) );
+					$rt = str_replace(DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/storefront/view/' . $project_xml[ 'extension_txt_id' ] . '/template/', '', $item[ 'filename' ]);
+					if (!in_array($rt, $exists_views)) {
+						$project_xml[ 'views' ][ 'storefront' ][ ] = array( 'route' => pathinfo($rt, PATHINFO_DIRNAME),
+																			'file' => pathinfo($rt, PATHINFO_BASENAME) );
 					}
 				}
 			}
 			$this->copied = array();
 		} else {
 			// replicate
-			$result = mkdir(DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/storefront/language/' . $extension_data[ 'extension_txt_id' ], 0777, true);
+			$result = mkdir(DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/storefront/language/' . $project_xml[ 'extension_txt_id' ], 0777, true);
 			if (!$result) {
-				$this->error = 'Cannot make directory ' . DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/storefront/language/' . $extension_data[ 'extension_txt_id' ];
+				$this->error = 'Cannot make directory ' . DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/storefront/language/' . $project_xml[ 'extension_txt_id' ];
 				return false;
 			}
-			$this->_chmod_R(DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/storefront/language/' . $extension_data[ 'extension_txt_id' ], 0777, 0777);
-			$this->_copyDir(DIR_STOREFRONT . 'language/english', DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/storefront/language/' . $extension_data[ 'extension_txt_id' ], $copy);
+			$this->_chmod_R(DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/storefront/language/' . $project_xml[ 'extension_txt_id' ], 0777, 0777);
+			$this->_copyDir(DIR_STOREFRONT . 'language/english', DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/storefront/language/' . $project_xml[ 'extension_txt_id' ], $copy);
 
-			$result = mkdir(DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/admin/language/' . $extension_data[ 'extension_txt_id' ], 0777, true);
+			$result = mkdir(DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/admin/language/' . $project_xml[ 'extension_txt_id' ], 0777, true);
 			if (!$result) {
-				$this->error = 'Cannot make directory ' . DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/admin/language/' . $extension_data[ 'extension_txt_id' ];
+				$this->error = 'Cannot make directory ' . DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/admin/language/' . $project_xml[ 'extension_txt_id' ];
 				return false;
 			}
-			$this->_chmod_R(DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/admin/language/' . $extension_data[ 'extension_txt_id' ], 0777, 0777);
-			$this->_copyDir(DIR_APP_SECTION . 'language/english', DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/admin/language/' . $extension_data[ 'extension_txt_id' ], $copy);
+			$this->_chmod_R(DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/admin/language/' . $project_xml[ 'extension_txt_id' ], 0777, 0777);
+			$this->_copyDir(DIR_APP_SECTION . 'language/english', DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/admin/language/' . $project_xml[ 'extension_txt_id' ], $copy);
 			//rename common language file
-			rename(DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/admin/language/' . $extension_data[ 'extension_txt_id' ] . '/english.xml',
-					DIR_EXT . $extension_data[ 'extension_txt_id' ] . '/admin/language/' . $extension_data[ 'extension_txt_id' ] . '/' . str_replace('_language', '', $extension_data[ 'extension_txt_id' ]) . '.xml');
+			rename(DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/admin/language/' . $project_xml[ 'extension_txt_id' ] . '/english.xml',
+					DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/admin/language/' . $project_xml[ 'extension_txt_id' ] . '/' . str_replace('_language', '', $project_xml[ 'extension_txt_id' ]) . '.xml');
 		}
+		return true;
+	}
+
+	/**
+	 * @param $rt
+	 * @return string
+	 */
+	public function getControllerTypeByRt($rt){
+		$rt = explode('/',$rt);
+		switch($rt[0]){
+			case 'pages':
+				$type = 'page';
+				break;
+			case 'responses':
+				$type = 'response';
+				break;
+			case 'blocks':
+				$type = 'block';
+				break;
+			case 'form':
+				$type = 'form';
+				break;
+			default:
+				$type = 'common';
+				break;
+
+		}
+		return $type;
+	}
+
+	/**
+	 * @param $type
+	 * @return string
+	 */
+	public function getRtPrefixByControllerType($type){
+			switch($type){
+				case 'page':
+					$prefix = 'pages';
+					break;
+				case 'response':
+					$prefix = 'responses';
+					break;
+				case 'block':
+					$prefix = 'blocks';
+					break;
+				case 'form':
+					$prefix = 'form';
+					break;
+				default:
+					$prefix = 'common';
+					break;
+			}
+		return $prefix;
 	}
 
 
-	private function _save_config_xml($data = array()) {
+	public function saveConfigXml($data = array()) {
 		$dir = DIR_EXT . $data[ 'extension_txt_id' ] . '/';
 		$xml_data = array(
 			'id' => $data[ 'extension_txt_id' ],
@@ -618,7 +672,7 @@ class ModelToolDeveloperTools extends Model {
 	}
 
 
-	private function _save_project_xml($data = array()) {
+	public function saveProjectXml($data = array()) {
 		$dir = DIR_APP_SECTION . 'system/temp/developer_tools/';
 		if (!is_dir($dir)) {
 			mkdir($dir, 0777, true);
@@ -627,6 +681,7 @@ class ModelToolDeveloperTools extends Model {
 			$this->error = "Can't save project-file because directory " . $dir . " is not writable.";
 			return false;
 		}
+
 		$xml_data = array( 'extension' => array(
 			'extension_type' => $data[ 'extension_type' ],
 			'copy_default' => $data[ 'copy_default' ],
@@ -661,45 +716,47 @@ class ModelToolDeveloperTools extends Model {
 		$xml_data[ 'extension' ][ 'route' ] = $data[ 'route' ];
 		if ($data[ 'hook_file' ]) {
 			$xml_data[ 'extension' ][ 'hook_file' ] = $data[ 'hook_file' ];
+			$xml_data[ 'extension' ][ 'hook_class_name' ] = $data[ 'hook_class_name' ];
 		}
 
+		if ($data[ 'languages' ][ 'admin' ]) {
+			$xml_data[ 'extension' ][ 'languages' ][ 'admin' ] = array( 'item' => $data[ 'languages' ][ 'admin' ] );
+		}
+		//controllers
+		if ($data[ 'controllers' ][ 'admin' ]) {
+			$xml_data[ 'extension' ][ 'controllers' ]['admin'] = array( 'item' => $data[ 'controllers' ][ 'admin' ] );
+		}
 
-		if ($data[ 'language' ][ 'admin' ]) {
-			$xml_data[ 'extension' ][ 'extension_admin_languages' ] = array( 'item' => $data[ 'language' ][ 'admin' ] );
+		//model
+		if ($data[ 'models' ][ 'admin' ]) {
+			$xml_data[ 'extension' ][ 'models' ]['admin'] = array( 'item' => $data[ 'models' ][ 'admin' ] );
 		}
-		if ($data[ 'controller' ][ 'admin' ][ 'page' ]) {
-			$xml_data[ 'extension' ][ 'admin_page_controller_files' ] = array( 'item' => $data[ 'controller' ][ 'admin' ][ 'page' ] );
+		//views
+		if ($data[ 'views' ][ 'admin' ]) {
+			$xml_data[ 'extension' ]['views'][ 'admin' ] = array( 'item' => $data[ 'views' ][ 'admin' ] );
 		}
-		if ($data[ 'controller' ][ 'admin' ][ 'response' ]) {
-			$xml_data[ 'extension' ][ 'admin_response_controller_files' ] = array( 'item' => $data[ 'controller' ][ 'admin' ][ 'response' ] );
+		/*
+		 * STOREFRONT
+		 * */
+
+		// languages
+		if ($data[ 'languages' ][ 'storefront' ]) {
+			$xml_data[ 'extension' ][ 'languages' ][ 'storefront' ] = array( 'item' => $data[ 'languages' ][ 'storefront' ] );
 		}
-		if ($data[ 'model' ][ 'admin' ]) {
-			$xml_data[ 'extension' ][ 'admin_model' ] = array( 'item' => $data[ 'model' ][ 'admin' ] );
+		//controllers
+		if ($data[ 'controllers' ][ 'storefront' ]) {
+			$xml_data[ 'extension' ][ 'controllers' ][ 'storefront' ] = array( 'item' => $data[ 'controllers' ][ 'storefront' ] );
 		}
-		if ($data[ 'view' ][ 'admin' ][ 'page' ]) {
-			$xml_data[ 'extension' ][ 'admin_page_view_files' ] = array( 'item' => $data[ 'view' ][ 'admin' ][ 'page' ] );
+
+		//model
+		if ($data[ 'models' ][ 'storefront' ]) {
+			$xml_data[ 'extension' ]['models'][ 'storefront' ] = array( 'item' => $data[ 'models' ][ 'storefront' ] );
 		}
-		if ($data[ 'view' ][ 'admin' ][ 'response' ]) {
-			$xml_data[ 'extension' ][ 'admin_response_view_files' ] = array( 'item' => $data[ 'view' ][ 'admin' ][ 'response' ] );
+		//views
+		if ($data[ 'views' ][ 'storefront' ]) {
+			$xml_data[ 'extension' ]['views'][ 'storefront' ] = array( 'item' => $data[ 'views' ][ 'storefront' ] );
 		}
-		if ($data[ 'language' ][ 'storefront' ]) {
-			$xml_data[ 'extension' ][ 'extension_storefront_languages' ] = array( 'item' => $data[ 'language' ][ 'storefront' ] );
-		}
-		if ($data[ 'controller' ][ 'storefront' ][ 'page' ]) {
-			$xml_data[ 'extension' ][ 'storefront_page_controller_files' ] = array( 'item' => $data[ 'controller' ][ 'storefront' ][ 'page' ] );
-		}
-		if ($data[ 'controller' ][ 'storefront' ][ 'response' ]) {
-			$xml_data[ 'extension' ][ 'storefront_response_controller_files' ] = array( 'item' => $data[ 'controller' ][ 'storefront' ][ 'response' ] );
-		}
-		if ($data[ 'model' ][ 'storefront' ]) {
-			$xml_data[ 'extension' ][ 'storefront_model' ] = array( 'item' => $data[ 'model' ][ 'storefront' ] );
-		}
-		if ($data[ 'view' ][ 'storefront' ][ 'page' ]) {
-			$xml_data[ 'extension' ][ 'storefront_page_view_files' ] = array( 'item' => $data[ 'view' ][ 'storefront' ][ 'page' ] );
-		}
-		if ($data[ 'view' ][ 'storefront' ][ 'response' ]) {
-			$xml_data[ 'extension' ][ 'storefront_response_view_files' ] = array( 'item' => $data[ 'view' ][ 'storefront' ][ 'response' ] );
-		}
+
 		$xml = Array2XML::createXML('project', $xml_data);
 		$file_name = 'dev_tools_project_' . $data[ 'extension_txt_id' ] . '_v' . $data[ 'version' ] . '.xml';
 		$xml = $xml->saveXML();
@@ -887,6 +944,13 @@ class ModelToolDeveloperTools extends Model {
 					$node = $node[ '@cdata' ];
 				}
 			}
+			// remove item tag from arrays
+			$mvcs= array('models','views','controllers','languages');
+			foreach($this->sections as $section){
+				foreach($mvcs as $mvc){
+					$xml_array[$mvc][$section] = $xml_array[$mvc][$section]['item'];
+				}
+			}
 		} else {
 			$this->error[ ] = 'Cannot open file ' . $file_name;
 		}
@@ -898,6 +962,7 @@ class ModelToolDeveloperTools extends Model {
 	public function getLanguageFiles($prj_id) {
 		$output = array();
 
+		/** @var $this TYPE_NAME */
 		$config = $this->getProjectConfig($prj_id);
 
 		$list = $this->_get_xml_files(DIR_EXT . $config[ 'extension_txt_id' ]);

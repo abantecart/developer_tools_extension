@@ -1020,6 +1020,9 @@ class ControllerPagesToolDeveloperTools extends AController {
 					unset($data[ 'templates' ][ $i ]);
 				}
 			}
+
+			//check is templates already in main.php file of extension
+			$this->_check4NewTemplates($data);
 			// saving block
 			$block_id = $layout->saveBlock($data);
 
@@ -1051,7 +1054,7 @@ class ControllerPagesToolDeveloperTools extends AController {
 		$this->data[ 'tabs' ][ ] = array( 'href' => $this->html->getSecureURL('extension/banner_manager/insert_block', '&block_id=' . $this->data[ 'block_id' ]),
 			'text' => $this->language->get('text_banner_block'),
 			'active' => true );
-
+		$this->_check4NewTemplates($data);
 		$this->_getBlockForm();
 	}
 
@@ -1076,6 +1079,10 @@ class ControllerPagesToolDeveloperTools extends AController {
 					unset($data[ 'templates' ][ $i ]);
 				}
 			}
+
+			//check is templates already in main.php file of extension
+			$this->_check4NewTemplates($data);
+
 			// saving block
 			$block_id = $layout->saveBlock($data, $block_id);
 
@@ -1106,6 +1113,36 @@ class ControllerPagesToolDeveloperTools extends AController {
 		$this->_getBlockForm();
 	}
 
+	private function _check4NewTemplates($data){
+		//check is templates already in main.php file of extension
+		if (has_value($this->session->data[ 'dev_tools_prj_id' ]) && has_value($data[ 'templates' ])) {
+			$prj_config = $this->model_tool_developer_tools->getProjectConfig($this->session->data['dev_tools_prj_id']);
+
+			foreach($data[ 'templates' ] as $template){
+
+				$path = pathinfo($template['template']);
+				$route = $path['dirname'];
+				$file = $path['basename'];
+				$found = false;
+
+				if($prj_config['views']['storefront']){
+					foreach($prj_config['views']['storefront'] as $item){
+						if($template['template'] == $item['route'].'/'.$item['file']){
+							$found = true;
+							break;
+						}
+					}
+				}
+				if(!$found){
+					$prj_config['views']['storefront'][] = array('route'=>$route,'file'=>$file);
+				}
+			}
+
+			//save changes to project config
+			$this->model_tool_developer_tools->saveProjectXml($prj_config);
+			$this->model_tool_developer_tools->saveMainFileByProjectConfig($prj_config);
+		}
+	}
 
 	private function _getBlockForm() {
 		if (isset ($this->session->data[ 'warning' ])) {

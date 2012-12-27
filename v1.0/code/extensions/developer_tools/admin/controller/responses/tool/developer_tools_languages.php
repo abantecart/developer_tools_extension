@@ -28,7 +28,7 @@ class ControllerResponsesToolDeveloperToolsLanguages extends AController {
 	public function main() {
 
 		$this->loadModel('tool/developer_tools');
-		$this->loadLanguage('tool/developer_tools');
+		$this->loadLanguage('developer_tools/developer_tools');
 
 		$prj_id = func_get_arg(0);
 
@@ -88,7 +88,7 @@ class ControllerResponsesToolDeveloperToolsLanguages extends AController {
 
 	public function edit(){
 		$this->loadModel('tool/developer_tools');
-		$this->loadLanguage('tool/developer_tools');
+		$this->loadLanguage('developer_tools/developer_tools');
 
 		$prj_id = func_get_arg(0);
 
