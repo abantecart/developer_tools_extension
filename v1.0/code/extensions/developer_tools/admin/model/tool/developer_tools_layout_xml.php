@@ -166,6 +166,7 @@ class ModelToolDeveloperToolsLayoutXml extends Model {
 			$this->placeholder_block_id = !$row['parent_instance_id'] ? $row['block_id'] : $this->placeholder_block_id;
 			$block_info = $row['custom_block_id'] ? $this->_getCustomBlockInfo4Xml($row['custom_block_id']) : $this->_getBlockInfo4Xml($row['block_id']);
 			$block_info['status'] = $row['status'];
+			$block_info['position'] = $row['position'];
 			// looking for nested blocks but only for generic blocks
 			if(!$row['custom_block_id']){
 				$children = $this->_getLayoutBlocks4Xml($layout_id, $row['instance_id']);
