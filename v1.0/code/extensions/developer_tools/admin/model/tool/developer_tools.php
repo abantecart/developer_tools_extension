@@ -151,7 +151,7 @@ class ModelToolDeveloperTools extends Model {
 						$route = trim($route, '\/ ');
 						$file = substr($file, -4) != '.tpl' ? $file . '.tpl' : $file;
 						$route_prefix = $this->getRtPrefixByControllerType($ctrl_type);
-						$template_name = $data[ 'extension_type' ]=='template' ? $extension_name : 'default';
+						$template_name = $data[ 'extension_type' ]=='template' ? $extension_name : 'default_html5';
 						$dir = $extension_directory . '/' . $section . '/view/'.$template_name.'/template/' . $route_prefix . '/' . $route;
 						if (!file_exists($dir)) {
 							mkdir($dir, 0777, true);
@@ -472,7 +472,7 @@ class ModelToolDeveloperTools extends Model {
 	}
 
 	/*
-	 * method copy(or clone) directory structure of default template(language)for extension
+	 * method copy(or clone) directory structure of default_html5 template(language)for extension
 	 * */
 	private function _replicate_default_dir_tree_(&$project_xml) {
 		$type = $project_xml[ 'extension_type' ];
@@ -487,7 +487,7 @@ class ModelToolDeveloperTools extends Model {
 			}
 			$this->_chmod_R(DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/storefront/view/' . $project_xml[ 'extension_txt_id' ], 0777, 0777);
 			$this->copied = array();
-			$this->_copyDir(DIR_STOREFRONT . '/view/default', DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/storefront/view/' . $project_xml[ 'extension_txt_id' ], $copy);
+			$this->_copyDir(DIR_STOREFRONT . '/view/default_html5', DIR_EXT . $project_xml[ 'extension_txt_id' ] . '/storefront/view/' . $project_xml[ 'extension_txt_id' ], $copy);
 			// get tpl list
 			$exists_views = array();
 			$project_xml[ 'views' ][ 'storefront' ] = (array)$project_xml[ 'views' ][ 'storefront' ];
@@ -1055,7 +1055,7 @@ class ModelToolDeveloperTools extends Model {
 		return $files;
 	}
 	public function getDefaultGenericBlocksTemplates(){
-		$path = DIR_ROOT.'/storefront/view/default/template/';
+		$path = DIR_ROOT.'/storefront/view/default_html5/template/';
 		$files = $this->_glob_recursive($path.'*');
 		foreach($files as $k=>$file){
 			if(is_dir($file) || (!is_int(strpos($file,'/template/blocks')) && !is_int(strpos($file,'/template/common')) ) ){
