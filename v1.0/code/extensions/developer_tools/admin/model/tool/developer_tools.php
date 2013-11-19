@@ -45,7 +45,7 @@ class ModelToolDeveloperTools extends Model {
 
 		$data[ 'extension_type' ] = $data[ 'extension_type' ] == 'other' ? 'extension' : $data[ 'extension_type' ];
 		$project_xml[ 'extension_type' ] = $config_xml[ 'extension_type' ] = $data[ 'extension_type' ];
-		$project_xml[ 'copy_default' ] = $this->_prepareData('copy_default', $data[ 'copy_default' ]);
+		$project_xml[ 'copy_default' ] = $this->_prepareData('copy_default', $data[ 'copy_default' ],$project_xml);
 
 		$project_xml[ 'extension_title' ] = $data[ 'extension_title' ];
 		$extension_directory = DIR_EXT . $extension_name;
