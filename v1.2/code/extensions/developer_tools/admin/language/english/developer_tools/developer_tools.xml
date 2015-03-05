@@ -1,0 +1,419 @@
+<?xml version="1.0"?>
+<definitions>
+	<definition>
+		<key>developer_tools_name</key>
+		<value><![CDATA[Extension Developer Tools]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_status</key>
+		<value><![CDATA[Status]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_note</key>
+		<value><![CDATA[]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_tab_prj_list</key>
+		<value><![CDATA[All Projects]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_tab_generate_extension</key>
+		<value><![CDATA[Create Extension]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_tab_clone_template</key>
+		<value><![CDATA[Clone Template]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_tab_generate_package</key>
+		<value><![CDATA[Build Package]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_select_extension</key>
+		<value><![CDATA[Select Extension: ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_create_extension</key>
+		<value><![CDATA[Create Extension ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_no_projects</key>
+		<value><![CDATA[No Projects Found ( %s ) ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_about_creation</key>
+		<value>
+			<![CDATA[ This page is intended to generate a template for new extension.<br>Generated extension package will contain most of the files needed to start creating extension.<br>This tool will save you time with repetitive and tedious work of creating files with correct names,etc.<br>Just fill in the form and extension will be generated and installed on this instance of the cart and ready to be developed on.  ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_about_edit</key>
+		<value>
+			<![CDATA[ Attention!<br>Edit form will overwrite some files such as config.xml, main.php, help.txt etc. <br>Please do backup directory %s and file %s before it.<br>NOTE: do not use folder "extensions" for backup! ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_success_generated_extension</key>
+		<value><![CDATA[ Success: Your's new Extention Generated successfully.]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_error_generated_extension</key>
+		<value><![CDATA[ Error: Your's New Extention Not Generated. Please check form and required fields.]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_tab_common_section</key>
+		<value><![CDATA[ Common Parameters]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_extension_title</key>
+		<value><![CDATA[Extension Title]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_extension_txt_id</key>
+		<value><![CDATA[Extension Unique Text ID<span class="help">Note: only alphanumeric and _ </span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_version</key>
+		<value><![CDATA[ Extension Version ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_cart_version</key>
+		<value>
+			<![CDATA[ Cart Versions <span class="help">If you set major and minor only version extensions will supported all builts of them. For ex. 1.1 will works on 1.1.0, 1.1.2 etc but does not works on 1.2.x</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_priority</key>
+		<value>
+			<![CDATA[ Priority<span class="help">Priority mean order number for hook call when few extensions hooks will run for the same controller. ex: 10,20,30 etc</span> ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_dependencies</key>
+		<value><![CDATA[Add Dependancy Extensions Names with versions range: ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_install_sql</key>
+		<value>
+			<![CDATA[ Create install.sql file? <span class="help"> sql-script will runs during installation process</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_install_php</key>
+		<value>
+			<![CDATA[ Create install.php file? <span class="help"> install.php will runs during installation process</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_help_note</key>
+		<value>
+			<![CDATA[Quick Help Text <span class="help">Text to be shown in the extension configuration</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_help_file</key>
+		<value>
+			<![CDATA[Help Text<span class="help">Text to be shown in popup window after help button press</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_preview</key>
+		<value><![CDATA[Extension Screenshots<span class="help">Image format .png</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_icon</key>
+		<value><![CDATA[Extension Icon<span class="help">Icon format .png 50x50 px</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_icon_default</key>
+		<value><![CDATA[Use Default]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_header_comment</key>
+		<value>
+			<![CDATA[ Php-files Header Comment <span class="help">will be paste into top of each php-files of your extension</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_route</key>
+		<value>
+			<![CDATA[ Default route to extension controllers <span class="help">it mean "rt" variable value by default for next fields</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_hook_file</key>
+		<value><![CDATA[ Filename with hooks<span class="help">core/your_filename.php will created</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_tab_admin_section</key>
+		<value><![CDATA[ Control Panel Extension Files]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_language_files</key>
+		<value><![CDATA[Select Language(s) ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_admin_page_controllers</key>
+		<value>
+			<![CDATA[ Control Panel Page Controllers List <span class="help">You have to set route(path) and filename for each controller.<br>Ex:  [pages/extension/some_extension_txt_id]  [some_extension_filename.php]</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_admin_response_controllers</key>
+		<value>
+			<![CDATA[ Control Panel Response Controllers List <span class="help">Same as page controllers...<br>Response controllers used for answer on ajax-requests</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_admin_api_controllers</key>
+		<value>
+			<![CDATA[ Control Panel API Controllers List <span class="help">API controllers used for answer on REST-requests</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_admin_task_controllers</key>
+		<value>
+			<![CDATA[ Control Panel Task Controllers List <span class="help">Task controllers used for scheduled tasks run.</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_admin_models</key>
+		<value><![CDATA[ Control Panel Models <span class="help"></span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_admin_page_views</key>
+		<value><![CDATA[ Control Panel View-files for Page Controllers <span class="help"></span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_admin_response_views</key>
+		<value>
+			<![CDATA[ Control Panel View-files for Response Controllers <span class="help"></span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_tab_storefront_section</key>
+		<value><![CDATA[ Storefront Extension Files]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_language_files</key>
+		<value><![CDATA[Select Language(s) ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_storefront_page_controllers</key>
+		<value>
+			<![CDATA[ Storefront Page Controllers List <span class="help">You have to set route(path) and filename for each controller.<br>Ex:  [pages/extension/some_extension_txt_id]  [some_extension_filename.php]</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_storefront_response_controllers</key>
+		<value>
+			<![CDATA[ Storefront Response Controllers List <span class="help">Same as page controllers...<br>Response controllers used for answer on ajax-requests</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_storefront_api_controllers</key>
+		<value>
+			<![CDATA[ Storefront API Controllers List]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_storefront_block_controllers</key>
+		<value>
+			<![CDATA[ Storefront Block Controllers List]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_storefront_models</key>
+		<value><![CDATA[ Storefront Models <span class="help"></span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_storefront_page_views</key>
+		<value><![CDATA[ Storefront View-files for Page Controllers <span class="help"></span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_storefront_response_views</key>
+		<value>
+			<![CDATA[ Storefront View-files for Response Controllers <span class="help"></span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_copyright</key>
+		<value><![CDATA[ Package copyright text]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_license</key>
+		<value><![CDATA[ Package license text]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_error_write_permission</key>
+		<value>
+			<![CDATA[ Error: You can't generate extension because extension directory is not writable. You have to change access mode to 0777 for yours extension directory. ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_type_template</key>
+		<value><![CDATA[ Template ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_type_payment</key>
+		<value><![CDATA[ Payment ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_type_shipping</key>
+		<value><![CDATA[ Shipping ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_type_language</key>
+		<value><![CDATA[ Language ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_type_preset</key>
+		<value><![CDATA[ Preset ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_type_total</key>
+		<value><![CDATA[ Total ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_type_other</key>
+		<value><![CDATA[ Other ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_extension_type</key>
+		<value>
+			<![CDATA[Extension Type<span class="help">Note: You need choose type to create specified hooks and routines for extension automatically. </span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_copy_default</key>
+		<value>
+			<![CDATA[Copy default file's content<span class="help">Note: If you checked generator will copy default template(language) files automatically into extension's directory. Otherwise content of tpl(xml)-files will purge. </span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_extension_category</key>
+		<value>
+			<![CDATA[Extension Category<span class="help">Note: You can use any few words to explain what extension use creating. For ex. Sale, Language, Social Net etc </span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_recent</key>
+		<value><![CDATA[Recent projects]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_open</key>
+		<value><![CDATA[Open Project]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_close</key>
+		<value><![CDATA[Close Project]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_general</key>
+		<value><![CDATA[General]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_edit</key>
+		<value><![CDATA[Edit Project Details]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_controllers</key>
+		<value><![CDATA[Controllers]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_models</key>
+		<value><![CDATA[Models]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_views</key>
+		<value><![CDATA[Views]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_hooks</key>
+		<value><![CDATA[Hooks]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_languages</key>
+		<value><![CDATA[Languages]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_other</key>
+		<value><![CDATA[Other]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_tab_admin_languages_section</key>
+		<value><![CDATA[ Control Panel Language Files]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_tab_storefront_languages_section</key>
+		<value><![CDATA[ StoreFront Language Files]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_language_file_edit</key>
+		<value><![CDATA[ Language File Edit Form]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_language_file_edit_success</key>
+		<value><![CDATA[ Success: You have modified language file!]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_view_layout_xml</key>
+		<value><![CDATA[ View Layout XML]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_save_layout_xml</key>
+		<value><![CDATA[ Save Layout XML]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_layout_xml_tab</key>
+		<value><![CDATA[ Layouts to XML]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_select_template</key>
+		<value><![CDATA[ Select template from database : ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_success_layout_xml</key>
+		<value><![CDATA[ Layout XML saved successfully. Now you can <a href="#admin#rt=extension/extensions/template" target="_blank">install</a> your template extension. ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_error_layout_xml</key>
+		<value><![CDATA[ Error has occurred during Layout XML saving. Please check <a href="#admin#rt=tool/error_log" target="_blank">error log</a> for details. ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_generic_block</key>
+		<value><![CDATA[ Generic Block ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_block_txt_id</key>
+		<value><![CDATA[ Block Text Id ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_block_controller</key>
+		<value><![CDATA[ Block Controller ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_block_templates</key>
+		<value><![CDATA[ Block Wrappers (tpl) ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_create_block</key>
+		<value><![CDATA[ Create Generic Block ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_edit_block</key>
+		<value><![CDATA[ Edit Generic Block ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_select_placeholder</key>
+		<value><![CDATA[ -- Select Placeholder -- ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_select_block_template</key>
+		<value><![CDATA[ -- Select Block Template -- ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_error_empty_templates</key>
+		<value><![CDATA[ You need to set at least one template for block! ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_success_block_save</key>
+		<value><![CDATA[ Success: You have modified generic block!]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_success_deleted</key>
+		<value><![CDATA[Success: You have deleted generic block!]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_error_delete</key>
+		<value><![CDATA[Can't delete because this block is in use. Please visit Layout section. ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_add_definition</key>
+		<value><![CDATA[ Add Definition ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_template_title</key>
+		<value><![CDATA[Template Title]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_extension_txt_id</key>
+		<value><![CDATA[Extension Unique Text ID<span class="help">Note: only alphanumeric and _ </span>]]></value>
+	</definition>
+</definitions>

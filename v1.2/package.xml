@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package>
+    <id>developer_tools</id>
+    <type>extension</type>
+	<version>1.2.0</version>
+	<minversion>1.2.0</minversion>
+	<cartversions>		
+		<item>1.2</item>
+	</cartversions>
+	<package_content>
+		<extensions>
+			<extension>developer_tools</extension>
+		</extensions>
+	</package_content>
+</package>
