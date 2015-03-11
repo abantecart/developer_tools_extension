@@ -41,7 +41,7 @@ class ControllerPagesToolDeveloperToolsLanguages extends AController{
 		$language_files = $this->model_tool_developer_tools->getLanguageFiles($prj_id);
 
 		if(!$language_files){
-			$this->session->data['warning'] = 'Project does not contain language files. To add it please use project edit form.';
+			$this->session->data['warning'] = 'Project does not contain language files. To add it please use project <a href="'.$this->html->getSecureURL('tool/developer_tools/edit').'">edit form</a>.';
 			$this->redirect($this->html->getSecureURL('tool/developer_tools/edit'));
 		}
 
@@ -150,13 +150,13 @@ class ControllerPagesToolDeveloperToolsLanguages extends AController{
 				}
 				$this->data['success'] = $this->language->get('developer_tools_text_language_file_edit_success');
 			}
-			$this->redirect($this->html->getSecureURL('tool/developer_tools_languages/edit'));
+			$this->redirect($this->html->getSecureURL('tool/developer_tools_languages/edit', '&block=' . $this->request->get['block'] . '&section=' . $this->request->get['section']));
 		}
 
 		$language_files = $this->model_tool_developer_tools->getLanguageFiles($prj_id);
 
 		if(!$language_files){
-			$this->session->data['warning'] = 'Project does not contain language files. To add it please use project edit form.';
+			$this->session->data['warning'] = 'Project does not contain language files. To add it please use project <a href="'.$this->html->getSecureURL('tool/developer_tools/edit').'">edit form</a>.';
 			$this->redirect($this->html->getSecureURL('tool/developer_tools/edit'));
 		}
 
@@ -168,8 +168,8 @@ class ControllerPagesToolDeveloperToolsLanguages extends AController{
 
 		$this->data['cancel'] = $this->html->getSecureURL('developer_tools_name');
 		$this->data['action'] = $this->html->getSecureURL(
-									'tool/developer_tools/edit',
-									'&mode=languages&block=' . $this->request->get['block'] . '&section=' . $this->request->get['section']);
+									'tool/developer_tools_languages/edit',
+									'&block=' . $this->request->get['block'] . '&section=' . $this->request->get['section']);
 		$this->data['heading_title'] = $this->language->get('developer_tools_name');
 		$this->data['update'] = '';
 		$form = new AForm('HT');
@@ -253,9 +253,10 @@ class ControllerPagesToolDeveloperToolsLanguages extends AController{
 		$this->data['form']['proto']['newkey'] = $form->getFieldHtml(
 				array('type'  => 'input',
 				      'name'  => 'newkey',
-				      'value' => '',
+				      'value' => $config['extension_txt_id'].'_', //use prefix for all language definitions of extension to prevent collision with core
 				      'attr'  => '  autocomplete="off" '
-				));
+				)
+		);
 
 		foreach($languages as $language_name){
 			$this->data['form']['proto']['field'][] = $language_name;

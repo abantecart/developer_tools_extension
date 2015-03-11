@@ -34,6 +34,10 @@ class ModelToolDeveloperTools extends Model{
 
 	public function generateExtension($data = array()){
 		$project_xml = $config_xml = array();
+		//when clone template
+		if(has_value($data['clone_method'])){
+			$project_xml['clone_method'] = $data['clone_method'];
+		}
 
 		$extension_name = $data['extension_txt_id'] = $this->_prepareData('extension_txt_id', $data['extension_txt_id']);
 		if(!$data['extension_txt_id']){
@@ -51,7 +55,6 @@ class ModelToolDeveloperTools extends Model{
 
 		$data['extension_type'] = $data['extension_type'] == 'other' ? 'extension' : $data['extension_type'];
 		$project_xml['extension_type'] = $config_xml['extension_type'] = $data['extension_type'];
-		$project_xml['copy_default'] = $this->_prepareData('copy_default', $data['copy_default'], $project_xml);
 
 		$project_xml['extension_title'] = $data['extension_title'];
 		$extension_directory = DIR_EXT . $extension_name;
@@ -229,6 +232,11 @@ class ModelToolDeveloperTools extends Model{
 		unset($content);
 		// LANGUAGE files for extension translates
 		$languages = array('admin' => array(), 'storefront' => array());
+		//NOTE! unacceptable extension without at least one admin language file
+		if(!$data['extension_admin_language_files']){
+			$data['extension_admin_language_files'] = array('english');
+		}
+
 		foreach($this->sections as $section){
 			if(!isset($data['extension_' . $section . '_language_files'])) continue;
 			foreach($data['extension_' . $section . '_language_files'] as $language_name){
@@ -265,17 +273,18 @@ class ModelToolDeveloperTools extends Model{
 				$this->load->model('tool/developer_tools_layout_xml');
 				$this->model_tool_developer_tools_layout_xml->saveXml($data['extension_txt_id'], 'default');
 				$install_content =
-						"\$file = DIR_EXT . \$name . '/layout.xml';\n" .
-						"\$layout = new ALayoutManager();\n" .
+						"\$file = DIR_EXT . '/".$data['extension_txt_id']."/layout.xml';\n" .
+						"\$layout = new ALayoutManager('default');\n" .
 						"\$layout->loadXml(array('file' => \$file));\n";
 			}
 			if(!is_file($extension_directory . '/install.php')){
 				file_put_contents($extension_directory . '/install.php', $content . $install_content);
 			}
 
+
 			if($project_xml['extension_type']=='template'){
 				$uninstall_content =
-						"\$extension_id = \$name;\n" .
+						"\$extension_id = '".$data['extension_txt_id']."';\n" .
 						"// delete template layouts\n" .
 						"\$layout = new ALayoutManager(\$extension_id);\n" .
 						"\$layout->deleteTemplateLayouts();";
@@ -379,13 +388,25 @@ class ModelToolDeveloperTools extends Model{
 
 		// change mode recurcive
 		$this->_chmod_R($extension_directory, 0777, 0777);
-		$this->_replicate_default_dir_tree_($project_xml);
+
+		$this->_replicate_default_dir_tree_($project_xml); // when cloning template check clone_method var
 
 		// save project xml
 		$this->saveProjectXml($project_xml);
 
 		$this->saveMainFileByProjectConfig($project_xml);
 		$this->session->data['dev_tools_prj_id'] = $project_xml['extension_txt_id'] . '_v' . $project_xml['version'];
+		//for cloning of template need to install
+		if($project_xml['clone_method']){
+			//1. refresh extensions list to write new into db, table extensions
+			$ex = new ExtensionsApi();
+			unset($ex);
+			$em = new AExtensionManager();
+			$em->install($project_xml['extension_txt_id'], getExtensionConfigXml($project_xml['extension_txt_id']) );
+			//enable
+			$em->editSetting($project_xml['extension_txt_id'],array($project_xml['extension_txt_id'].'_status'=>1));
+		}
+
 		return true;
 	}
 
@@ -547,7 +568,7 @@ class ModelToolDeveloperTools extends Model{
 
 	public function copyTemplate($project_xml, $src_template_dir=''){
 
-		$copy_file_content = $project_xml['copy_default'];
+
 		$src_template_dir = !$src_template_dir ? DIR_STOREFRONT . '/view/default' : $src_template_dir;
 
 		$template_dir = DIR_EXT . $project_xml['extension_txt_id'] . '/storefront/view/' . $project_xml['extension_txt_id'];
@@ -560,7 +581,22 @@ class ModelToolDeveloperTools extends Model{
 		}
 		$this->_chmod_R($template_dir, 0777, 0777);
 		$this->copied = array();
-		$this->_copyDir($src_template_dir, $template_dir, $copy_file_content);
+
+		$clone_method = $project_xml['clone_method'];
+		if($clone_method=='full_clone'){
+			$this->_copyDir($src_template_dir, $template_dir, true);
+		}elseif($clone_method=='jscss_clone'){
+			$subdirs = scandir($src_template_dir);
+			foreach($subdirs as $file){
+				//skip all tpl-files when clone only js and css
+				if(is_int(strpos($file,'template'))){
+					return true;
+				}
+				if($file != "." && $file != ".."){
+					$this->_copyDir($src_template_dir . "/" . $file, $template_dir . "/" . $file, true);
+				}
+			}
+		}
 		// get tpl list
 		$exists_views = array();
 		$project_xml['views']['storefront'] = (array)$project_xml['views']['storefront'];
@@ -580,6 +616,19 @@ class ModelToolDeveloperTools extends Model{
 			}
 		}
 		$this->copied = array();
+		//copy settings of default template into db
+		$sql = " INSERT INTO ".$this->db->table('settings')." (`group`,`store_id`, `key`, `value`,`date_added`)
+				SELECT '".$project_xml['extension_txt_id']."' as `group`,
+						'".(int)$this->config->get('config_store_id')."' as store_id,
+						`key`,
+						`value`,
+						NOW()
+				FROM ".$this->db->table('settings')."
+				WHERE `group`='appearance'";
+		$this->db->query($sql);
+
+
+
 	}
 
 	public function copyLanguage($project_xml, $src_language_name = 'english'){

@@ -13,12 +13,20 @@
 		<value><![CDATA[]]></value>
 	</definition>
 	<definition>
+		<key>developer_tools_text_project_summary</key>
+		<value><![CDATA[Project Summary]]></value>
+	</definition>
+	<definition>
 		<key>developer_tools_tab_prj_list</key>
 		<value><![CDATA[All Projects]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_tab_generate_extension</key>
 		<value><![CDATA[Create Extension]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_create_project</key>
+		<value><![CDATA[Create New Project]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_tab_clone_template</key>
@@ -51,6 +59,11 @@
 			<![CDATA[ Attention!<br>Edit form will overwrite some files such as config.xml, main.php, help.txt etc. <br>Please do backup directory %s and file %s before it.<br>NOTE: do not use folder "extensions" for backup! ]]></value>
 	</definition>
 	<definition>
+		<key>developer_tools_text_about_cloning</key>
+		<value>
+			<![CDATA[ Note: during cloning will be created and installed new template extension. ]]></value>
+	</definition>
+	<definition>
 		<key>developer_tools_text_success_generated_extension</key>
 		<value><![CDATA[ Success: Your's new Extention Generated successfully.]]></value>
 	</definition>
@@ -77,7 +90,7 @@
 	<definition>
 		<key>developer_tools_entry_cart_version</key>
 		<value>
-			<![CDATA[ Cart Versions <span class="help">If you set major and minor only version extensions will supported all builts of them. For ex. 1.1 will works on 1.1.0, 1.1.2 etc but does not works on 1.2.x</span>]]></value>
+			<![CDATA[ Cart Version <span class="help">If you set major and minor only version extensions will supported all builts of them. For ex. 1.1 will works on 1.1.0, 1.1.2 etc but does not works on 1.2.x</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_priority</key>
@@ -415,5 +428,29 @@
 	<definition>
 		<key>developer_tools_entry_extension_txt_id</key>
 		<value><![CDATA[Extension Unique Text ID<span class="help">Note: only alphanumeric and _ </span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_extension_txt_id</key>
+		<value><![CDATA[Extension Text ID]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_extension_category</key>
+		<value><![CDATA[Extension Category]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_clone_method</key>
+		<value><![CDATA[Clone Method]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_template_title</key>
+		<value><![CDATA[Template Title]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_full_clone</key>
+		<value><![CDATA[Full Clone]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_jscss_clone</key>
+		<value><![CDATA[Partial Clone (will copy js,css files and images)]]></value>
 	</definition>
 </definitions>

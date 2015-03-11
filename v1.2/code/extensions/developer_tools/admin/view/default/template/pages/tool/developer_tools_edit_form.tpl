@@ -1,5 +1,6 @@
 <?php include($tpl_common_dir . 'action_confirm.tpl'); ?>
 
+<?php echo $project_summary ?>
 <?php echo $dev_tabs ?>
 <?php echo $prj_tabs ?>
 
@@ -130,6 +131,9 @@
 			$(this).val()=='' ? $(this).val($('#extFrm_route').val()) : null;
 		});
 		$('#extFrm_storefront_api_controller_routes').each(function(){
+			$(this).val()=='' ? $(this).val($('#extFrm_route').val()) : null;
+		});
+		$('#extFrm_storefront_block_controller_routes').each(function(){
 			$(this).val()=='' ? $(this).val($('#extFrm_route').val()) : null;
 		});
 		$('#extFrm_storefront_model_routes').each(function(){

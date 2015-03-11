@@ -39,10 +39,12 @@ class ControllerPagesToolDeveloperToolsTabs extends AController{
 				'text'   => $this->language->get('developer_tools_tab_prj_list'),
 				'active' => ($active=='list'));
 
-		$this->data['tabs']['clone'] = array(
-				'href'   => $this->html->getSecureURL('tool/developer_tools/cloneTemplate'),
-				'text'   => $this->language->get('developer_tools_tab_clone_template'),
-				'active' => ($active=='clone'));
+		if(($active=='clone')){
+			$this->data['tabs']['clone'] = array(
+					'href'   => $this->html->getSecureURL('tool/developer_tools/cloneTemplate'),
+					'text'   => $this->language->get('developer_tools_tab_clone_template'),
+					'active' => true);
+		}
 
 		$this->data['tabs']['create'] = array(
 				'href'   => $this->html->getSecureURL('tool/developer_tools/create'),

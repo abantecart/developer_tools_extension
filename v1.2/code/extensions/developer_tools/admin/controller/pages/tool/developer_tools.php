@@ -20,6 +20,7 @@
 if(!defined('DIR_CORE')){
 	header('Location: static_pages/');
 }
+
 /**
  * @property ModelToolDeveloperTools $model_tool_developer_tools
  */
@@ -60,15 +61,18 @@ class ControllerPagesToolDeveloperTools extends AController{
 				if($this->session->data['dev_tools_prj_id'] == $project['id']){
 					$text = $this->language->get('developer_tools_text_close');
 					$href = $this->html->getSecureURL('tool/developer_tools', '&prj_id=' . $project['id'] . '&close=1');
+					$style = '';
 				} else{
 					$text = $this->language->get('developer_tools_text_open');
 					$href = $this->html->getSecureURL('tool/developer_tools/edit', '&prj_id=' . $project['id']);
+					$style = 'btn btn-primary';
 				}
 
 				$project['button'] = $this->html->buildElement(
-						array('type' => 'button',
-						      'text' => $text,
-						      'href' => $href
+						array('type'  => 'button',
+						      'text'  => $text,
+						      'href'  => $href,
+						      'style' => $style
 						));
 
 			}
@@ -76,20 +80,58 @@ class ControllerPagesToolDeveloperTools extends AController{
 			$this->data['developer_tools_text_no_projects'] = sprintf($this->language->get('developer_tools_text_no_projects'), DIR_EXT . 'developer_tools/projects/');
 		}
 
+
+		if($this->session->data['warning']){
+			$this->data['error_warning'] = $this->session->data['warning'];
+			unset($this->session->data['warning']);
+		}
+
+		$this->data['create_url'] = $this->html->getSecureURL('tool/developer_tools/create');
+
 		$this->data['projects'] = $projects;
 		$this->data['text_recent'] = $this->language->get('developer_tools_text_recent');
+
+		$this->addChild('responses/tool/developer_tools/summary', 'project_summary', 'responses/tool/developer_tools_project_summary.tpl');
 
 		$this->view->batchAssign($this->data);
 		$this->processTemplate('pages/tool/developer_tools.tpl');
 	}
 
-	public function edit(){
+	public function create(){
+
 		if($this->request->get['prj_id']){
 			$this->session->data['dev_tools_prj_id'] = $this->request->get['prj_id'];
 		}
-		if(!$this->session->data['dev_tools_prj_id']){
-			$this->redirect($this->html->getSecureURL('tool/developer_tools'));
-		}
+
+		$this->loadLanguage('developer_tools/developer_tools');
+		$this->document->setTitle($this->language->get('developer_tools_name'));
+		$this->data['heading_title'] = $this->language->get('developer_tools_name') . ': ' . $this->session->data['dev_tools_prj_id'];
+
+		$this->document->initBreadcrumb(array(
+				'href'      => $this->html->getSecureURL('index/home'),
+				'text'      => $this->language->get('text_home'),
+				'separator' => false));
+		$this->document->addBreadcrumb(array(
+				'href'      => $this->html->getSecureURL('tool/developer_tools'),
+				'text'      => $this->language->get('developer_tools_name'),
+				'separator' => ' :: ',
+				'current'   => true));
+
+		//load tabs controller
+		$tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs', array('create'));
+		$this->data['dev_tabs'] = $tabs_obj->dispatchGetOutput();
+
+		$this->_getForm('short');
+
+		$this->addChild('responses/tool/developer_tools/summary', 'project_summary', 'responses/tool/developer_tools_project_summary.tpl');
+
+		$this->view->batchAssign($this->data);
+		$this->processTemplate('pages/tool/developer_tools_edit_form.tpl');
+	}
+
+
+	public function edit(){
+
 		$this->loadLanguage('developer_tools/developer_tools');
 		$this->document->setTitle($this->language->get('developer_tools_name'));
 
@@ -102,13 +144,25 @@ class ControllerPagesToolDeveloperTools extends AController{
 				if(file_exists(DIR_BACKUP . 'developer_tools_autosave_' . $this->request->post['extension_id'])){
 					unlink(DIR_BACKUP . 'developer_tools_autosave_' . $this->request->post['extension_id']);
 				}
-				$this->redirect($this->html->getSecureURL('tool/developer_tools/edit'));
+				if(has_value($this->request->post['clone_method'])){
+					$url = $this->html->getSecureURL('setting/setting', '&active=appearance&tmpl_id='.$this->request->post['extension_id']);
+				}else{
+					$url = $this->html->getSecureURL('tool/developer_tools/edit');
+				}
+				$this->redirect($url);
 			} else{
-				$error = implode('<br>', $this->model_tool_developer_tools->error );
+				$error = implode('<br>', $this->model_tool_developer_tools->error);
 				$this->data['error_warning'] = $this->language->get('developer_tools_text_error_generated_extension') . '<br>' . $error;
 				foreach($this->request->post as $key => $value){
 					$this->data[$key] = $value;
 				}
+			}
+		}else{
+			if($this->request->get['prj_id']){
+				$this->session->data['dev_tools_prj_id'] = $this->request->get['prj_id'];
+			}
+			if(!$this->session->data['dev_tools_prj_id']){
+				$this->redirect($this->html->getSecureURL('tool/developer_tools'));
 			}
 		}
 		if(!is_writable(DIR_EXT)){
@@ -119,10 +173,16 @@ class ControllerPagesToolDeveloperTools extends AController{
 			}
 			$this->data = array_merge($this->data, $project_info);
 			$this->_getForm();
-			$this->data['info'] = sprintf(  $this->language->get('developer_tools_text_about_edit'),
-											$this->data['extension_txt_id'],
-											DIR_EXT.'developer_tools/projects/dev_tools_project_'.$this->session->data['dev_tools_prj_id']);
+			$this->data['info'] = sprintf($this->language->get('developer_tools_text_about_edit'),
+					$this->data['extension_txt_id'],
+					DIR_EXT . 'developer_tools/projects/dev_tools_project_' . $this->session->data['dev_tools_prj_id']);
 		}
+
+		if($this->session->data['warning']){
+			$this->data['error_warning'] = $this->session->data['warning'];
+			unset($this->session->data['warning']);
+		}
+
 		$this->data['text_create_extension'] = $this->language->get('developer_tools_text_create_extension');
 
 		//load tabs controller
@@ -131,11 +191,13 @@ class ControllerPagesToolDeveloperTools extends AController{
 		$tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs/prjtabs', array('edit'));
 		$this->data['prj_tabs'] = $tabs_obj->dispatchGetOutput();
 
+		$this->addChild('responses/tool/developer_tools/summary', 'project_summary', 'responses/tool/developer_tools_project_summary.tpl');
+
 		$this->view->batchAssign($this->data);
 		$this->processTemplate('pages/tool/developer_tools_edit_form.tpl');
 	}
 
-	private function _getForm($mode='full'){
+	private function _getForm($mode = 'full'){
 
 		$this->view->assign('heading_title', $this->language->get('developer_tools_name'));
 		$this->document->initBreadcrumb(array(
@@ -182,7 +244,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 		//build common part
 		$this->_build_common($form, $mode);
-		if($mode=='full'){
+		if($mode == 'full'){
 			$this->data['all_languages'] = (array)$this->language->getAvailableLanguages();
 
 			//build admin section settings
@@ -196,7 +258,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 	/**
 	 * @param AForm $form
 	 */
-	private function _build_common($form, $mode='full'){
+	private function _build_common($form, $mode = 'full'){
 		$this->data['form']['fields']['common']['extension_type'] = $form->getFieldHtml(
 				array('type'     => 'selectbox',
 				      'name'     => 'extension_type',
@@ -245,7 +307,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 				      'required' => true,
 				      'style'    => 'small-field'
 				));
-/*disable ability to set few cart versions yet*/
+		/*disable ability to set few cart versions yet*/
 		$this->data['cartversions'] = (array)array_unique((array)$this->data['cartversions']);
 		$this->data['cartversions'] = current($this->data['cartversions']);
 
@@ -253,15 +315,15 @@ class ControllerPagesToolDeveloperTools extends AController{
 			$this->data['cartversions'] = MASTER_VERSION . '.' . MINOR_VERSION;
 		}
 
-		$this->data['form']['fields']['common']['cart_versions'] = array(
+		$this->data['form']['fields']['common']['cart_version'] = array(
 				$form->getFieldHtml(
-					array('type'     => 'input',
-					      'name'     => 'cartversions[]',
-					      'value'    => $this->data['cartversions'],
-					      'default'  => '',
-					      'required' => true,
-					      'style'    => 'small-field'
-					))
+						array('type'     => 'input',
+						      'name'     => 'cartversions[]',
+						      'value'    => $this->data['cartversions'],
+						      'default'  => '',
+						      'required' => true,
+						      'style'    => 'small-field'
+						))
 		);
 
 		$this->data['form']['fields']['common']['priority'] = $form->getFieldHtml(
@@ -272,77 +334,70 @@ class ControllerPagesToolDeveloperTools extends AController{
 				      'required' => true,
 				      'style'    => 'small-field'
 				));
-		if($mode=='short'){
+		if($mode == 'short'){
 			return true;
 		}
-/* //disabled yet
-		$this->data['dependency']['name'] = (array)$this->data['dependency']['name'];
-		$this->data['dependency']['name']['new'] = array();
-		foreach($this->data['dependency']['name'] as $k => $route){
-			$this->data['form']['fields']['common']['dependencies'][$k][] = $form->getFieldHtml(
-					array('type'        => 'input',
-					      'name'        => 'dependency[name][]',
-					      'value'       => $route,
-					      'placeholder' => 'Name'
-					));
-			$this->data['form']['fields']['common']['dependencies'][$k][] = $form->getFieldHtml(
-					array('type'        => 'input',
-					      'name'        => 'dependency[prior_versions][]',
-					      'value'       => $this->data['dependency']['prior_versions'][$k],
-					      'placeholder' => 'Prior version'
-					));
-			$this->data['form']['fields']['common']['dependencies'][$k][] = $form->getFieldHtml(
-					array('type'        => 'input',
-					      'name'        => 'dependency[versions][]',
-					      'value'       => $this->data['dependency']['versions'][$k],
-					      'placeholder' => 'Version'
-					));
-		}
-		$add_button = $this->dispatch('responses/tool/developer_tools/addbutton', array('id' => 'dependencies'));
-		$this->data['form']['fields']['common']['dependencies'][]['btn_add'] = $add_button->dispatchGetOutput();
-*/
+		/* //disabled yet
+				$this->data['dependency']['name'] = (array)$this->data['dependency']['name'];
+				$this->data['dependency']['name']['new'] = array();
+				foreach($this->data['dependency']['name'] as $k => $route){
+					$this->data['form']['fields']['common']['dependencies'][$k][] = $form->getFieldHtml(
+							array('type'        => 'input',
+								  'name'        => 'dependency[name][]',
+								  'value'       => $route,
+								  'placeholder' => 'Name'
+							));
+					$this->data['form']['fields']['common']['dependencies'][$k][] = $form->getFieldHtml(
+							array('type'        => 'input',
+								  'name'        => 'dependency[prior_versions][]',
+								  'value'       => $this->data['dependency']['prior_versions'][$k],
+								  'placeholder' => 'Prior version'
+							));
+					$this->data['form']['fields']['common']['dependencies'][$k][] = $form->getFieldHtml(
+							array('type'        => 'input',
+								  'name'        => 'dependency[versions][]',
+								  'value'       => $this->data['dependency']['versions'][$k],
+								  'placeholder' => 'Version'
+							));
+				}
+				$add_button = $this->dispatch('responses/tool/developer_tools/addbutton', array('id' => 'dependencies'));
+				$this->data['form']['fields']['common']['dependencies'][]['btn_add'] = $add_button->dispatchGetOutput();
+		*/
 
 		$this->data['form']['fields']['common']['install_sql'] = $form->getFieldHtml(
 				array('type'    => 'checkbox',
 				      'name'    => 'install_sql',
 				      'value'   => 1,
-				      'checked' => has_value($this->data['install_sql']) ? ($this->data['install_sql']?true:false): true,
+				      'checked' => has_value($this->data['install_sql']) ? ($this->data['install_sql'] ? true : false) : true,
 				));
 		$this->data['form']['fields']['common']['install_php'] = $form->getFieldHtml(
 				array('type'    => 'checkbox',
 				      'name'    => 'install_php',
 				      'value'   => 1,
-				      'checked' => has_value($this->data['install_php']) ? ($this->data['install_php']?true:false) : true,
+				      'checked' => has_value($this->data['install_php']) ? ($this->data['install_php'] ? true : false) : true,
 				));
-/*
-		$this->data['form']['fields']['common']['help_note'] = $form->getFieldHtml(
-				array('type'  => 'textarea',
-				      'name'  => 'help_note',
-				      'value' => $this->data['help_note'],
-				      'style' => 'large-field'
-				));
+		/*
+				$this->data['form']['fields']['common']['help_note'] = $form->getFieldHtml(
+						array('type'  => 'textarea',
+							  'name'  => 'help_note',
+							  'value' => $this->data['help_note'],
+							  'style' => 'large-field'
+						));
 
-		$this->data['form']['fields']['common']['help_file'][0][] = $form->getFieldHtml(
-				array('type'  => 'textarea',
-				      'name'  => 'help_file',
-				      'value' => $this->data['help_file'],
-				      'style' => 'large-field'
-				));
-		$this->data['form']['fields']['common']['help_file'][0][] = ' or URL: ';
-		$this->data['form']['fields']['common']['help_file'][0][] = $form->getFieldHtml(
-				array('type'  => 'input',
-				      'name'  => 'help_url',
-				      'value' => $this->data['help_url'],
-				      'style' => 'large-field'
-				));
-*/
-		$this->data['form']['fields']['common']['icon'][0][] = $form->getFieldHtml(
-				array('type'       => 'checkbox',
-				      'name'       => 'icon_default',
-				      'value'      => 1,
-				      'checked'    => ($this->data['icon_default'] ? true : false),
-				      'label_text' => $this->language->get('developer_tools_entry_icon_default')
-				));
+				$this->data['form']['fields']['common']['help_file'][0][] = $form->getFieldHtml(
+						array('type'  => 'textarea',
+							  'name'  => 'help_file',
+							  'value' => $this->data['help_file'],
+							  'style' => 'large-field'
+						));
+				$this->data['form']['fields']['common']['help_file'][0][] = ' or URL: ';
+				$this->data['form']['fields']['common']['help_file'][0][] = $form->getFieldHtml(
+						array('type'  => 'input',
+							  'name'  => 'help_url',
+							  'value' => $this->data['help_url'],
+							  'style' => 'large-field'
+						));
+		*/
 
 		$this->data['form']['fields']['common']['icon'][0][] = $form->getFieldHtml(
 				array('type'  => 'file',
@@ -355,7 +410,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 		$this->data['form']['fields']['common']['header_comment'] = $form->getFieldHtml(
 				array('type'  => 'textarea',
 				      'name'  => 'header_comment',
-				      'value' => implode("\n",$matches_slashstar[1]),
+				      'value' => implode("\n", $matches_slashstar[1]),
 				      'style' => 'large-field'
 				));
 
@@ -388,9 +443,9 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 		if(!(array)$this->data['languages']['admin']){
 			$admin_languages = array('english' => 'english');
-		}else{
+		} else{
 			foreach((array)$this->data['languages']['admin'] as $l){
-				$l = substr($l,0,strpos($l,'/'));
+				$l = substr($l, 0, strpos($l, '/'));
 				$admin_languages[$l] = $l;
 			}
 		}
@@ -409,17 +464,17 @@ class ControllerPagesToolDeveloperTools extends AController{
 			$c['file'] = pathinfo($c['file'], PATHINFO_FILENAME);
 			if(is_int(strpos($c['route'], 'pages/'))){
 				$ac['page'][] = array(
-						'route' => str_replace('pages/','',$c['route']),
+						'route' => str_replace('pages/', '', $c['route']),
 						'file'  => $c['file']);
 			} elseif(is_int(strpos($c['route'], 'responses/'))){
 				$ac['response'][] = array(
 						'route' => str_replace('responses/', '', $c['route']),
 						'file'  => $c['file']);
-			}elseif(is_int(strpos($c['route'], 'api/'))){
+			} elseif(is_int(strpos($c['route'], 'api/'))){
 				$ac['api'][] = array(
 						'route' => str_replace('api/', '', $c['route']),
 						'file'  => $c['file']);
-			}elseif(is_int(strpos($c['route'], 'task/'))){
+			} elseif(is_int(strpos($c['route'], 'task/'))){
 				$ac['task'][] = array(
 						'route' => str_replace('task/', '', $c['route']),
 						'file'  => $c['file']);
@@ -515,8 +570,9 @@ class ControllerPagesToolDeveloperTools extends AController{
 		$this->data['form']['fields']['admin']['admin_task_controllers'][]['btn_add'] = $add_button->dispatchGetOutput();
 
 		// admin models
-		$this->data['admin_model_routes'] = (array)$this->data['models']['admin'];
+		$this->data['admin_model_routes'] = $this->data['models']['admin'];
 		$this->data['admin_model_routes'][''] = array();
+
 		foreach($this->data['admin_model_routes'] as $k => $route){
 			$this->data['form']['fields']['admin']['admin_models'][$k][] = $form->getFieldHtml(
 					array('type'  => 'input',
@@ -540,7 +596,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 		foreach($admin_views as $c){
 			if(is_int(strpos($c['route'], 'pages/'))){
 				$av['page'][] = array(
-						'route' => str_replace('pages/','',$c['route']),
+						'route' => str_replace('pages/', '', $c['route']),
 						'file'  => $c['file']);
 			} elseif(is_int(strpos($c['route'], 'responses/'))){
 				$av['response'][] = array(
@@ -605,7 +661,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 		$this->data['languages']['storefront'] = (array)$this->data['languages']['storefront'];
 		if($this->data['languages']['storefront']){
 			foreach($this->data['languages']['storefront'] as $l){
-				$l = substr($l,0,strpos($l,'/'));
+				$l = substr($l, 0, strpos($l, '/'));
 				$storefront_languages[$l] = $l;
 			}
 		}
@@ -624,17 +680,17 @@ class ControllerPagesToolDeveloperTools extends AController{
 			$c['file'] = pathinfo($c['file'], PATHINFO_FILENAME);
 			if(is_int(strpos($c['route'], 'pages/'))){
 				$sc['page'][] = array(
-						'route' => str_replace('pages/','',$c['route']),
+						'route' => str_replace('pages/', '', $c['route']),
 						'file'  => $c['file']);
 			} elseif(is_int(strpos($c['route'], 'responses/'))){
 				$sc['response'][] = array(
 						'route' => str_replace('responses/', '', $c['route']),
 						'file'  => $c['file']);
-			}elseif(is_int(strpos($c['route'], 'api/'))){
+			} elseif(is_int(strpos($c['route'], 'api/'))){
 				$sc['api'][] = array(
 						'route' => str_replace('api/', '', $c['route']),
 						'file'  => $c['file']);
-			}elseif(is_int(strpos($c['route'], 'blocks/'))){
+			} elseif(is_int(strpos($c['route'], 'blocks/'))){
 				$sc['block'][] = array(
 						'route' => str_replace('blocks/', '', $c['route']),
 						'file'  => $c['file']);
@@ -733,7 +789,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 
 // storefront models
-		$this->data['storefront_model_routes'] = (array)$this->data['models']['storefront'];
+		$this->data['storefront_model_routes'] = $this->data['models']['storefront'];
 		$this->data['storefront_model_routes'][''] = array();
 		foreach($this->data['storefront_model_routes'] as $k => $route){
 			$this->data['form']['fields']['storefront']['storefront_models'][$k][] = $form->getFieldHtml(
@@ -759,7 +815,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 		foreach($storefront_views as $c){
 			if(is_int(strpos($c['route'], 'pages/'))){
 				$sv['page'][] = array(
-						'route' => str_replace('pages/','',$c['route']),
+						'route' => str_replace('pages/', '', $c['route']),
 						'file'  => $c['file']);
 			} elseif(is_int(strpos($c['route'], 'responses/'))){
 				$sv['response'][] = array(
@@ -838,7 +894,6 @@ class ControllerPagesToolDeveloperTools extends AController{
 				flush();
 				readfile($result);
 				exit;
-				//$this->response->setOutput( $this->model_tools_backup->backup($this->request->post['backup']) );
 			}
 		}
 
@@ -927,24 +982,73 @@ class ControllerPagesToolDeveloperTools extends AController{
 		$tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs', array('package'));
 		$this->data['dev_tabs'] = $tabs_obj->dispatchGetOutput();
 
+		$this->addChild('responses/tool/developer_tools/summary', 'project_summary', 'responses/tool/developer_tools_project_summary.tpl');
+
 		$this->view->batchAssign($this->data);
 		$this->processTemplate('pages/tool/developer_tools_package_form.tpl');
 	}
 
-	public function create(){
-
-		if($this->request->get['prj_id']){
-			$this->session->data['dev_tools_prj_id'] = $this->request->get['prj_id'];
-		}
-
-		if(!$this->session->data['dev_tools_prj_id']){
-			$this->redirect($this->html->getSecureURL('tool/developer_tools'));
-		}
-
+	public function cloneTemplate(){
 		$this->loadLanguage('developer_tools/developer_tools');
-		$this->document->setTitle($this->language->get('developer_tools_name'));
-		$this->data['heading_title'] = $this->language->get('developer_tools_name') . ': ' . $this->session->data['dev_tools_prj_id'];
 
+		if($this->request->is_POST()){
+
+			$this->loadModel('tool/developer_tools');
+			$data = $this->request->post;
+			$data['extension_category'] = 'template';
+			$data['extension_type'] = 'template';
+			$data['version'] = '1.0.0';
+			$data['cartversions'][0] = MASTER_VERSION . '.' . MINOR_VERSION;
+			$data['install_php'] = 1;
+			$data['install_sql'] = 1;
+			$data['route'] = $data['extension_txt_id'];
+			$data['hook_file'] = $data['extension_txt_id'] . '_hook.php';
+			$data['extension_admin_language_files'] = array('english');
+
+			$result = $this->model_tool_developer_tools->generateExtension($data);
+
+			if($result){
+				$this->session->data['success'] = $this->language->get('developer_tools_text_success_generated_extension');
+				if(file_exists(DIR_BACKUP . 'developer_tools_autosave_' . $data['extension_txt_id'])){
+					unlink(DIR_BACKUP . 'developer_tools_autosave_' . $data['extension_txt_id']);
+				}
+				if(has_value($this->request->post['clone_method'])){
+					$url = $this->html->getSecureURL('setting/setting', '&active=appearance&tmpl_id='.$data['extension_txt_id']);
+				}else{
+					$url = $this->html->getSecureURL('tool/developer_tools/edit');
+				}
+				$this->redirect($url);
+			} else{
+				$error = implode('<br>', $this->model_tools_developer_tools->error);
+				$this->view->assign('error_warning', $this->language->get('developer_tools_text_error_generated_extension') . '<br>' . $error);
+				foreach($this->request->post as $key => $value){
+					$this->data[$key] = $value;
+				}
+			}
+		}
+
+		$this->document->setTitle($this->language->get('developer_tools_name'));
+
+		if(!is_writable(DIR_EXT)){
+			$this->view->assign('error_warning', $this->language->get('developer_tools_error_write_permission'));
+		} else{
+			$this->_getCloneForm();
+			$this->view->assign('info', $this->language->get('developer_tools_text_about_cloning'));
+		}
+		$this->view->assign('text_create_extension', $this->language->get('developer_tools_text_create_extension'));
+
+		//load tabs controller
+		$tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs', array('clone'));
+		$this->data['dev_tabs'] = $tabs_obj->dispatchGetOutput();
+
+		$this->addChild('responses/tool/developer_tools/summary', 'project_summary', 'responses/tool/developer_tools_project_summary.tpl');
+
+		$this->view->batchAssign($this->data);
+		$this->processTemplate('pages/tool/developer_tools_clone_template.tpl');
+	}
+
+	private function _getCloneForm(){
+		$this->view->assign('heading_title', $this->language->get('developer_tools_name'));
 		$this->document->initBreadcrumb(array(
 				'href'      => $this->html->getSecureURL('index/home'),
 				'text'      => $this->language->get('text_home'),
@@ -955,21 +1059,74 @@ class ControllerPagesToolDeveloperTools extends AController{
 				'separator' => ' :: ',
 				'current'   => true));
 
-		//load tabs controller
-		$tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs', array('project'));
-		$this->data['dev_tabs'] = $tabs_obj->dispatchGetOutput();
-		$tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs/prjtabs', array('edit'));
-		$this->data['prj_tabs'] = $tabs_obj->dispatchGetOutput();
+		$this->view->assign('cancel', $this->html->getSecureURL('developer_tools_name'));
 
-		$this->_getForm('short');
+		$this->data['action'] = $this->html->getSecureURL('tool/developer_tools/cloneTemplate');
+		$this->data['heading_title'] = $this->language->get('developer_tools_name');
+		$this->data['update'] = '';
+		$form = new AForm('ST');
 
-		$this->view->batchAssign($this->data);
-		$this->processTemplate('pages/tool/developer_tools_edit_form.tpl');
+		$form->setForm(
+				array('form_name' => 'extFrm',
+				      'update'    => $this->data['update'],
+				));
+		$this->data['form']['id'] = 'extFrm';
+		$this->data['form']['form_open'] = $form->getFieldHtml(
+				array(
+						'type'   => 'form',
+						'name'   => 'extFrm',
+						'action' => $this->data['action'],
+						'attr'   => 'data-confirm-exit="true" class="aform form-horizontal"'
+				));
+
+		$this->data['form']['submit'] = $form->getFieldHtml(
+				array('type'  => 'button',
+				      'name'  => 'submit',
+				      'text'  => $this->language->get('button_generate'),
+				      'style' => 'button1',
+				));
+
+		$this->data['form']['cancel'] = $form->getFieldHtml(
+				array('type'  => 'button',
+				      'name'  => 'cancel',
+				      'text'  => $this->language->get('button_cancel'),
+				      'style' => 'button2',
+				));
+
+		$this->data['form']['fields']['common']['clone_method'] = $form->getFieldHtml(
+				array('type'     => 'selectbox',
+				      'name'     => 'clone_method',
+				      'value'    => '',
+				      'options'  => array(
+						      '' => $this->language->get('text_select'),
+				              'full_clone' => $this->language->get('developer_tools_text_full_clone'),
+				              'jscss_clone' => $this->language->get('developer_tools_text_jscss_clone')
+
+				      ),
+				      'required' => true,
+				      'style'    => 'large-field',
+				));
+
+		$this->data['form']['fields']['common']['template_title'] = $form->getFieldHtml(
+				array('type'     => 'input',
+				      'name'     => 'extension_title',
+				      'value'    => $this->data['extension_title'],
+				      'required' => true,
+				      'style'    => 'large-field',
+				));
+
+		$this->data['form']['fields']['common']['extension_txt_id'] = $form->getFieldHtml(
+				array('type'     => 'input',
+				      'name'     => 'extension_txt_id',
+				      'value'    => $this->data['extension_txt_id'],
+				      'required' => true,
+				      'style'    => 'large-field',
+				));
+
 	}
 
-
 	/*
-	 * functioms for generic block operations
+	 * functions of  operations with generic blocks
 	 * */
 
 	public function insert_block(){
@@ -1329,121 +1486,4 @@ class ControllerPagesToolDeveloperTools extends AController{
 		}
 	}
 
-	public function cloneTemplate(){
-		$this->loadLanguage('developer_tools/developer_tools');
-
-		if($this->request->is_POST()){
-
-			$this->loadModel('tool/developer_tools');
-			$data = $this->request->post;
-			$data['category'] = 'template';
-			$data['copy_default'] = 1;
-			$data['extension_type'] = 'template';
-			$data['version'] = '1.0.0';
-			$data['cart_version'] = MASTER_VERSION . '.' . MINOR_VERSION;
-			$data['install_php'] = 1;
-			$data['install_sql'] = 1;
-			$data['route'] = $data['extension_txt_id'];
-			$data['hook_file'] = $data['extension_txt_id'] . '_hook.php';
-
-
-			$result = $this->model_tool_developer_tools->generateExtension($data);
-
-			if($result){
-
-				$this->session->data['success'] = $this->language->get('developer_tools_text_success_generated_extension');
-				if(file_exists(DIR_BACKUP . 'developer_tools_autosave_' . $this->request->post['extension_id'])){
-					unlink(DIR_BACKUP . 'developer_tools_autosave_' . $this->request->post['extension_id']);
-				}
-				$this->redirect($this->html->getSecureURL('tool/developer_tools'));
-			} else{
-				$error = implode('<br>', $this->model_tools_developer_tools->error);
-				$this->view->assign('error_warning', $this->language->get('developer_tools_text_error_generated_extension') . '<br>' . $error);
-				foreach($this->request->post as $key => $value){
-					$this->data[$key] = $value;
-				}
-			}
-		}
-
-		$this->document->setTitle($this->language->get('developer_tools_name'));
-
-		if(!is_writable(DIR_EXT)){
-			$this->view->assign('error_warning', $this->language->get('developer_tools_error_write_permission'));
-		} else{
-			$this->_getCloneForm();
-			$this->view->assign('info', $this->language->get('developer_tools_text_about_cloning'));
-		}
-		$this->view->assign('text_create_extension', $this->language->get('developer_tools_text_create_extension'));
-
-		//load tabs controller
-		$tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs', array('clone'));
-		$this->data['dev_tabs'] = $tabs_obj->dispatchGetOutput();
-
-		$this->view->batchAssign($this->data);
-		$this->processTemplate('pages/tool/developer_tools_clone_template.tpl');
-	}
-
-	private function _getCloneForm(){
-		$this->view->assign('heading_title', $this->language->get('developer_tools_name'));
-		$this->document->initBreadcrumb(array(
-				'href'      => $this->html->getSecureURL('index/home'),
-				'text'      => $this->language->get('text_home'),
-				'separator' => false));
-		$this->document->addBreadcrumb(array(
-				'href'      => $this->html->getSecureURL('tool/developer_tools'),
-				'text'      => $this->language->get('developer_tools_name'),
-				'separator' => ' :: ',
-				'current'   => true));
-
-		$this->view->assign('cancel', $this->html->getSecureURL('developer_tools_name'));
-
-		$this->data['action'] = $this->html->getSecureURL('tool/developer_tools/cloneTemplate');
-		$this->data['heading_title'] = $this->language->get('developer_tools_name');
-		$this->data['update'] = '';
-		$form = new AForm('ST');
-
-		$form->setForm(
-				array('form_name' => 'extFrm',
-				      'update'    => $this->data['update'],
-				));
-		$this->data['form']['id'] = 'extFrm';
-		$this->data['form']['form_open'] = $form->getFieldHtml(
-				array(
-						'type'   => 'form',
-						'name'   => 'extFrm',
-						'action' => $this->data['action'],
-						'attr'   => 'data-confirm-exit="true" class="aform form-horizontal"'
-				));
-
-		$this->data['form']['submit'] = $form->getFieldHtml(
-				array('type'  => 'button',
-				      'name'  => 'submit',
-				      'text'  => $this->language->get('button_generate'),
-				      'style' => 'button1',
-				));
-
-		$this->data['form']['cancel'] = $form->getFieldHtml(
-				array('type'  => 'button',
-				      'name'  => 'cancel',
-				      'text'  => $this->language->get('button_cancel'),
-				      'style' => 'button2',
-				));
-
-		$this->data['form']['fields']['common']['extension_title'] = $form->getFieldHtml(
-				array('type'     => 'input',
-				      'name'     => 'extension_title',
-				      'value'    => $this->data['extension_title'],
-				      'required' => true,
-				      'style'    => 'large-field',
-				));
-
-		$this->data['form']['fields']['common']['extension_txt_id'] = $form->getFieldHtml(
-				array('type'     => 'input',
-				      'name'     => 'extension_txt_id',
-				      'value'    => $this->data['extension_txt_id'],
-				      'required' => true,
-				      'style'    => 'large-field',
-				));
-
-	}
 }

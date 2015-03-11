@@ -57,12 +57,14 @@ $templates = array(
 	    'pages/tool/developer_tools_tabs.tpl',
 	    'pages/tool/developer_tools_package_form.tpl',
 	    'pages/tool/developer_tools_create_form.tpl',
-	    'pages/tool/developer_tools_clone_tenplate.tpl',
+	    'pages/tool/developer_tools_clone_template.tpl',
+	    'responses/tool/developer_tools_clone_template.tpl',
 	    'pages/tool/developer_tools_edit_form.tpl',
 	    'pages/tool/developer_tools_generic_block_form.tpl',
 	    'responses/tool/developer_tools_add_button.tpl',
 	    'responses/tool/developer_tools_general.tpl',
 	    'pages/tool/developer_tools_other.tpl',
 	    'pages/tool/developer_tools_languages.tpl',
-	    'pages/tool/developer_tools_language_edit.tpl'
+	    'pages/tool/developer_tools_language_edit.tpl',
+	    'responses/tool/developer_tools_project_summary.tpl'
     ));

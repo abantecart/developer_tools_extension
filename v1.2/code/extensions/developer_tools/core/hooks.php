@@ -43,10 +43,28 @@ class ExtensionDeveloperTools extends Extension {
 		if($this->baseObject_method!='main' || $that->data['active']!='appearance' ){
 			return null;
 		}
+		$that->loadLanguage('developer_tools/developer_tools');
 		$clone_button = $that->view->getData('clone_button');
-		$clone_button->href = $that->html->getSecureURL('tool/developer_tools/cloneTemplate');
+		//TODO: remove it in the future
+		if(in_array(VERSION, array('1.2.0','1.2.1'))){
+			$clone_button->href = $that->html->getSecureURL('p/tool/developer_tools/cloneTemplate');
+		}else{
+			$clone_button->href = $that->html->getSecureURL('r/tool/developer_tools/cloneTemplate');
+		}
+		$clone_button->attr = ' data-target="#clone_modal" data-toggle="modal" ';
 
 		$that->view->assign('clone_button', $clone_button);
+
+		$modal = $that->html->buildElement(
+					array('type' => 'modal',
+						'id' => 'clone_modal',
+						'modal_type' => 'lg',
+						'data_source' => 'ajax'
+					)
+		);
+
+		$that->view->addHookVar('common_content_buttons', $modal);
+
 	}
 
 	public function onControllerPagesDesignBlocks_InitData() {
@@ -84,7 +102,6 @@ class ExtensionDeveloperTools extends Extension {
 		}
 	}
 
-
 	public function onControllerResponsesListingGridBlocksGrid_UpdateData() {
 
 		$method_name = func_get_arg(0);
@@ -107,19 +124,7 @@ class ExtensionDeveloperTools extends Extension {
 					continue;
 				}
 				end($row[ 'cell' ]);
-				$key = key($row[ 'cell' ]);
 				$response->userdata->classes[ $row[ 'id' ] ] = '';//'disable-edit disable-delete';
-				/*$row[ 'cell' ][ $key ] = $row[ 'cell' ][ $key ] . '<a id="action_edit_' . $row[ 'id' ] . '"
-									class="btn_action"
-									href="' . $this->html->getSecureURL('tool/developer_tools/edit_block', '&block_id=' . $row[ 'id' ]) . '"
-									title="' . $this->language->get('text_edit') . '">' .
-						'<img src="' . RDIR_TEMPLATE . 'image/icons/icon_grid_edit.png" alt="' . $this->language->get('text_edit') . '" />' .
-						'</a>
-									<a class="btn_action"
-										href="' . $this->html->getSecureURL('tool/developer_tools/delete_block', '&block_id=' . $row[ 'id' ]) . '"
-										onclick="return confirm(\'' . $this->language->get('text_delete_confirm') . '\')" title="' . $this->language->get('text_delete') . '">' .
-						'<img src="' . RDIR_TEMPLATE . 'image/icons/icon_grid_delete.png" alt="' . $this->language->get('text_delete') . '" />' .
-						'</a>';*/
 			}
 			$this->baseObject->data = $response;
 		}

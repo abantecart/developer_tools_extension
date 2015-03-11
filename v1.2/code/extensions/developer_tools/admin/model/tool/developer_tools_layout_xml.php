@@ -49,7 +49,7 @@ class ModelToolDeveloperToolsLayoutXml extends Model {
 			$result = file_put_contents($path, $xml);
 			if ($result) {
 				// and put xml-import call into install.php
-				$import_call =  "\n\$layout = new ALayoutManager();\n\$layout->loadXml(array('file' => DIR_EXT.'".$extension_txt_id."/layout.xml'));";
+				/*$import_call =  "\n\$layout = new ALayoutManager();\n\$layout->loadXml(array('file' => DIR_EXT.'".$extension_txt_id."/layout.xml'));";
 				$code = file_get_contents(DIR_EXT.$extension_txt_id.'/install.php');
 				$code = str_replace($import_call,'',$code).$import_call;
 				file_put_contents(DIR_EXT.$extension_txt_id.'/install.php',$code);
@@ -57,7 +57,7 @@ class ModelToolDeveloperToolsLayoutXml extends Model {
 				$import_call =  "\n\$layout = new ALayoutManager('".$extension_txt_id."');\n\$layout->deleteTemplateLayouts();";
 				$code = file_get_contents(DIR_EXT.$extension_txt_id.'/uninstall.php');
 				$code = str_replace($import_call,'',$code).$import_call;
-				file_put_contents(DIR_EXT.$extension_txt_id.'/uninstall.php',$code);
+				file_put_contents(DIR_EXT.$extension_txt_id.'/uninstall.php',$code);*/
 
 				return true;
 			} else {
@@ -232,6 +232,8 @@ class ModelToolDeveloperToolsLayoutXml extends Model {
 																		'language'=>$row['language_name'],
 																		'name'=>array('@cdata'=>$row['name']),
 																		'title'=>array('@cdata'=>$row['title']),
+																		'block_wrapper'=>array('@cdata'=>$row['block_wrapper']),
+																		'block_framed'=>array('@cdata'=>$row['block_framed']),
 																		'description'=>array('@cdata'=>$row['description']),
 																		'content'=>array('@cdata'=>$row['content'])	);
 		}
