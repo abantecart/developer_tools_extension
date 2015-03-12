@@ -1102,7 +1102,11 @@ class ModelToolDeveloperTools extends Model{
 			$mvcs = array('models', 'views', 'controllers', 'languages');
 			foreach($this->sections as $section){
 				foreach($mvcs as $mvc){
-					$xml_array[$mvc][$section] = $xml_array[$mvc][$section]['item'];
+					$item = $xml_array[$mvc][$section]['item'];
+					if(is_string(key($item))){
+						$item = array($item);
+					}
+					$xml_array[$mvc][$section] = $item;
 				}
 			}
 		} else{

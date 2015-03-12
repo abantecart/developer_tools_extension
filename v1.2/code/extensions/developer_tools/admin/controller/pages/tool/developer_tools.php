@@ -232,7 +232,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 		$this->data['form']['submit'] = $form->getFieldHtml(
 				array('type'  => 'button',
 				      'name'  => 'submit',
-				      'text'  => $this->language->get('button_generate'),
+				      'text'  => ($mode=='short' ? $this->language->get('button_generate') : $this->language->get('button_save')),
 				      'style' => 'button1',
 				));
 		$this->data['form']['cancel'] = $form->getFieldHtml(
@@ -257,6 +257,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 	/**
 	 * @param AForm $form
+	 * @param string $mode - can be "full" or "short" (for creating and editing)
 	 */
 	private function _build_common($form, $mode = 'full'){
 		$this->data['form']['fields']['common']['extension_type'] = $form->getFieldHtml(
