@@ -10,7 +10,7 @@
 	</definition>
 	<definition>
 		<key>developer_tools_note</key>
-		<value><![CDATA[]]></value>
+		<value><![CDATA[This is an extension development wizard to help developers save time with organizing and creating extension components. Click this link to access <a href="#admin#rt=tool/developer_tools">Developer Tools</a> ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_project_summary</key>
@@ -56,20 +56,20 @@
 	<definition>
 		<key>developer_tools_text_about_edit</key>
 		<value>
-			<![CDATA[ Attention!<br>Edit form will overwrite some files such as config.xml, main.php, help.txt etc. <br>Please do backup directory %s and file %s before it.<br>NOTE: do not use folder "extensions" for backup! ]]></value>
+			<![CDATA[ Attention!<br>Edit form will overwrite some files such as config.xml, main.php, help.txt etc. <br>Please do backup directory %s and file %s before editing.<br>NOTE: Do not use "extensions" folder to keep backups! ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_about_cloning</key>
 		<value>
-			<![CDATA[ Note: during cloning will be created and installed new template extension. ]]></value>
+			<![CDATA[ Note: during cloning new template extension will be created and installed. ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_success_generated_extension</key>
-		<value><![CDATA[ Success: Your's new Extention Generated successfully.]]></value>
+		<value><![CDATA[ Success: New extention has been generated successfully.]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_error_generated_extension</key>
-		<value><![CDATA[ Error: Your's New Extention Not Generated. Please check form and required fields.]]></value>
+		<value><![CDATA[ Error: Extension generation has failed. Please check form details and required fields.]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_tab_common_section</key>
@@ -81,7 +81,7 @@
 	</definition>
 	<definition>
 		<key>developer_tools_entry_extension_txt_id</key>
-		<value><![CDATA[Extension Unique Text ID<span class="help">Note: only alphanumeric and _ </span>]]></value>
+		<value><![CDATA[Extension Unique Text ID<span class="help">This is a qunique extension text ID that can not conflict with other extenions. Note: You can use only alphanumeric characters and _ </span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_version</key>
@@ -90,12 +90,12 @@
 	<definition>
 		<key>developer_tools_entry_cart_version</key>
 		<value>
-			<![CDATA[ Cart Version <span class="help">If you set major and minor only version extensions will supported all builts of them. For ex. 1.1 will works on 1.1.0, 1.1.2 etc but does not works on 1.2.x</span>]]></value>
+			<![CDATA[ Cart Version <span class="help">If you set only major and minor version, extensions will be supported for all builts of them. For example, 1.1 extension will work on AbanteCart 1.1.0, 1.1.2 etc but will show warning if installed on 1.2.x.  If third built number is used (Example: 1.2.1) installation will not be allowed for any prior versions.</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_priority</key>
 		<value>
-			<![CDATA[ Priority<span class="help">Priority mean order number for hook call when few extensions hooks will run for the same controller. ex: 10,20,30 etc</span> ]]></value>
+			<![CDATA[ Priority<span class="help">Priority is an order in which hooks will be called when few extensions hooks will run for the same controller. ex: 10,20,30 etc. This setting also effects the sorting of extenson in the listing</span> ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_dependencies</key>
@@ -104,22 +104,22 @@
 	<definition>
 		<key>developer_tools_entry_install_sql</key>
 		<value>
-			<![CDATA[ Create install.sql file? <span class="help"> sql-script will runs during installation process</span>]]></value>
+			<![CDATA[ Create install.sql file? <span class="help">SQL instal script will runs during installation process and sould contain only database SQL syntax</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_install_php</key>
 		<value>
-			<![CDATA[ Create install.php file? <span class="help"> install.php will runs during installation process</span>]]></value>
+			<![CDATA[ Create install.php file? <span class="help">Created install.php will runs during installation process and sould coitain only PHP code</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_help_note</key>
 		<value>
-			<![CDATA[Quick Help Text <span class="help">Text to be shown in the extension configuration</span>]]></value>
+			<![CDATA[Quick Help Text <span class="help">Text to be shown in the extension configuration section</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_help_file</key>
 		<value>
-			<![CDATA[Help Text<span class="help">Text to be shown in popup window after help button press</span>]]></value>
+			<![CDATA[Help Manual<span class="help">Extension Manual to be shown in popup window after help button pressed in configuration section</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_preview</key>
@@ -136,16 +136,16 @@
 	<definition>
 		<key>developer_tools_entry_header_comment</key>
 		<value>
-			<![CDATA[ Php-files Header Comment <span class="help">will be paste into top of each php-files of your extension</span>]]></value>
+			<![CDATA[ Php-files Header Comment <span class="help">This comment will be paste into top of each php-files of your extension. </span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_route</key>
 		<value>
-			<![CDATA[ Default route to extension controllers <span class="help">it mean "rt" variable value by default for next fields</span>]]></value>
+			<![CDATA[ Default route to extension controllers <span class="help">First portion of the route "rt" used in the next fileds</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_hook_file</key>
-		<value><![CDATA[ Filename with hooks<span class="help">core/your_filename.php will created</span>]]></value>
+		<value><![CDATA[Core file name<span class="help">This is a core PHP file to be executed for this extenstion hooks. core/your_filename.php will be created</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_tab_admin_section</key>
@@ -158,35 +158,35 @@
 	<definition>
 		<key>developer_tools_entry_admin_page_controllers</key>
 		<value>
-			<![CDATA[ Control Panel Page Controllers List <span class="help">You have to set route(path) and filename for each controller.<br>Ex:  [pages/extension/some_extension_txt_id]  [some_extension_filename.php]</span>]]></value>
+			<![CDATA[ Admin Page Controllers <span class="help">You have to set route(rt) and filename for each controller you create for this extension. Try to create unique name to prevent conflicts with other controllers<br>Example:  [pages/extension/some_extension_txt_id]  [some_extension_filename.php]</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_admin_response_controllers</key>
 		<value>
-			<![CDATA[ Control Panel Response Controllers List <span class="help">Same as page controllers...<br>Response controllers used for answer on ajax-requests</span>]]></value>
+			<![CDATA[ Admin Response Controllers <span class="help">Same as page controllers...<br>Response controllers are mainly used for ajax-requests</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_admin_api_controllers</key>
 		<value>
-			<![CDATA[ Control Panel API Controllers List <span class="help">API controllers used for answer on REST-requests</span>]]></value>
+			<![CDATA[ Admin API Controllers <span class="help">API controllers used for REST-requests</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_admin_task_controllers</key>
 		<value>
-			<![CDATA[ Control Panel Task Controllers List <span class="help">Task controllers used for scheduled tasks run.</span>]]></value>
+			<![CDATA[ Admin Task Controllers <span class="help">Task controllers used for scheduled tasks.</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_admin_models</key>
-		<value><![CDATA[ Control Panel Models <span class="help"></span>]]></value>
+		<value><![CDATA[ Admin Models <span class="help"></span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_admin_page_views</key>
-		<value><![CDATA[ Control Panel View-files for Page Controllers <span class="help"></span>]]></value>
+		<value><![CDATA[ Admin View-files (tpl) for Page Controllers <span class="help"></span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_admin_response_views</key>
 		<value>
-			<![CDATA[ Control Panel View-files for Response Controllers <span class="help"></span>]]></value>
+			<![CDATA[ Admin View-files (tpl) for Response Controllers <span class="help"></span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_tab_storefront_section</key>
@@ -199,22 +199,22 @@
 	<definition>
 		<key>developer_tools_entry_storefront_page_controllers</key>
 		<value>
-			<![CDATA[ Storefront Page Controllers List <span class="help">You have to set route(path) and filename for each controller.<br>Ex:  [pages/extension/some_extension_txt_id]  [some_extension_filename.php]</span>]]></value>
+			<![CDATA[ Storefront Page Controllers <span class="help">You have to set route(path) and filename for each controller.<br>Ex:  [pages/extension/some_extension_txt_id]  [some_extension_filename.php]</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_storefront_response_controllers</key>
 		<value>
-			<![CDATA[ Storefront Response Controllers List <span class="help">Same as page controllers...<br>Response controllers used for answer on ajax-requests</span>]]></value>
+			<![CDATA[ Storefront Response Controllers <span class="help">Same as page controllers...<br>Response controllers used for answer on ajax-requests</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_storefront_api_controllers</key>
 		<value>
-			<![CDATA[ Storefront API Controllers List]]></value>
+			<![CDATA[ Storefront API Controllers]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_storefront_block_controllers</key>
 		<value>
-			<![CDATA[ Storefront Block Controllers List]]></value>
+			<![CDATA[ Storefront Block Controllers]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_storefront_models</key>
@@ -231,16 +231,16 @@
 	</definition>
 	<definition>
 		<key>developer_tools_entry_copyright</key>
-		<value><![CDATA[ Package copyright text]]></value>
+		<value><![CDATA[ Extension copyright]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_license</key>
-		<value><![CDATA[ Package license text]]></value>
+		<value><![CDATA[ Extension license]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_error_write_permission</key>
 		<value>
-			<![CDATA[ Error: You can't generate extension because extension directory is not writable. You have to change access mode to 0777 for yours extension directory. ]]></value>
+			<![CDATA[ Error: Extension directory is not writable, cannot generate extension. Change access mode to 0777 for the extension directory. ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_type_template</key>
@@ -273,12 +273,12 @@
 	<definition>
 		<key>developer_tools_entry_extension_type</key>
 		<value>
-			<![CDATA[Extension Type<span class="help">Note: You need choose type to create specified hooks and routines for extension automatically. </span>]]></value>
+			<![CDATA[Extension Type<span class="help">Note: You need to choose extension type to create specified hooks and routines for extension automatically. </span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_copy_default</key>
 		<value>
-			<![CDATA[Copy default file's content<span class="help">Note: If you checked generator will copy default template(language) files automatically into extension's directory. Otherwise content of tpl(xml)-files will purge. </span>]]></value>
+			<![CDATA[Copy default file content<span class="help">Note: If selected, generator will copy default template(language) files automatically into extension directory. Otherwise, content of tpl(xml)-files will be purge. </span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_extension_category</key>
@@ -331,7 +331,7 @@
 	</definition>
 	<definition>
 		<key>developer_tools_tab_admin_languages_section</key>
-		<value><![CDATA[ Control Panel Language Files]]></value>
+		<value><![CDATA[ Admin Language Files]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_tab_storefront_languages_section</key>
@@ -363,11 +363,11 @@
 	</definition>
 	<definition>
 		<key>developer_tools_text_success_layout_xml</key>
-		<value><![CDATA[ Layout XML saved successfully. Now you can <a href="#admin#rt=extension/extensions/template" target="_blank">install</a> your template extension. ]]></value>
+		<value><![CDATA[ Layout XML saved successfully. You can now <a href="#admin#rt=extension/extensions/template" target="_blank">install</a> template extension. ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_error_layout_xml</key>
-		<value><![CDATA[ Error has occurred during Layout XML saving. Please check <a href="#admin#rt=tool/error_log" target="_blank">error log</a> for details. ]]></value>
+		<value><![CDATA[ Error has occurred during saving Layout XML. Please check <a href="#admin#rt=tool/error_log" target="_blank">error log</a> for details. ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_generic_block</key>
@@ -415,7 +415,7 @@
 	</definition>
 	<definition>
 		<key>developer_tools_error_delete</key>
-		<value><![CDATA[Can't delete because this block is in use. Please visit Layout section. ]]></value>
+		<value><![CDATA[Cannot delete blocks in use. Please visit Layout section. ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_add_definition</key>
