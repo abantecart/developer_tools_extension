@@ -1,6 +1,7 @@
 <?php include($tpl_common_dir . 'action_confirm.tpl'); ?>
 
 <?php echo $dev_tabs ?>
+<?php echo $prj_tabs ?>
 <div id="content" class="panel panel-default">
 
 	<div class="panel-heading col-xs-12">

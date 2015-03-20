@@ -30,7 +30,7 @@ class ControllerPagesToolDeveloperToolsTabs extends AController{
 		if($this->session->data['dev_tools_prj_id']){
 			$this->data['tabs']['project'] = array(
 					'href'   => $this->html->getSecureURL('tool/developer_tools/edit'),
-			        'text'   => $this->session->data['dev_tools_prj_id'],
+			        'text'   => sprintf($this->language->get('developer_tools_text_opened_project'),$this->session->data['dev_tools_prj_id']),
 			        'active' => ($active=='project'));
 		}
 
@@ -48,13 +48,9 @@ class ControllerPagesToolDeveloperToolsTabs extends AController{
 
 		$this->data['tabs']['create'] = array(
 				'href'   => $this->html->getSecureURL('tool/developer_tools/create'),
-				'text'   => $this->language->get('developer_tools_tab_generate_extension'),
+				'text'   => $this->language->get('developer_tools_text_create_project'),
 				'active' => ($active=='create'));
 
-		$this->data['tabs']['package'] = array(
-				'href'   => $this->html->getSecureURL('tool/developer_tools/package'),
-				'text'   => $this->language->get('developer_tools_tab_generate_package'),
-				'active' => ($active=='package'));
 
 		$this->view->batchAssign($this->data);
 		$this->processTemplate('pages/tool/developer_tools_tabs.tpl');
@@ -79,6 +75,11 @@ class ControllerPagesToolDeveloperToolsTabs extends AController{
 								'text'   => $this->language->get('developer_tools_text_'.$tab),
 								'active' => ($active==$tab));
 			}
+
+			$this->data['tabs']['package'] = array(
+				'href'   => $this->html->getSecureURL('tool/developer_tools/package'),
+				'text'   => $this->language->get('developer_tools_tab_generate_package'),
+				'active' => ($active=='package'));
 
 			$this->view->batchAssign($this->data);
 			$this->processTemplate('pages/tool/developer_tools_tabs.tpl');

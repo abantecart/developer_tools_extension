@@ -104,7 +104,7 @@ class ExtensionDeveloperTools extends Extension {
 
 	public function onControllerResponsesListingGridBlocksGrid_UpdateData() {
 
-		$method_name = func_get_arg(0);
+		$method_name = $this->baseObject_method;
 		if ($method_name == 'main') {
 			$response = $this->baseObject->data;
 			$sql = "SELECT DISTINCT b.block_txt_id
@@ -130,4 +130,24 @@ class ExtensionDeveloperTools extends Extension {
 		}
 
 	}
+
+/*
+ * TODO:check this func in the future
+	public function onControllerCommonHeader_UpdateData(){
+		$that = $this->baseObject;
+		$enabled = $that->extensions->getEnabledExtensions();
+
+		if(!in_array('developer_tools', $enabled)){ return null;}
+		$html = '<li>
+					<div class="btn-group" id="dev_tools_link">
+						<a href="'.$that->html->getSecureURL('tool/developer_tools').'"
+						   class="btn btn-default tp-icon activate_setting"
+						   title="'.$that->language->get('developer_tools_name').'">
+							<i class=" fa fa-code fa-lg"></i>
+						</a>
+					</div>
+				</li>';
+		$that->view->addHookVar('headermenu_left',$html);
+	}
+	*/
 }

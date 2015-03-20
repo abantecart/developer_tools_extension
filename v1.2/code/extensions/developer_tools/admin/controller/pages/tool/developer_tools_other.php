@@ -96,6 +96,8 @@ class ControllerPagesToolDeveloperToolsOther extends AController {
 		$this->data['xml_build_url'] = $this->html->getSecureUrl('r/tool/developer_tools_other/savelayoutxml','&prj_id='.$prj_id);
 		$this->data['text_save_layout_xml'] = $this->language->get('text_save_layout_xml');
 
+		$this->data['info'] = $this->language->get('developer_tools_info_about_layouts');
+
 		$this->view->batchAssign($this->data);
 
 		$this->processTemplate('pages/tool/developer_tools_other.tpl' );

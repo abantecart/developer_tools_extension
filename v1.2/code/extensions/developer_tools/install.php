@@ -20,6 +20,29 @@
 if (! defined ( 'DIR_CORE' )) {
         header ( 'Location: static_pages/' );
 }
+
+// add new menu item
+$rm = new AResourceManager();
+$rm->setType('image');
+
+$language_id = $this->language->getContentLanguageID();
+$data = array();
+$data['resource_code'] = '<i class="fa fa-code"></i>&nbsp;';
+$data['name'] = array($language_id => 'Menu Icon Developer Tools');
+$data['title'] = array($language_id => '');
+$data['description'] = array($language_id => '');
+$resource_id = $rm->addResource($data);
+
+$menu = new AMenu ( "admin" );
+$menu->insertMenuItem ( array (  "item_id" => "developer_tools",
+								 "parent_id"=>"system",
+								 "item_text" => "developer_tools_name",
+								 "item_url" => "tool/developer_tools",
+								 "item_icon_rl_id" => $resource_id,
+								 "item_type"=>"extension",
+								 "sort_order"=>"20")
+								);
+
 // add new menu item
 $menu = new AMenu ( "admin" );
 $menu->insertMenuItem ( array (  "item_id" => "developer_tools",

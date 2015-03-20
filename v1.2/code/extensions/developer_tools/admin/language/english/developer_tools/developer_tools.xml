@@ -2,7 +2,7 @@
 <definitions>
 	<definition>
 		<key>developer_tools_name</key>
-		<value><![CDATA[Extension Developer Tools]]></value>
+		<value><![CDATA[Developer Tools]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_status</key>
@@ -22,11 +22,11 @@
 	</definition>
 	<definition>
 		<key>developer_tools_tab_generate_extension</key>
-		<value><![CDATA[Create Extension]]></value>
+		<value><![CDATA[Create an Extension]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_create_project</key>
-		<value><![CDATA[Create New Project]]></value>
+		<value><![CDATA[Create a New Project]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_tab_clone_template</key>
@@ -34,7 +34,7 @@
 	</definition>
 	<definition>
 		<key>developer_tools_tab_generate_package</key>
-		<value><![CDATA[Build Package]]></value>
+		<value><![CDATA[Build a Package]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_select_extension</key>
@@ -268,7 +268,7 @@
 	</definition>
 	<definition>
 		<key>developer_tools_text_type_other</key>
-		<value><![CDATA[ Other ]]></value>
+		<value><![CDATA[ Additional ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_extension_type</key>
@@ -327,7 +327,7 @@
 	</definition>
 	<definition>
 		<key>developer_tools_text_other</key>
-		<value><![CDATA[Other]]></value>
+		<value><![CDATA[Additional]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_tab_admin_languages_section</key>
@@ -452,5 +452,17 @@
 	<definition>
 		<key>developer_tools_text_jscss_clone</key>
 		<value><![CDATA[Partial Clone (will copy js,css files and images)]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_opened_project</key>
+		<value><![CDATA[Opened: %s]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_info_about_layouts</key>
+		<value><![CDATA[Note: If you need to add blocks or template layout to your extension installation you can do this here. This process will select layout from selected template and will add it into this extension installation process]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_info_about_package</key>
+		<value><![CDATA[Note: Here you can automatically generate an archive (.tar.gz) with all extension components. This archive can be provided for installation in AbanteCart admin or Marketplace]]></value>
 	</definition>
 </definitions>

@@ -869,6 +869,10 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 	public function package(){
 
+		if(!$this->session->data['dev_tools_prj_id']){
+			$this->redirect( $this->html->getSecureURL('tool/developer_tools'));
+		}
+
 		$this->loadLanguage('developer_tools/developer_tools');
 		$this->view->assign('heading_title', $this->language->get('developer_tools_name'));
 
@@ -948,22 +952,6 @@ class ControllerPagesToolDeveloperTools extends AController{
 				));
 
 
-		$extensions = $this->extensions->getExtensionsList();
-		$missed = $this->extensions->getMissingExtensions();
-		$exts = array('0' => $this->language->get('text_select'));
-		foreach($extensions->rows as $ext){
-			if(in_array($ext['key'], $missed)) continue;
-			$exts[$ext['key']] = $ext['key'];
-		}
-
-		$this->data['form']['fields']['extensions']['field'] = $form->getFieldHtml(
-				array('name'    => 'extension',
-				      'type'    => 'selectbox',
-				      'options' => $exts,
-				      'value'   => ''
-				));
-		$this->data['form']['fields']['extensions']['text'] = $this->language->get('developer_tools_text_select_extension');
-
 		$this->data['form']['fields']['license']['field'] = $form->getFieldHtml(
 				array('type'  => 'textarea',
 				      'name'  => 'license',
@@ -980,10 +968,14 @@ class ControllerPagesToolDeveloperTools extends AController{
 		$this->data['form']['fields']['copyright']['text'] = $this->language->get('developer_tools_entry_copyright');
 
 		//load tabs controller
-		$tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs', array('package'));
+		$tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs', array('project'));
 		$this->data['dev_tabs'] = $tabs_obj->dispatchGetOutput();
+		$tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs/prjtabs', array('package'));
+		$this->data['prj_tabs'] = $tabs_obj->dispatchGetOutput();
 
 		$this->addChild('responses/tool/developer_tools/summary', 'project_summary', 'responses/tool/developer_tools_project_summary.tpl');
+
+		$this->data['info'] = $this->language->get('developer_tools_info_about_package');
 
 		$this->view->batchAssign($this->data);
 		$this->processTemplate('pages/tool/developer_tools_package_form.tpl');

@@ -927,16 +927,17 @@ class ModelToolDeveloperTools extends Model{
 	}
 
 	public function generatePackage($data = array()){
-		if(!$data['extension']){
+		$project_info = $this->getProjectConfig($this->session->data['dev_tools_prj_id']);
+		$extension = $project_info['extension_txt_id'];
+		if(!$extension){
 			return false;
 		}
 
-		if(!is_dir(DIR_EXT . $data['extension'])){
+		if(!is_dir(DIR_EXT . $extension)){
 			return false;
 		}
 
-		$extension_name = $data['extension'];
-		$config_xml = simplexml_load_file(DIR_EXT . $data['extension'] . '/config.xml');
+		$config_xml = simplexml_load_file(DIR_EXT . $extension . '/config.xml');
 		$data['version'] = (string)$config_xml->version;
 
 		foreach($config_xml->cartversions->item as $store_version){
@@ -956,21 +957,21 @@ class ModelToolDeveloperTools extends Model{
 			$package_dir = sys_get_temp_dir();
 		}
 
-		if(file_exists($package_dir . $extension_name)){
+		if(file_exists($package_dir . $extension)){
 			// if stuck files exists - breaks
 			return false;
 		}
-		$package_directory = $package_dir . $extension_name . '_' . $data['version'] . '/';
+		$package_directory = $package_dir . $extension . '_' . $data['version'] . '/';
 
 		mkdir($package_directory, 0777);
 		mkdir($package_directory . '/code', 0777);
 		mkdir($package_directory . '/code/extensions', 0777);
-		mkdir($package_directory . '/code/extensions/' . $extension_name, 0777);
-		$this->_copyDir(DIR_EXT . $extension_name, $package_directory . '/code/extensions/' . $extension_name);
+		mkdir($package_directory . '/code/extensions/' . $extension, 0777);
+		$this->_copyDir(DIR_EXT . $extension, $package_directory . '/code/extensions/' . $extension);
 
 		// build package.xml
 		$xml_data = array(
-				'id'         => $extension_name,
+				'id'         => $extension,
 				'type'       => 'extension',
 				'version'    => $data['version'],
 				'minversion' => $data['version']
@@ -984,7 +985,7 @@ class ModelToolDeveloperTools extends Model{
 
 			$xml_data['cartversions'] = array('item' => $data['cartversions']);
 		}
-		$xml_data['package_content'] = array('extensions' => array('extension' => $extension_name));
+		$xml_data['package_content'] = array('extensions' => array('extension' => $extension));
 		$xml = Array2XML::createXML('package', $xml_data);
 		$xml = $xml->saveXML();
 
@@ -997,10 +998,10 @@ class ModelToolDeveloperTools extends Model{
 			file_put_contents($package_directory . 'copyright.txt', $data['copyright']);
 		}
 
-		$archive = new ABackup($extension_name . '_' . $data['version']);
-		$archive->archive($package_dir . $extension_name . '_' . $data['version'] . '.tar.gz', $package_dir, $extension_name . '_' . $data['version']);
-		if(file_exists($package_dir . $extension_name . '_' . $data['version'] . '.tar.gz')){
-			return $package_dir . $extension_name . '_' . $data['version'] . '.tar.gz';
+		$archive = new ABackup($extension . '_' . $data['version']);
+		$archive->archive($package_dir . $extension . '_' . $data['version'] . '.tar.gz', $package_dir, $extension . '_' . $data['version']);
+		if(file_exists($package_dir . $extension . '_' . $data['version'] . '.tar.gz')){
+			return $package_dir . $extension . '_' . $data['version'] . '.tar.gz';
 		} else{
 			return false;
 		}
