@@ -131,13 +131,13 @@ class ExtensionDeveloperTools extends Extension {
 
 	}
 
-/*
- * TODO:check this func in the future
+
+
 	public function onControllerCommonHeader_UpdateData(){
 		$that = $this->baseObject;
-		$enabled = $that->extensions->getEnabledExtensions();
+		$enabled = $that->config->get('developer_tools_status');
 
-		if(!in_array('developer_tools', $enabled)){ return null;}
+		if(!$enabled){ return null;}
 		$html = '<li>
 					<div class="btn-group" id="dev_tools_link">
 						<a href="'.$that->html->getSecureURL('tool/developer_tools').'"
@@ -149,5 +149,5 @@ class ExtensionDeveloperTools extends Extension {
 				</li>';
 		$that->view->addHookVar('headermenu_left',$html);
 	}
-	*/
+
 }

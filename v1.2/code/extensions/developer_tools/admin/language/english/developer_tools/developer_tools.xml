@@ -240,7 +240,7 @@
 	<definition>
 		<key>developer_tools_error_write_permission</key>
 		<value>
-			<![CDATA[ Error: Extension directory is not writable, cannot generate extension. Change access mode to 0777 for the extension directory. ]]></value>
+			<![CDATA[ Error: Project can not be created!  Directory %s does not have write permissions. ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_type_template</key>
@@ -268,7 +268,7 @@
 	</definition>
 	<definition>
 		<key>developer_tools_text_type_other</key>
-		<value><![CDATA[ Additional ]]></value>
+		<value><![CDATA[ Other ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_extension_type</key>

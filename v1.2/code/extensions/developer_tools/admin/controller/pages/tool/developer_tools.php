@@ -107,6 +107,10 @@ class ControllerPagesToolDeveloperTools extends AController{
 		$this->document->setTitle($this->language->get('developer_tools_name'));
 		$this->data['heading_title'] = $this->language->get('developer_tools_name') . ': ' . $this->session->data['dev_tools_prj_id'];
 
+		if(!$this->_checkWritable()){
+			$this->data['error_warning'] =  implode('<br>',$this->error);
+		}
+
 		$this->document->initBreadcrumb(array(
 				'href'      => $this->html->getSecureURL('index/home'),
 				'text'      => $this->language->get('text_home'),
@@ -134,6 +138,10 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 		$this->loadLanguage('developer_tools/developer_tools');
 		$this->document->setTitle($this->language->get('developer_tools_name'));
+
+		if(!$this->_checkWritable()){
+			$this->data['error_warning'] =  implode('<br>',$this->error);
+		}
 
 		if($this->request->is_POST()){
 			$this->loadModel('tool/developer_tools');
@@ -165,21 +173,26 @@ class ControllerPagesToolDeveloperTools extends AController{
 				$this->redirect($this->html->getSecureURL('tool/developer_tools'));
 			}
 		}
-		if(!is_writable(DIR_EXT)){
-			$this->data['error_warning'] = $this->language->get('developer_tools_error_write_permission');
-		} else{
-			if($this->session->data['dev_tools_prj_id']){
-				$project_info = $this->model_tool_developer_tools->getProjectConfig($this->session->data['dev_tools_prj_id']);
-			}
-			$this->data = array_merge($this->data, $project_info);
-			$this->_getForm();
-			$this->data['info'] = sprintf($this->language->get('developer_tools_text_about_edit'),
-					$this->data['extension_txt_id'],
-					DIR_EXT . 'developer_tools/projects/dev_tools_project_' . $this->session->data['dev_tools_prj_id']);
+
+		if($this->session->data['dev_tools_prj_id']){
+			$project_info = $this->model_tool_developer_tools->getProjectConfig($this->session->data['dev_tools_prj_id']);
 		}
 
+		if(is_array($project_info)){
+			$this->data = array_merge($this->data, $project_info);
+		}else{
+			$this->data['error_warning'] .= implode('<br>',$this->model_tool_developer_tools->error);
+		}
+
+		$this->_getForm();
+		$this->data['dt_attention'] = sprintf(
+									$this->language->get('developer_tools_text_about_edit'),
+									$this->data['extension_txt_id'],
+									DIR_EXT . 'developer_tools/projects/dev_tools_project_' . $this->session->data['dev_tools_prj_id']
+		);
+
 		if($this->session->data['warning']){
-			$this->data['error_warning'] = $this->session->data['warning'];
+			$this->data['error_warning'] .= $this->session->data['warning'];
 			unset($this->session->data['warning']);
 		}
 
@@ -874,6 +887,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 		}
 
 		$this->loadLanguage('developer_tools/developer_tools');
+		$this->document->setTitle($this->language->get('developer_tools_name'));
 		$this->view->assign('heading_title', $this->language->get('developer_tools_name'));
 
 
@@ -983,7 +997,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 	public function cloneTemplate(){
 		$this->loadLanguage('developer_tools/developer_tools');
-
+		$this->document->setTitle($this->language->get('developer_tools_name'));
 		if($this->request->is_POST()){
 
 			$this->loadModel('tool/developer_tools');
@@ -1479,4 +1493,20 @@ class ControllerPagesToolDeveloperTools extends AController{
 		}
 	}
 
+
+	private function _checkWritable(){
+		if(!is_writable(DIR_EXT)){
+			$this->error[] = sprintf($this->language->get('developer_tools_error_write_permission'),DIR_EXT);
+			return false;
+		}
+		$prj_dir = DIR_EXT.'developer_tools/projects';
+		if(!is_dir($prj_dir)){
+			mkdir($prj_dir,0777);
+		}
+		if(!is_writable($prj_dir)){
+			$this->error[] = sprintf($this->language->get('developer_tools_error_write_permission'),$prj_dir);
+			return false;
+		}
+		return true;
+	}
 }

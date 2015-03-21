@@ -1,5 +1,7 @@
 <?php include($tpl_common_dir . 'action_confirm.tpl'); ?>
-
+<?php if ($dt_attention) { ?>
+	<div class="info alert alert-warning"><i class="fa fa fa-exclamation-triangle fa-fw"></i> <?php echo $dt_attention; ?></div>
+<?php } ?>
 <?php echo $project_summary ?>
 <?php echo $dev_tabs ?>
 <?php echo $prj_tabs ?>
