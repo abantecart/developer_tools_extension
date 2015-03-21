@@ -69,7 +69,7 @@
 	</definition>
 	<definition>
 		<key>developer_tools_text_error_generated_extension</key>
-		<value><![CDATA[ Error: Extension generation has failed. Please check form details and required fields.]]></value>
+		<value><![CDATA[ Error: Extension creation has failed. Please check form for provided details and required fields.]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_tab_common_section</key>
