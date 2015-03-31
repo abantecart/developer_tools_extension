@@ -273,10 +273,12 @@ class ControllerPagesToolDeveloperTools extends AController{
 	 * @param string $mode - can be "full" or "short" (for creating and editing)
 	 */
 	private function _build_common($form, $mode = 'full'){
+		$val = $this->data['extension_type'];
+		$val = $val=='extension' ? 'other' : $val;
 		$this->data['form']['fields']['common']['extension_type'] = $form->getFieldHtml(
 				array('type'     => 'selectbox',
 				      'name'     => 'extension_type',
-				      'value'    => $this->data['extension_type'],
+				      'value'    => $val,
 				      'options'  => array(
 						      'template' => $this->language->get('developer_tools_text_type_template'),
 						      'payment'  => $this->language->get('developer_tools_text_type_payment'),
