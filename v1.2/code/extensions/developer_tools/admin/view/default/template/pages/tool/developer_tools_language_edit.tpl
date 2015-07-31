@@ -5,7 +5,7 @@
 <div id="content" class="panel panel-default">
 	<?php echo $form['form_open']; ?>
 	<div class="panel-body panel-body-nopadding tab-content col-xs-12 ">
-		<label class="h4 heading" ><?php echo $heading; ?></label>
+		<label class="h4 heading" ><?php echo $heading_title; ?></label>
 			<?php foreach ($form['fields'] as $name => $field) {  ?>
 			<div class="form-group">
 				<label class="control-label col-sm-3 col-xs-12" ><?php echo $name?></label>

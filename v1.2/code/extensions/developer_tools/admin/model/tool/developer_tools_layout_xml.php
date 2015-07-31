@@ -27,7 +27,7 @@ require_once(DIR_EXT . 'developer_tools/core/lib/array2xml.php');
 class ModelToolDeveloperToolsLayoutXml extends Model {
 	public $error = array();
 	private $placeholder_block_id;
-	public function saveXml($extension_txt_id,$template_id_src){
+	public function saveXml($extension_txt_id,$template_id_src, $path=''){
 
 		$layouts = $this->getLayoutsByTemplate($template_id_src);
 		$xml_data = array();
@@ -43,7 +43,7 @@ class ModelToolDeveloperToolsLayoutXml extends Model {
 		$xml = Array2XML::createXML('template_layouts', $xml_data);
 		$xml = $xml->saveXML();
 
-		$path = DIR_EXT.$extension_txt_id.'/layout.xml';
+		$path = !$path ? DIR_EXT.$extension_txt_id.'/layout.xml' : rtrim($path,'/layout.xml').'/layout.xml';
 
 		if ($xml) {
 			$result = file_put_contents($path, $xml);

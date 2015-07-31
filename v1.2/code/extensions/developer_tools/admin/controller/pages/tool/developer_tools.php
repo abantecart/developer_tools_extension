@@ -212,14 +212,14 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 	private function _getForm($mode = 'full'){
 
-		$this->view->assign('heading_title', $this->language->get('developer_tools_name'));
+		$this->data['heading_title'] = $mode=='short' ? $this->language->get('developer_tools_tab_generate_extension') : $this->language->get('developer_tools_text_edit');
 		$this->document->initBreadcrumb(array(
 				'href'      => $this->html->getSecureURL('index/home'),
 				'text'      => $this->language->get('text_home'),
 				'separator' => false));
 		$this->document->addBreadcrumb(array(
 				'href'      => $this->html->getSecureURL('tool/developer_tools'),
-				'text'      => $this->language->get('developer_tools_name'),
+				'text'      => $this->language->get('developer_tools_name').' - '.$this->data['heading_title'],
 				'separator' => ' :: ',
 				'current'   => true));
 
@@ -313,6 +313,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 				      'value'    => $this->data['extension_txt_id'],
 				      'required' => true,
 				      'style'    => 'large-field',
+					  'attr'    => $mode!='short' ? ' readonly ' : ''
 				));
 
 		$this->data['form']['fields']['common']['version'] = $form->getFieldHtml(
@@ -889,7 +890,11 @@ class ControllerPagesToolDeveloperTools extends AController{
 		}
 
 		$this->loadLanguage('developer_tools/developer_tools');
-		$this->document->setTitle($this->language->get('developer_tools_name'));
+
+		$this->data['heading_title'] = $this->language->get('developer_tools_name'). ' - '. $this->language->get('developer_tools_tab_generate_package');
+
+
+		$this->document->setTitle($this->data['heading_title']);
 		$this->view->assign('heading_title', $this->language->get('developer_tools_name'));
 
 
@@ -897,10 +902,12 @@ class ControllerPagesToolDeveloperTools extends AController{
 			$this->loadModel('tool/developer_tools');
 			$result = $this->model_tool_developer_tools->generatePackage($this->request->post);
 
-			if(!$result){
+			if(!$result || !is_file($result) || !is_readable($result)){
 				foreach($this->request->post as $key => $value){
 					$this->data[$key] = $value;
 				}
+				$this->data['error_warning'] = 'Error: Something went wrong. Please check directory '.DIR_APP_SECTION . 'system/temp for files and error log.';
+
 			} else{
 				$filename = pathinfo($result, PATHINFO_BASENAME);
 
@@ -924,7 +931,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 				'separator' => false));
 		$this->document->addBreadcrumb(array(
 				'href'      => $this->html->getSecureURL('tool/developer_tools'),
-				'text'      => $this->language->get('developer_tools_name'),
+				'text'      => $this->data['heading_title'],
 				'separator' => ' :: ',
 				'current'   => true));
 
@@ -1014,7 +1021,11 @@ class ControllerPagesToolDeveloperTools extends AController{
 			$data['hook_file'] = $data['extension_txt_id'] . '_hook.php';
 			$data['extension_admin_language_files'] = array('english');
 
-			$result = $this->model_tool_developer_tools->generateExtension($data);
+			if($this->request->post['clone_as']=='extension'){
+				$result = $this->model_tool_developer_tools->generateExtension($data);
+			}else if( $this->request->post['clone_as']=='core_template' ){
+				$result = $this->model_tool_developer_tools->cloneCoreTemplate($data);
+			}
 
 			if($result){
 				$this->session->data['success'] = $this->language->get('developer_tools_text_success_generated_extension');

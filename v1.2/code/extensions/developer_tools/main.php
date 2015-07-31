@@ -55,6 +55,7 @@ $templates = array(
     'admin' => array(
 	    'pages/tool/developer_tools.tpl',
 	    'pages/tool/developer_tools_tabs.tpl',
+	    'pages/tool/developer_tools_project_buttons.tpl.tpl',
 	    'pages/tool/developer_tools_package_form.tpl',
 	    'pages/tool/developer_tools_create_form.tpl',
 	    'pages/tool/developer_tools_clone_template.tpl',

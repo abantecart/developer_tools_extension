@@ -3,16 +3,9 @@
 <?php echo $dev_tabs ?>
 <?php echo $prj_tabs ?>
 <div id="content" class="panel panel-default">
-
-	<div class="panel-heading col-xs-12">
-		<div class="primary_content_actions pull-left">
-		<?php include($tpl_common_dir . 'content_buttons.tpl'); ?>
-		</div>
-	</div>
-
 	<?php echo $form['form_open']; ?>
 	<div class="panel-body panel-body-nopadding tab-content col-xs-12">
-
+		<label class="h4 heading" ><?php echo $developer_tools_tab_generate_package; ?></label>
 			<?php foreach ($form['fields'] as $name => $field) {
 				//Logic to calculate fields width
 				$widthcasses = "col-sm-7";

@@ -65,24 +65,23 @@ class ControllerPagesToolDeveloperToolsTabs extends AController{
 				return null;
 			}
 
-			$tab_list = array(
+			$btn_list = array(
 					'edit'      => $this->html->getSecureURL('tool/developer_tools/edit'),
 					'languages' => $this->html->getSecureURL('tool/developer_tools_languages'),
 					'other'     => $this->html->getSecureURL('tool/developer_tools_other'));
-			foreach($tab_list as $tab=>$href){
-				$this->data['tabs'][$tab] = array(
+			foreach($btn_list as $btn=>$href){
+				$this->data['buttons'][$btn] = array(
 								'href'   => $href,
-								'text'   => $this->language->get('developer_tools_text_'.$tab),
-								'active' => ($active==$tab));
+								'text'   => $this->language->get('developer_tools_text_'.$btn),
+								'active' => ($active==$btn));
 			}
 
-			$this->data['tabs']['package'] = array(
+			$this->data['buttons']['package'] = array(
 				'href'   => $this->html->getSecureURL('tool/developer_tools/package'),
 				'text'   => $this->language->get('developer_tools_tab_generate_package'),
 				'active' => ($active=='package'));
 
 			$this->view->batchAssign($this->data);
-			$this->processTemplate('pages/tool/developer_tools_tabs.tpl');
+			$this->processTemplate('pages/tool/developer_tools_project_buttons.tpl');
 		}
 }
-

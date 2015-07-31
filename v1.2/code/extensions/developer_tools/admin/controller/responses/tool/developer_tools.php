@@ -76,8 +76,6 @@ class ControllerResponsesToolDeveloperTools extends AController {
 			}
 		}
 
-
-
 		if(!is_writable(DIR_EXT)){
 			$this->view->assign('error_warning', $this->language->get('developer_tools_error_write_permission'));
 		} else{
@@ -126,6 +124,30 @@ class ControllerResponsesToolDeveloperTools extends AController {
 				));
 
 
+		$template_list =  glob(DIR_STOREFRONT . '/view/*', GLOB_ONLYDIR);
+		foreach($template_list as $t){
+			$tname = basename($t);
+			$options[$tname] = $tname;
+		}
+
+		$this->data['form']['fields']['common']['proto_template'] = $form->getFieldHtml(
+				array('type'     => 'selectbox',
+				      'name'     => 'proto_template',
+				      'options'  => $options,
+				      'required' => true,
+				      'style'    => 'large-field',
+				));
+
+		$this->data['form']['fields']['common']['clone_as'] = $form->getFieldHtml(
+				array('type'     => 'radio',
+				      'name'     => 'clone_as',
+				      'options'  => array(
+						        'extension' => $this->language->get('developer_tools_entry_clone_as_extension'),
+				                'core_template'=> $this->language->get('developer_tools_entry_clone_as_core_template')),
+					  'value' => 'extension',
+				      'style'    => 'large-field',
+				));
+
 		$this->data['form']['fields']['common']['clone_method'] = $form->getFieldHtml(
 				array('type'     => 'selectbox',
 				      'name'     => 'clone_method',
@@ -149,7 +171,7 @@ class ControllerResponsesToolDeveloperTools extends AController {
 				));
 
 
-		$this->data['form']['fields']['common']['extension_txt_id'] = $form->getFieldHtml(
+		$this->data['form']['fields']['common']['template_txt_id'] = $form->getFieldHtml(
 				array('type'     => 'input',
 				      'name'     => 'extension_txt_id',
 				      'value'    => $this->data['extension_txt_id'],

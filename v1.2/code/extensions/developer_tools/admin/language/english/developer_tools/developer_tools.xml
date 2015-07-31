@@ -81,7 +81,7 @@
 	</definition>
 	<definition>
 		<key>developer_tools_entry_extension_txt_id</key>
-		<value><![CDATA[Extension Unique Text ID<span class="help">This is a qunique extension text ID that can not conflict with other extenions. Note: You can use only alphanumeric characters and _ </span>]]></value>
+		<value><![CDATA[Extension Unique Text ID<span class="help">This is an unique extension text ID that can not conflict with other extenions. Note: You can use only alphanumeric characters and _. If extension project is created, extension key cannot be changed. </span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_version</key>
@@ -350,16 +350,20 @@
 		<value><![CDATA[ View Layout XML]]></value>
 	</definition>
 	<definition>
+		<key>developer_tools_layout_xml_file</key>
+		<value><![CDATA[ Layout XML for extension installation <span class="help"> This is a location of layout XML file in the extension. This file will be loaded into the system on extension installation step</span>]]></value>
+	</definition>
+	<definition>
 		<key>developer_tools_text_save_layout_xml</key>
 		<value><![CDATA[ Save Layout XML]]></value>
 	</definition>
 	<definition>
-		<key>developer_tools_text_layout_xml_tab</key>
-		<value><![CDATA[ Layouts to XML]]></value>
+		<key>developer_tools_text_layout_xml_title</key>
+		<value><![CDATA[ Extension storefront pages layout]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_select_template</key>
-		<value><![CDATA[ Select template from database : ]]></value>
+		<value><![CDATA[ Clone XML from:</br><span class="help">You can select to export layout from existing template and save into this extension. After, this XML can be edited manually in location above</span> ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_success_layout_xml</key>
@@ -426,10 +430,6 @@
 		<value><![CDATA[Template Title]]></value>
 	</definition>
 	<definition>
-		<key>developer_tools_entry_extension_txt_id</key>
-		<value><![CDATA[Extension Unique Text ID<span class="help">Note: only alphanumeric and _ </span>]]></value>
-	</definition>
-	<definition>
 		<key>developer_tools_text_extension_txt_id</key>
 		<value><![CDATA[Extension Text ID]]></value>
 	</definition>
@@ -442,12 +442,32 @@
 		<value><![CDATA[Clone Method]]></value>
 	</definition>
 	<definition>
+		<key>developer_tools_entry_proto_template</key>
+		<value><![CDATA[Which template to clone?]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_clone_as</key>
+		<value><![CDATA[Clone as]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_clone_as_extension</key>
+		<value><![CDATA[Extension]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_clone_as_core_template</key>
+		<value><![CDATA[Core Template]]></value>
+	</definition>
+	<definition>
 		<key>developer_tools_entry_template_title</key>
 		<value><![CDATA[Template Title]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_full_clone</key>
 		<value><![CDATA[Full Clone]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_template_txt_id</key>
+		<value><![CDATA[Unique Template Text ID<span class="help">This is an unique text ID that can not conflict with other extenions. Note: You can use only alphanumeric characters and _.</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_jscss_clone</key>

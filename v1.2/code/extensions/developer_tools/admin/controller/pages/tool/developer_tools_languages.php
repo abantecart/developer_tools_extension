@@ -45,13 +45,15 @@ class ControllerPagesToolDeveloperToolsLanguages extends AController{
 			$this->redirect($this->html->getSecureURL('tool/developer_tools/edit'));
 		}
 
+		$this->data['heading_title'] = $this->language->get('developer_tools_text_languages');
+		$this->document->setTitle( $this->data['heading_title'] );
 		$this->document->initBreadcrumb(array(
 				'href'      => $this->html->getSecureURL('index/home'),
 				'text'      => $this->language->get('text_home'),
 				'separator' => false));
 		$this->document->addBreadcrumb(array(
 				'href'      => $this->html->getSecureURL('tool/developer_tools'),
-				'text'      => $this->language->get('developer_tools_name'),
+				'text'      => $this->language->get('developer_tools_name').' - '.$this->data['heading_title'],
 				'separator' => ' :: ',
 				'current'   => true));
 
@@ -268,8 +270,18 @@ class ControllerPagesToolDeveloperToolsLanguages extends AController{
 					));
 		}
 
+		$this->data['heading_title'] = $this->language->get('developer_tools_name') .' - '.$this->language->get('developer_tools_text_language_file_edit') . ' - ' . $this->request->get['block'];
+		$this->document->setTitle( $this->data['heading_title'] );
+		$this->document->initBreadcrumb(array(
+				'href'      => $this->html->getSecureURL('index/home'),
+				'text'      => $this->language->get('text_home'),
+				'separator' => false));
+		$this->document->addBreadcrumb(array(
+				'href'      => $this->html->getSecureURL('tool/developer_tools_languages'),
+				'text'      => $this->language->get('developer_tools_name') .' - '.$this->language->get('developer_tools_text_languages'),
+				'separator' => ' :: ',
+				'current'   => true));
 
-		$this->data['heading'] = $this->language->get('developer_tools_text_language_file_edit') . ' - ' . $this->request->get['block'];
 		$this->data['languages'] = $languages;
 
 		$this->view->batchAssign($this->data);

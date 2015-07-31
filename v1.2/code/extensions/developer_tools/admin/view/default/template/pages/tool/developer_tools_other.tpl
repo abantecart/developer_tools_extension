@@ -5,10 +5,10 @@
 <div id="content" class="panel panel-default">
 	<?php echo $form['form_open']; ?>
 	<div class="panel-body panel-body-nopadding tab-content col-xs-12 ">
-		<label class="h4 heading" ><?php echo $developer_tools_text_layout_xml_tab; ?></label>
-		<?php if ($developer_tools_text_view_layout_xml) { ?>
+		<label class="h4 heading" ><?php echo $developer_tools_text_layout_xml_title; ?></label>
+		<?php if ($filepath) { ?>
 			<div class="form-group">
-				<label class="control-label col-sm-3 col-xs-12" >Project's layout.xml file:</label>
+				<label class="control-label col-sm-3 col-xs-12" ><?php echo $developer_tools_layout_xml_file; ?></label>
 				<div class="input-group afield col-sm-7 col-xs-12">
 					<a title="<?php echo $developer_tools_text_view_layout_xml?>"
 					   id="view_layout_xml"><?php echo $filepath; ?></a>
