@@ -1023,12 +1023,14 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 			if($this->request->post['clone_as']=='extension'){
 				$result = $this->model_tool_developer_tools->generateExtension($data);
+				$success_text = $this->language->get('developer_tools_text_success_generated_extension');
 			}else if( $this->request->post['clone_as']=='core_template' ){
 				$result = $this->model_tool_developer_tools->cloneCoreTemplate($data);
+				$success_text = $this->language->get('developer_tools_text_success_cloned_template');
 			}
 
 			if($result){
-				$this->session->data['success'] = $this->language->get('developer_tools_text_success_generated_extension');
+				$this->session->data['success'] = $success_text;
 				if(file_exists(DIR_BACKUP . 'developer_tools_autosave_' . $data['extension_txt_id'])){
 					unlink(DIR_BACKUP . 'developer_tools_autosave_' . $data['extension_txt_id']);
 				}
@@ -1065,6 +1067,30 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 		$this->view->batchAssign($this->data);
 		$this->processTemplate('pages/tool/developer_tools_clone_template.tpl');
+	}
+	public function removeCoreTemplate(){
+		$this->loadLanguage('developer_tools/developer_tools');
+		$url = $this->html->getSecureURL('design/template');
+		$tmpl_id = $this->request->get['tmpl_id'];
+		if (!$tmpl_id
+				|| !is_dir(DIR_STOREFRONT.'view/'.$tmpl_id)
+				|| $tmpl_id=='default'
+		){
+			$this->redirect($url);
+		}
+
+		$this->loadModel('tool/developer_tools');
+		$result = $this->model_tool_developer_tools->removeCoreTemplate($tmpl_id);
+
+		if($result){
+			$this->session->data['success'] = $this->language->get('developer_tools_template_remove_success');
+		} else{
+			$error = implode('<br>', $this->model_tools_developer_tools->error);
+			$this->session->data['error'] = $this->language->get('developer_tools_text_error_generated_extension') . '<br>' . $error;
+		}
+
+		$this->redirect($url);
+
 	}
 
 	private function _getCloneForm(){

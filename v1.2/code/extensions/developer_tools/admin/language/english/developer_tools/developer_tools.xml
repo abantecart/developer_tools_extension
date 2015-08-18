@@ -68,6 +68,10 @@
 		<value><![CDATA[ Success: New extention has been generated successfully.]]></value>
 	</definition>
 	<definition>
+		<key>developer_tools_text_success_cloned_template</key>
+		<value><![CDATA[ Success: Template has been cloned successfully.]]></value>
+	</definition>
+	<definition>
 		<key>developer_tools_text_error_generated_extension</key>
 		<value><![CDATA[ Error: Extension creation has failed. Please check form for provided details and required fields.]]></value>
 	</definition>
@@ -484,5 +488,17 @@
 	<definition>
 		<key>developer_tools_info_about_package</key>
 		<value><![CDATA[Note: Here you can automatically generate an archive (.tar.gz) with all extension components. This archive can be provided for installation in AbanteCart admin or Marketplace]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_template_remove_success</key>
+		<value><![CDATA[Success: Core template has been removed successfully.]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_remove_template</key>
+		<value><![CDATA[Remove Core Template]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_text_remove_template_confirm_text</key>
+		<value><![CDATA[Are you sure you want to delete the core template?]]></value>
 	</definition>
 </definitions>

@@ -38,14 +38,75 @@ class ExtensionDeveloperTools extends Extension {
 		return $this->registry->get($key);
 	}
 
+	private function _check_status(){
+		return $this->baseObject->config->get('developer_tools_status') ? true : false;
+	}
+
+	public function onControllerPagesSettingSetting_InitData(){
+		if(!$this->_check_status()){ return false; }
+		$this->baseObject->loadLanguage('developer_tools/developer_tools');
+	}
+
 	public function onControllerPagesSettingSetting_UpdateData(){
+		if(!$this->_check_status()){ return false; }
 		$that = &$this->baseObject;
 		if($this->baseObject_method!='main' || $that->data['active']!='appearance' ){
 			return null;
 		}
-		$that->loadLanguage('developer_tools/developer_tools');
+		$this->_change_clone_button($that);
+	}
+
+	public function onControllerPagesDesignTemplate_InitData(){
+		if(!$this->_check_status()){ return false; }
+		$this->baseObject->loadLanguage('developer_tools/developer_tools');
+	}
+
+	public function onControllerPagesDesignTemplate_UpdateData(){
+		if(!$this->_check_status()){ return false; }
+		$that = &$this->baseObject;
+		if($this->baseObject_method=='edit' ){
+			$this->_change_clone_button($that);
+		}elseif($this->baseObject_method=='main'){
+			/**
+			 * @var STDClass $clone_button
+			 */
+			$templates = $that->view->getData('templates');
+			foreach($templates as $tmpl => &$template){
+				if($template['template_type'] != 'core'){ continue; }
+				//TODO: remove this conditions in the future
+				if (in_array(VERSION, array ('1.2.0', '1.2.1'))){
+					$template['clone_button']->href = $that->html->getSecureURL('p/tool/developer_tools/cloneTemplate', '&proto_template='.$tmpl );
+				} else{
+					$template['clone_button']->href = $that->html->getSecureURL('r/tool/developer_tools/cloneTemplate', '&proto_template='.$tmpl);
+				}
+				$template['clone_button']->attr = ' data-target="#clone_modal" data-toggle="modal" ';
+
+				if($tmpl != 'default'){
+					$remove_button = '<a href="'. $that->html->getSecureURL('tool/developer_tools/removeCoreTemplate', '&tmpl_id=' . $tmpl) .'"
+							target="_template" class="btn tooltips" data-confirmation="delete"
+							data-confirmation-text="'. $that->language->get('developer_tools_text_remove_template_confirm_text') .'"
+							data-original-title="'. $that->language->get('developer_tools_text_remove_template') .'"><i class="fa fa-trash fa-lg"></i></a>';
+
+					$that->view->addHookVar('template_control_buttons_'.$tmpl, $remove_button);
+				}
+
+			}
+			$that->view->assign('templates', $templates);
+			$this->_add_modal($that);
+		}
+
+	}
+
+	/**
+	 * @param  AController $that :  baseObject
+	 */
+	private function _change_clone_button($that){
+		if(!$this->_check_status()){ return false; }
+		/**
+		 * @var STDClass $clone_button
+		 */
 		$clone_button = $that->view->getData('clone_button');
-		//TODO: remove it in the future
+		//TODO: remove this conditions in the future
 		if(in_array(VERSION, array('1.2.0','1.2.1'))){
 			$clone_button->href = $that->html->getSecureURL('p/tool/developer_tools/cloneTemplate');
 		}else{
@@ -55,19 +116,24 @@ class ExtensionDeveloperTools extends Extension {
 
 		$that->view->assign('clone_button', $clone_button);
 
-		$modal = $that->html->buildElement(
-					array('type' => 'modal',
-						'id' => 'clone_modal',
-						'modal_type' => 'lg',
-						'data_source' => 'ajax'
-					)
-		);
-
-		$that->view->addHookVar('common_content_buttons', $modal);
-
+		$this->_add_modal($that);
 	}
 
+	private function _add_modal($that){
+		$modal = $that->html->buildElement(
+					array(
+							'type' => 'modal',
+							'id' => 'clone_modal',
+							'modal_type' => 'lg',
+							'data_source' => 'ajax'
+					)
+		);
+		$that->view->addHookVar('common_content_buttons', $modal);
+	}
+
+
 	public function onControllerPagesDesignBlocks_InitData() {
+		if(!$this->_check_status()){ return false; }
 		$that = $this->baseObject;
 		$method_name = $this->baseObject_method;
 
@@ -95,6 +161,7 @@ class ExtensionDeveloperTools extends Extension {
 	}
 
 	public function onControllerCommonListingGrid_InitData(){
+		if(!$this->_check_status()){ return false; }
 		$data = &$this->baseObject->data;
 		if($data['table_id'] == 'block_grid'){
 			$data['actions']['edit']['href'] = $this->html->getSecureURL('design/blocks/edit', '&block_id=%ID%');
@@ -103,7 +170,7 @@ class ExtensionDeveloperTools extends Extension {
 	}
 
 	public function onControllerResponsesListingGridBlocksGrid_UpdateData() {
-
+		if(!$this->_check_status()){ return false; }
 		$method_name = $this->baseObject_method;
 		if ($method_name == 'main') {
 			$response = $this->baseObject->data;
@@ -134,6 +201,7 @@ class ExtensionDeveloperTools extends Extension {
 
 
 	public function onControllerCommonHeader_UpdateData(){
+		if(!$this->_check_status()){ return false; }
 		$that = $this->baseObject;
 		$enabled = $that->config->get('developer_tools_status');
 

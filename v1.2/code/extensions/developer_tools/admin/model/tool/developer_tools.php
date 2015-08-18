@@ -26,12 +26,18 @@ require_once(DIR_EXT . "developer_tools/core/lib/array2xml.php");
 /**
  * Class ModelToolDeveloperTools
  * @property ModelToolDeveloperToolsLayoutXml $model_tool_developer_tools_layout_xml
+ * @property ModelSettingSetting $model_setting_setting
  */
 class ModelToolDeveloperTools extends Model{
 	public $error = array ();
 	private $copied = array (); // array with copied files or directories by method _copyDir. do not forget reset it after method call!!!
 	private $sections = array ('admin', 'storefront');
 
+	/**
+	 * @param array $data
+	 * @return bool
+	 * @throws AException
+	 */
 	public function generateExtension($data = array ()){
 		$project_xml = $config_xml = array ();
 		//when clone template
@@ -372,8 +378,8 @@ class ModelToolDeveloperTools extends Model{
 				'item' => array (
 						'@attributes'   => array (
 								'id' => $data['extension_txt_id'] . "_status"),
-								'type'          => 'checkbox',
-								'default_value' => '0')
+						'type'          => 'checkbox',
+						'default_value' => '0')
 		);
 		$config_xml['note'] = $data['help_note'] ? true : false;
 
@@ -452,6 +458,12 @@ class ModelToolDeveloperTools extends Model{
 	}
 
 	// method prepares data before save
+	/**
+	 * @param string $key
+	 * @param string|array $value
+	 * @param array $data
+	 * @return mixed
+	 */
 	private function _prepareData($key, $value, $data = array ()){
 		switch($key){
 			case 'extension_txt_id':
@@ -496,6 +508,10 @@ class ModelToolDeveloperTools extends Model{
 	}
 
 	//method writes main.php
+	/**
+	 * @param array $data
+	 * @return int
+	 */
 	private function _write_main_file($data){
 
 		// build main.php
@@ -555,13 +571,17 @@ class ModelToolDeveloperTools extends Model{
 	/*
 	 * method copy(or clone) directory structure of default template(language)for extension
 	 * */
+	/**
+	 * @param array $project_xml
+	 * @return bool
+	 */
 	private function _replicate_default_dir_tree_(&$project_xml){
 
 		if (!in_array($project_xml['extension_type'], array ('template', 'language'))){
 			return false;
 		}
 		if ($project_xml['extension_type'] == 'template'){
-			$src_template = DIR_STOREFRONT.'view/'.$project_xml['proto_template'];
+			$src_template = DIR_STOREFRONT . 'view/' . $project_xml['proto_template'];
 			$this->copyTemplate($project_xml, $src_template);
 		} else{
 			$result = $this->copyLanguage($project_xml);
@@ -572,6 +592,12 @@ class ModelToolDeveloperTools extends Model{
 		return true;
 	}
 
+	/**
+	 * @param array $project_xml
+	 * @param string $src_template_dir
+	 * @param string $dst_template_dir
+	 * @return bool
+	 */
 	public function copyTemplate($project_xml, $src_template_dir = '', $dst_template_dir = ''){
 
 		$src_template_dir = !$src_template_dir ? DIR_STOREFRONT . '/view/default' : $src_template_dir;
@@ -631,12 +657,16 @@ class ModelToolDeveloperTools extends Model{
 						`value`,
 						NOW()
 				FROM " . $this->db->table('settings') . "
-				WHERE `group`='".($source=='defaut' ? 'appearance' : $source)."'";
+				WHERE `group`='" . ($source == 'defaut' ? 'appearance' : $source) . "'";
 		$this->db->query($sql);
-
-
+		return true;
 	}
 
+	/**
+	 * @param array $project_xml
+	 * @param string $src_language_name
+	 * @return bool
+	 */
 	public function copyLanguage($project_xml, $src_language_name = 'english'){
 		$src_language_name = !$src_language_name ? 'english' : $src_language_name;
 		$copy_file_content = $project_xml['copy_default'];
@@ -673,6 +703,7 @@ class ModelToolDeveloperTools extends Model{
 		}
 		return true;
 	}
+
 	/**
 	 * @param $rt
 	 * @return string
@@ -738,6 +769,10 @@ class ModelToolDeveloperTools extends Model{
 	}
 
 
+	/**
+	 * @param array $data
+	 * @return bool
+	 */
 	public function saveConfigXml($data = array ()){
 		$dir = DIR_EXT . $data['extension_txt_id'] . '/';
 		$xml_data = array (
@@ -787,6 +822,11 @@ class ModelToolDeveloperTools extends Model{
 		}
 	}
 
+	/**
+	 * @param array $data
+	 * @param string $language_name
+	 * @return bool|null
+	 */
 	private function _save_base_language_xml($data = array (), $language_name){
 		$path = DIR_EXT . $data['extension_txt_id'] . '/admin/language/' . $language_name . '/' . $data['extension_txt_id'] . '/' . $data['extension_txt_id'] . '.xml';
 		if (is_file($path)){
@@ -799,6 +839,11 @@ class ModelToolDeveloperTools extends Model{
 		return $this->saveLanguageXML($path, $content);
 	}
 
+	/**
+	 * @param string $path
+	 * @param array $data
+	 * @return bool
+	 */
 	public function saveLanguageXML($path, $data = array ()){
 		$xml_data = array ('definition' => array ());
 		foreach ($data as $key => $value){
@@ -827,6 +872,10 @@ class ModelToolDeveloperTools extends Model{
 		}
 	}
 
+	/**
+	 * @param array $data
+	 * @return bool
+	 */
 	public function saveProjectXml($data = array ()){
 		$dir = DIR_EXT . 'developer_tools/projects/';
 		if (!is_dir($dir)){
@@ -931,6 +980,10 @@ class ModelToolDeveloperTools extends Model{
 		}
 	}
 
+	/**
+	 * @param array $data
+	 * @return bool|string
+	 */
 	public function generatePackage($data = array ()){
 		$project_info = $this->getProjectConfig($this->session->data['dev_tools_prj_id']);
 		$extension = $project_info['extension_txt_id'];
@@ -1012,7 +1065,12 @@ class ModelToolDeveloperTools extends Model{
 		}
 	}
 
-	private function _chmod_R($path, $filemode, $dirmode){
+	/**
+	 * @param string$path
+	 * @param int $filemode
+	 * @param int $dirmode
+	 */
+	private function _chmod_R($path, $filemode=0777, $dirmode=0777){
 		if (is_dir($path)){
 			if (!chmod($path, $dirmode)){
 				$dirmode_str = decoct($dirmode);
@@ -1043,6 +1101,12 @@ class ModelToolDeveloperTools extends Model{
 		}
 	}
 
+	/**
+	 * @param string $src - source path
+	 * @param string $dst - destination path
+	 * @param bool|true $copy_file_content
+	 * @return bool
+	 */
 	private function _copyDir($src, $dst, $copy_file_content = true){
 		if (is_dir($src)){
 			if (!is_dir($dst)){
@@ -1068,6 +1132,9 @@ class ModelToolDeveloperTools extends Model{
 	}
 
 
+	/**
+	 * @return array
+	 */
 	public function getProjectList(){
 		$projects = $prj = array ();
 		if (is_dir(DIR_EXT . 'developer_tools/projects')){
@@ -1126,6 +1193,10 @@ class ModelToolDeveloperTools extends Model{
 
 	}
 
+	/**
+	 * @param string $prj_id
+	 * @return array
+	 */
 	public function getLanguageFiles($prj_id){
 		$output = array ();
 
@@ -1170,6 +1241,10 @@ class ModelToolDeveloperTools extends Model{
 		return $output;
 	}
 
+	/**
+	 * @param string $pattern
+	 * @return array
+	 */
 	private function _get_xml_files($pattern){
 		$files = array ();
 		foreach (glob($pattern . '/*') as $dir){
@@ -1184,6 +1259,9 @@ class ModelToolDeveloperTools extends Model{
 		return $files;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getGenericBlocksLIst(){
 		$sql = "SELECT block_id, block_txt_id
 				FROM " . $this->db->table('blocks') . "
@@ -1214,15 +1292,22 @@ class ModelToolDeveloperTools extends Model{
 		return $output;
 	}
 
+	/**
+	 * @param $pattern
+	 * @return array
+	 */
 	private function _glob_recursive($pattern){
 		$files = glob($pattern);
 		foreach (glob(dirname($pattern) . '/*', GLOB_NOSORT) as $dir){
-			$files = array_merge($files, $this->_glob_recursive($dir . '/' . basename($pattern), $flags));
+			$files = array_merge($files, $this->_glob_recursive($dir . '/' . basename($pattern)));
 		}
 
 		return $files;
 	}
 
+	/**
+	 * @return mixed
+	 */
 	public function getDefaultGenericBlocksTemplates(){
 		$path = DIR_ROOT . '/storefront/view/default/template/';
 		$files = $this->_glob_recursive($path . '*');
@@ -1237,37 +1322,164 @@ class ModelToolDeveloperTools extends Model{
 		return $output;
 	}
 
-	public function cloneCoreTemplate($data=array()){
+	/**
+	 * @param array $data
+	 * @return bool
+	 * @throws AException
+	 */
+	public function cloneCoreTemplate($data = array ()){
+		//when clone template
+		if (has_value($data['clone_method'])){
+			$project_xml['clone_method'] = $data['clone_method'];
+			$project_xml['proto_template'] = $data['proto_template'];
+		}
 
-			//when clone template
-			if (has_value($data['clone_method'])){
-				$project_xml['clone_method'] = $data['clone_method'];
-				$project_xml['proto_template'] = $data['proto_template'];
-			}
+		$template_txt_id = $data['extension_txt_id'] = $this->_prepareData('extension_txt_id', $data['extension_txt_id']);
+		if (!$data['extension_txt_id']){
+			$this->error['extension_txt_id'] = 'template text ID required.';
+			return false;
+		}
 
-			$template_txt_id = $data['extension_txt_id'] = $this->_prepareData('extension_txt_id', $data['extension_txt_id']);
-			if (!$data['extension_txt_id']){
-				$this->error['extension_txt_id'] = 'template text ID required.';
-				return false;
-			}
+		$project_xml['extension_txt_id'] = $template_txt_id;
 
-			$project_xml['extension_txt_id'] = $template_txt_id;
-
-			if (is_dir(DIR_STOREFRONT .'view/'. $template_txt_id)){
-				$this->error[] = 'Core Template with text id "' . $template_txt_id . '" is already exists! Delete it first and refresh page.';
-				return false;
-			}
-			if (!is_dir(DIR_STOREFRONT .'view/'. $data['proto_template'])){
-				$this->error[] = 'Core Template "' . $data['proto_template'] . '" does not exists!';
-				return false;
-			}
+		if (is_dir(DIR_STOREFRONT . 'view/' . $template_txt_id)){
+			$this->error[] = 'Core Template with text id "' . $template_txt_id . '" is already exists! Delete it first and refresh page.';
+			return false;
+		}
+		if (!is_dir(DIR_STOREFRONT . 'view/' . $data['proto_template'])){
+			$this->error[] = 'Core Template "' . $data['proto_template'] . '" does not exists!';
+			return false;
+		}
 
 		//now copy files
-		$this->copyTemplate($project_xml,DIR_STOREFRONT .'view/'.$data['proto_template'], DIR_STOREFRONT .'view/'.$template_txt_id);
-
+		$this->copyTemplate($project_xml, DIR_STOREFRONT . 'view/' . $data['proto_template'], DIR_STOREFRONT . 'view/' . $template_txt_id);
+		//build layout.xml file and save it into storefront/view/$template_txt_id directory
 		$this->load->model('tool/developer_tools_layout_xml');
-		$this->model_tool_developer_tools_layout_xml->saveXml($template_txt_id, $data['proto_template'], DIR_STOREFRONT .'view/'.$template_txt_id);
 
+		$xml_result = $this->model_tool_developer_tools_layout_xml->saveXml($template_txt_id, $data['proto_template'], DIR_STOREFRONT . 'view/' . $template_txt_id);
+		//then import layout.xml into database
+		if ($xml_result){
+			$layout_xml_filename = DIR_STOREFRONT . 'view/' . $template_txt_id . '/layout.xml';
+			if (is_file($layout_xml_filename) && is_readable($layout_xml_filename)){
+				$xml_string = file_get_contents($layout_xml_filename);
+				$this->load->model('tool/backup');
+				$this->model_tool_backup->load($xml_string);
+			} else{
+				$this->error[] = 'Something went wrong when we tried to read just generated file ' . $layout_xml_filename . ' . Probably it non-readable or does not exists.';
+				return false;
+			}
+		} else{
+			$this->error[] = 'Error during export layouts from database to file ' . $layout_xml_filename . '.';
+			return false;
+		}
+
+		//now copy settings
+		//
+		$proto_store_id = null;
+		if ($data['proto_template'] == 'default'){
+			$settings_group = 'appearance';
+			$proto_store_id = 0;
+		} else{
+			$settings_group = $data['proto_template'];
+			//need to know what store_id of clone
+			$result = $this->db->query("SELECT DISTINCT `store_id`
+										FROM " . $this->db->table("settings") . "
+									    WHERE `group` = '" . $this->db->escape($group) . "'");
+			$store_ids = array ();
+			$current_store_id = $this->session->data['current_store_id'];
+			foreach ($result->rows as $row){
+				if ($row['store_id'] == $current_store_id){
+					$proto_store_id = $row['store_id'];
+					break;
+				}
+				$store_ids[] = $row['store_id'];
+			}
+			//if we have no setting for proto-template  by current selected store_id take first
+			if ($proto_store_id === null){
+				$proto_store_id = $store_ids[0];
+			}
+			unset($store_ids);
+		}
+
+		$this->load->model('setting/setting');
+		$settings = $this->model_setting_setting->getSetting($settings_group, $proto_store_id);
+		if ($settings){
+			$this->model_setting_setting->editSetting($template_txt_id, $settings, $current_store_id);
+		}
+
+		//and finally set template as default for current store
+		$this->model_setting_setting->editSetting('appearance', array ('config_storefront_template' => $template_txt_id), $current_store_id);
+		return true;
+	}
+
+
+	public function removeCoreTemplate($template_txt_id){
+
+		if(!$template_txt_id || $template_txt_id == 'default'){
+			return false;
+		}
+
+		// delete template layouts
+		$layout = new ALayoutManager($template_txt_id);
+		$layout->deleteTemplateLayouts();
+
+		$this->_remove_dir(DIR_STOREFRONT.'view/'.$template_txt_id);
+
+		if($this->error){
+			return false;
+		}
+
+
+	/*	$this->loadModel('setting/setting');
+
+		$store_id = 0;
+		if ($this->request->get['store_id']){
+			$store_id = $this->request->get['store_id'];
+		} else{
+			$store_id = $this->config->get('config_store_id');
+		}
+
+		if ($this->request->get['tmpl_id']){
+			$this->model_setting_setting->editSetting('appearance',
+					array ('config_storefront_template' => $this->request->get['tmpl_id']),
+					$store_id
+			);
+			$this->session->data['success'] = $this->language->get('text_remove_success');
+		} else{
+			$this->session->data['warning'] = $this->language->get('text_remove_error');
+		}*/
+
+		return true;
+	}
+
+	/**
+	 * function removes directory with files inside
+	 * @param string $dir - full path
+	 * @return bool
+	 */
+	private function _remove_dir($dir){
+
+		if (!is_dir($dir)) {
+			return false;
+		}
+
+
+		$objects = scandir($dir);
+		foreach ($objects as $obj) {
+			if ($obj != "." && $obj != "..") {
+				chmod($dir . "/" . $obj, 0777);
+				$err = is_dir($dir . "/" . $obj) ? $this->_remove_Dir($dir . "/" . $obj) : unlink($dir . "/" . $obj);
+				if (!$err) {
+					$error = "Error: Can't to delete file or directory: '" . $dir . "/" . $obj . "'.";
+					$error = new AError ($error);
+					$error->toLog()->toDebug();
+					$this->error = $error;
+					return false;
+				}
+			}
+		}
+		reset($objects);
+		rmdir($dir);
 		return true;
 	}
 

@@ -134,6 +134,7 @@ class ControllerResponsesToolDeveloperTools extends AController {
 				array('type'     => 'selectbox',
 				      'name'     => 'proto_template',
 				      'options'  => $options,
+					  'value'    => $this->request->get['proto_template'],
 				      'required' => true,
 				      'style'    => 'large-field',
 				));
