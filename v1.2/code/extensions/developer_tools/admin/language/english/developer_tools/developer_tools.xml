@@ -450,15 +450,15 @@
 		<value><![CDATA[Which template to clone?]]></value>
 	</definition>
 	<definition>
-		<key>developer_tools_entry_clone_as</key>
-		<value><![CDATA[Clone as]]></value>
+		<key>developer_tools_entry_clone_to</key>
+		<value><![CDATA[Clone to]]></value>
 	</definition>
 	<definition>
-		<key>developer_tools_entry_clone_as_extension</key>
+		<key>developer_tools_entry_clone_to_extension</key>
 		<value><![CDATA[Extension]]></value>
 	</definition>
 	<definition>
-		<key>developer_tools_entry_clone_as_core_template</key>
+		<key>developer_tools_entry_clone_to_core_template</key>
 		<value><![CDATA[Core Template]]></value>
 	</definition>
 	<definition>

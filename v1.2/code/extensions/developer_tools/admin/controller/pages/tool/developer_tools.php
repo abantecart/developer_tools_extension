@@ -1021,10 +1021,10 @@ class ControllerPagesToolDeveloperTools extends AController{
 			$data['hook_file'] = $data['extension_txt_id'] . '_hook.php';
 			$data['extension_admin_language_files'] = array('english');
 
-			if($this->request->post['clone_as']=='extension'){
+			if($this->request->post['clone_to']=='extension'){
 				$result = $this->model_tool_developer_tools->generateExtension($data);
 				$success_text = $this->language->get('developer_tools_text_success_generated_extension');
-			}else if( $this->request->post['clone_as']=='core_template' ){
+			}else if( $this->request->post['clone_to']=='core_template' ){
 				$result = $this->model_tool_developer_tools->cloneCoreTemplate($data);
 				$success_text = $this->language->get('developer_tools_text_success_cloned_template');
 			}

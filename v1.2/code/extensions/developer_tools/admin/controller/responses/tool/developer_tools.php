@@ -139,12 +139,12 @@ class ControllerResponsesToolDeveloperTools extends AController {
 				      'style'    => 'large-field',
 				));
 
-		$this->data['form']['fields']['common']['clone_as'] = $form->getFieldHtml(
+		$this->data['form']['fields']['common']['clone_to'] = $form->getFieldHtml(
 				array('type'     => 'radio',
-				      'name'     => 'clone_as',
+				      'name'     => 'clone_to',
 				      'options'  => array(
-						        'extension' => $this->language->get('developer_tools_entry_clone_as_extension'),
-				                'core_template'=> $this->language->get('developer_tools_entry_clone_as_core_template')),
+						        'extension' => $this->language->get('developer_tools_entry_clone_to_extension'),
+				                'core_template'=> $this->language->get('developer_tools_entry_clone_to_core_template')),
 					  'value' => 'extension',
 				      'style'    => 'large-field',
 				));
