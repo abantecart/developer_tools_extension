@@ -296,6 +296,7 @@ class ModelToolDeveloperTools extends Model{
 						"\$layout = new ALayoutManager(\$extension_id);\n" .
 						"\$layout->deleteTemplateLayouts();";
 			}
+
 			if (!is_file($extension_directory . '/uninstall.php')){
 				file_put_contents($extension_directory . '/uninstall.php', $content . $uninstall_content);
 			}
@@ -308,7 +309,9 @@ class ModelToolDeveloperTools extends Model{
 				file_put_contents($extension_directory . '/install.sql', "");
 			}
 			if (!is_file($extension_directory . '/uninstall.sql')){
-				file_put_contents($extension_directory . '/uninstall.sql', "");
+				$sql = "DELETE FROM `ac_settings` WHERE `group`= '".$data['extension_txt_id']."';";
+				file_put_contents($extension_directory . '/uninstall.sql', $sql);
+				unset($sql);
 			}
 		}
 
@@ -414,6 +417,9 @@ class ModelToolDeveloperTools extends Model{
 			unset($ex);
 			$em = new AExtensionManager();
 			$em->install($project_xml['extension_txt_id'], getExtensionConfigXml($project_xml['extension_txt_id']));
+
+			$this->_clone_template_settings($data);
+
 			//enable
 			$em->editSetting($project_xml['extension_txt_id'], array ($project_xml['extension_txt_id'] . '_status' => 1));
 		}
@@ -1373,6 +1379,15 @@ class ModelToolDeveloperTools extends Model{
 			return false;
 		}
 
+		$this->_clone_template_settings($data);
+
+		//and finally set template as default for current store
+		$this->model_setting_setting->editSetting('appearance', array ('config_storefront_template' => $template_txt_id), $current_store_id);
+		return true;
+	}
+
+	private function _clone_template_settings($data){
+
 		//now copy settings
 		//
 		$proto_store_id = null;
@@ -1404,14 +1419,10 @@ class ModelToolDeveloperTools extends Model{
 		$this->load->model('setting/setting');
 		$settings = $this->model_setting_setting->getSetting($settings_group, $proto_store_id);
 		if ($settings){
-			$this->model_setting_setting->editSetting($template_txt_id, $settings, $current_store_id);
+			$this->model_setting_setting->editSetting($data['extension_txt_id'], $settings, $current_store_id);
 		}
 
-		//and finally set template as default for current store
-		$this->model_setting_setting->editSetting('appearance', array ('config_storefront_template' => $template_txt_id), $current_store_id);
-		return true;
 	}
-
 
 	public function removeCoreTemplate($template_txt_id){
 
