@@ -99,6 +99,7 @@ class ExtensionDeveloperTools extends Extension {
 
 	/**
 	 * @param  AController $that :  baseObject
+	 * @return bool
 	 */
 	private function _change_clone_button($that){
 		if(!$this->_check_status()){ return false; }
@@ -106,16 +107,16 @@ class ExtensionDeveloperTools extends Extension {
 		 * @var STDClass $clone_button
 		 */
 		$clone_button = $that->view->getData('clone_button');
-		//TODO: remove this conditions in the future
-		if(in_array(VERSION, array('1.2.0','1.2.1'))){
-			$clone_button->href = $that->html->getSecureURL('p/tool/developer_tools/cloneTemplate');
-		}else{
-			$clone_button->href = $that->html->getSecureURL('r/tool/developer_tools/cloneTemplate');
+		if($clone_button){
+			//TODO: remove this conditions in the future
+			if (in_array(VERSION, array ('1.2.0', '1.2.1'))){
+				$clone_button->href = $that->html->getSecureURL('p/tool/developer_tools/cloneTemplate');
+			} else{
+				$clone_button->href = $that->html->getSecureURL('r/tool/developer_tools/cloneTemplate');
+			}
+			$clone_button->attr = ' data-target="#clone_modal" data-toggle="modal" ';
+			$that->view->assign('clone_button', $clone_button);
 		}
-		$clone_button->attr = ' data-target="#clone_modal" data-toggle="modal" ';
-
-		$that->view->assign('clone_button', $clone_button);
-
 		$this->_add_modal($that);
 	}
 
