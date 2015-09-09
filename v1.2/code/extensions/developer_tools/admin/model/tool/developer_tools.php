@@ -27,6 +27,7 @@ require_once(DIR_EXT . "developer_tools/core/lib/array2xml.php");
  * Class ModelToolDeveloperTools
  * @property ModelToolDeveloperToolsLayoutXml $model_tool_developer_tools_layout_xml
  * @property ModelSettingSetting $model_setting_setting
+ * @property ModelToolBackup $model_tool_backup
  */
 class ModelToolDeveloperTools extends Model{
 	public $error = array ();
@@ -292,9 +293,11 @@ class ModelToolDeveloperTools extends Model{
 			if ($project_xml['extension_type'] == 'template'){
 				$uninstall_content =
 						"\$extension_id = '" . $data['extension_txt_id'] . "';\n" .
-						"// delete template layouts\n" .
+						"// delete template layouts\n".
+						"try{\n".
 						"\$layout = new ALayoutManager(\$extension_id);\n" .
-						"\$layout->deleteTemplateLayouts();";
+						"\$layout->deleteTemplateLayouts();\n" .
+						"}catch(AException \$e){}\n";
 			}
 
 			if (!is_file($extension_directory . '/uninstall.php')){
@@ -337,25 +340,6 @@ class ModelToolDeveloperTools extends Model{
 			$project_xml['icon'] = 'icon.png';
 		}
 
-
-		/*if($this->request->files['preview']){
-
-			foreach($this->request->files['preview']['name'] as $k=>$item){
-				if($this->request->files['preview']['error'][$k]){
-					$this->error[] = getTextUploadError($this->request->files['preview']['error'][$k]);
-				}
-
-				if($this->request->files['preview']['type'][$k]=='image/png' && $this->request->files['preview']['size'][$k]>0){
-					if(!is_dir($extension_directory.'/image')){
-						mkdir($extension_directory.'/image',0777);
-					}
-					move_uploaded_file($this->request->files['preview']["tmp_name"][$k],$extension_directory.'/image/preview'.$k.'.png');
-					$project_xml['preview'][] = 'preview'.$k.'.png';
-					$config_xml['preview'][] = 'preview'.$k.'.png';
-				}
-			}
-		} */
-
 		$project_xml['version'] = $config_xml['version'] = $data['version'];
 		$project_xml['category'] = $config_xml['category'] = $data['extension_category'];
 
@@ -363,19 +347,6 @@ class ModelToolDeveloperTools extends Model{
 		$project_xml['cartversions'] = $config_xml['cartversions'] = $data['cartversions'];
 		$project_xml['priority'] = $config_xml['priority'] = (int)$data['priority'];
 
-
-		/*if($data['dependency']){
-			$project_xml['dependencies'] = array();
-			foreach($data['dependency']['name'] as $k => $dep_name){
-				if($dep_name){
-					$project_xml['dependencies']['item'][] = array('@attributes' => array(
-							'prior_version' => $data['dependency']['prior_versions'][$k],
-							'version'       => $data['dependency']['versions'][$k]),
-																   '@value'      => $dep_name);
-				}
-			}
-			$config_xml['dependencies'] = $project_xml['dependencies'];
-		}*/
 
 		$config_xml['settings'] = array (
 				'item' => array (
@@ -402,8 +373,9 @@ class ModelToolDeveloperTools extends Model{
 
 		// change mode recurcive
 		$this->_chmod_R($extension_directory, 0777, 0777);
-
-		$this->_replicate_default_dir_tree_($project_xml); // when cloning template check clone_method var
+		// when cloning template check clone_method var
+		// plus add tpls for case "clone to ext"
+		$this->_replicate_default_dir_tree_($project_xml);
 
 		// save project xml
 		$this->saveProjectXml($project_xml);
@@ -604,7 +576,7 @@ class ModelToolDeveloperTools extends Model{
 	 * @param string $dst_template_dir
 	 * @return bool
 	 */
-	public function copyTemplate($project_xml, $src_template_dir = '', $dst_template_dir = ''){
+	public function copyTemplate(&$project_xml, $src_template_dir = '', $dst_template_dir = ''){
 
 		$src_template_dir = !$src_template_dir ? DIR_STOREFRONT . '/view/default' : $src_template_dir;
 
@@ -1281,9 +1253,11 @@ class ModelToolDeveloperTools extends Model{
 		return $output;
 	}
 
-	/*
+	/**
 	 * function search template files for block on filesystem
 	 * When we find new tpl, that not listed in main.php - we will add it
+	 * @param string $path
+	 * @return array
 	 */
 	public function getGenericBlocksTemplates($path){
 		$files = $this->_glob_recursive($path . '*');
@@ -1386,10 +1360,13 @@ class ModelToolDeveloperTools extends Model{
 		return true;
 	}
 
+	/**
+	 * @param array $data
+	 * @throws AException
+	 */
 	private function _clone_template_settings($data){
 
 		//now copy settings
-		//
 		$proto_store_id = null;
 		if ($data['proto_template'] == 'default'){
 			$settings_group = 'appearance';
@@ -1419,6 +1396,8 @@ class ModelToolDeveloperTools extends Model{
 		$this->load->model('setting/setting');
 		$settings = $this->model_setting_setting->getSetting($settings_group, $proto_store_id);
 		if ($settings){
+			//remove settings related to core
+			unset($settings['config_storefront_template'], $settings['admin_template']);
 			$this->model_setting_setting->editSetting($data['extension_txt_id'], $settings, $current_store_id);
 		}
 
@@ -1430,36 +1409,17 @@ class ModelToolDeveloperTools extends Model{
 			return false;
 		}
 
-		// delete template layouts
-		$layout = new ALayoutManager($template_txt_id);
-		$layout->deleteTemplateLayouts();
+		// delete template layouts safely
+		try{
+			$layout = new ALayoutManager($template_txt_id);
+			$layout->deleteTemplateLayouts();
+		}catch(AException $e){}
 
 		$this->_remove_dir(DIR_STOREFRONT.'view/'.$template_txt_id);
 
 		if($this->error){
 			return false;
 		}
-
-
-	/*	$this->loadModel('setting/setting');
-
-		$store_id = 0;
-		if ($this->request->get['store_id']){
-			$store_id = $this->request->get['store_id'];
-		} else{
-			$store_id = $this->config->get('config_store_id');
-		}
-
-		if ($this->request->get['tmpl_id']){
-			$this->model_setting_setting->editSetting('appearance',
-					array ('config_storefront_template' => $this->request->get['tmpl_id']),
-					$store_id
-			);
-			$this->session->data['success'] = $this->language->get('text_remove_success');
-		} else{
-			$this->session->data['warning'] = $this->language->get('text_remove_error');
-		}*/
-
 		return true;
 	}
 
@@ -1493,5 +1453,4 @@ class ModelToolDeveloperTools extends Model{
 		rmdir($dir);
 		return true;
 	}
-
 }

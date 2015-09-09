@@ -271,6 +271,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 	/**
 	 * @param AForm $form
 	 * @param string $mode - can be "full" or "short" (for creating and editing)
+	 * @return bool
 	 */
 	private function _build_common($form, $mode = 'full'){
 		$val = $this->data['extension_type'];
@@ -1021,10 +1022,12 @@ class ControllerPagesToolDeveloperTools extends AController{
 			$data['hook_file'] = $data['extension_txt_id'] . '_hook.php';
 			$data['extension_admin_language_files'] = array('english');
 
-			if($this->request->post['clone_to']=='extension'){
+			if($data['clone_to']=='extension'){
+				//if need clone as extension we need to create tpls-list, that will be placed into main.php file of extension
+				$data['views'] = $this->model_tool_developer_tools->getTemplateViewList($data['proto_template']);
 				$result = $this->model_tool_developer_tools->generateExtension($data);
 				$success_text = $this->language->get('developer_tools_text_success_generated_extension');
-			}else if( $this->request->post['clone_to']=='core_template' ){
+			}else if( $data['clone_to']=='core_template' ){
 				$result = $this->model_tool_developer_tools->cloneCoreTemplate($data);
 				$success_text = $this->language->get('developer_tools_text_success_cloned_template');
 			}
