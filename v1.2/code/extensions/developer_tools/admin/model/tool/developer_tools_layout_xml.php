@@ -46,7 +46,12 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 		$xml = Array2XML::createXML('template_layouts', $xml_data);
 		$xml = $xml->saveXML();
 
-		$path = !$path ? DIR_EXT . $extension_txt_id . '/layout.xml' : rtrim($path, '/layout.xml') . '/layout.xml';
+		$core_path = $path;
+		if(substr($core_path, -11) == '/layout.xml') {
+			$core_path = substr($core_path, 0, -11);
+		}
+
+		$path = !$path ? DIR_EXT . $extension_txt_id . '/layout.xml' : $core_path . '/layout.xml';
 
 		if ($xml){
 			$result = file_put_contents($path, $xml);

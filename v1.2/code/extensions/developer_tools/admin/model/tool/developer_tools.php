@@ -1322,6 +1322,10 @@ class ModelToolDeveloperTools extends Model{
 
 		$project_xml['extension_txt_id'] = $template_txt_id;
 
+		if (!is_writeable(DIR_STOREFRONT . 'view/')){
+			$this->error[] = 'Cannot to clone template. Directory '.DIR_STOREFRONT . 'view/ is not writable. Please change permissions and repeat attempt.';
+			return false;
+		}
 		if (is_dir(DIR_STOREFRONT . 'view/' . $template_txt_id)){
 			$this->error[] = 'Core Template with text id "' . $template_txt_id . '" is already exists! Delete it first and refresh page.';
 			return false;

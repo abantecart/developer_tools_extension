@@ -39,7 +39,7 @@
 
 	<div class="panel-footer col-xs-12">
 		<div class="text-center">
-			<button id="clone_btn" class="btn btn-primary">
+			<button id="clone_btn" class="btn btn-primary lock-on-click">
 			<i class="fa fa-save fa-fw"></i> <?php echo $form['submit']->text; ?>
 			</button>
 			<a class="btn btn-default" data-dismiss="modal">
@@ -68,7 +68,29 @@
 			error_alert('Please fill all required fields!');
 			return false;
 		}
-	})
+	});
+
+
+	$('#extFrm').submit(function () {
+		doClone();
+		return false;
+	});
+
+
+	function doClone(){
+		$.ajax({
+			url: '<?php echo $form['form_open']->action; ?>',
+		    type: 'POST',
+		    data: $('#extFrm').serializeArray(),
+		    dataType: 'json',
+		    success: function (data) {
+				success_alert(data.result_text);
+			    goTo(data['redirect_url'])
+		    }
+		});
+	}
+
+
 
 
 </script>

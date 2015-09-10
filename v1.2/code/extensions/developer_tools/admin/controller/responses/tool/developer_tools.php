@@ -46,35 +46,6 @@ class ControllerResponsesToolDeveloperTools extends AController {
 	public function cloneTemplate(){
 		$this->loadLanguage('developer_tools/developer_tools');
 
-		if($this->request->is_POST()){
-			$this->loadModel('tool/developer_tools');
-			$data = $this->request->post;
-			$data['category'] = 'template';
-			$data['extension_type'] = 'template';
-			$data['version'] = '1.0.0';
-			$data['cart_version'] = MASTER_VERSION . '.' . MINOR_VERSION;
-			$data['install_php'] = 1;
-			$data['install_sql'] = 1;
-			$data['route'] = $data['extension_txt_id'];
-			$data['hook_file'] = $data['extension_txt_id'] . '_hook.php';
-
-
-			$result = $this->model_tool_developer_tools->generateExtension($data);
-
-			if($result){
-				$this->session->data['success'] = $this->language->get('developer_tools_text_success_generated_extension');
-				if(file_exists(DIR_BACKUP . 'developer_tools_autosave_' . $this->request->post['extension_id'])){
-					unlink(DIR_BACKUP . 'developer_tools_autosave_' . $this->request->post['extension_id']);
-				}
-				$this->redirect($this->html->getSecureURL('tool/developer_tools'));
-			} else{
-				$error = implode('<br>', $this->model_tools_developer_tools->error);
-				$this->view->assign('error_warning', $this->language->get('developer_tools_text_error_generated_extension') . '<br>' . $error);
-				foreach($this->request->post as $key => $value){
-					$this->data[$key] = $value;
-				}
-			}
-		}
 
 		if(!is_writable(DIR_EXT)){
 			$this->view->assign('error_warning', $this->language->get('developer_tools_error_write_permission'));
@@ -91,7 +62,7 @@ class ControllerResponsesToolDeveloperTools extends AController {
 
 		$this->view->assign('cancel', $this->html->getSecureURL('developer_tools_name'));
 
-		$this->data['action'] = $this->html->getSecureURL('tool/developer_tools/cloneTemplate');
+		$this->data['action'] = $this->html->getSecureURL('r/tool/developer_tools/doCloneTemplate');
 		$this->data['heading_title'] = $this->language->get('developer_tools_name');
 		$this->data['update'] = '';
 		$form = new AForm('ST');
@@ -180,6 +151,65 @@ class ControllerResponsesToolDeveloperTools extends AController {
 				      'style'    => 'large-field',
 				));
 
+	}
+
+	public function doCloneTemplate(){
+
+		if(!$this->request->is_POST()){
+			$this->redirect($this->html->getSecureURL('setting/setting', '&active=appearance'));
+		}
+
+		$this->loadLanguage('developer_tools/developer_tools');
+		$this->loadModel('tool/developer_tools');
+		$data = $this->request->post;
+		$data['extension_category'] = 'template';
+		$data['extension_type'] = 'template';
+		$data['version'] = '1.0.0';
+		$data['cartversions'][0] = MASTER_VERSION . '.' . MINOR_VERSION;
+		$data['install_php'] = 1;
+		$data['install_sql'] = 1;
+		$data['route'] = $data['extension_txt_id'];
+		$data['hook_file'] = $data['extension_txt_id'] . '_hook.php';
+		$data['extension_admin_language_files'] = array('english');
+
+		if($data['clone_to']=='extension'){
+			//if need clone as extension we need to create tpls-list, that will be placed into main.php file of extension
+			$data['views'] = $this->model_tool_developer_tools->getTemplateViewList($data['proto_template']);
+			$result = $this->model_tool_developer_tools->generateExtension($data);
+			$success_text = $this->language->get('developer_tools_text_success_generated_extension');
+		}else if( $data['clone_to']=='core_template' ){
+			$result = $this->model_tool_developer_tools->cloneCoreTemplate($data);
+			$success_text = $this->language->get('developer_tools_text_success_cloned_template');
+		}
+
+		if(!$result){
+			$error = new AError('');
+			return $error->toJSONResponse('VALIDATION_ERROR_406',
+				array('error_text' => implode('<br>', $this->model_tool_developer_tools->error),
+					'reset_value' => false
+				));
+		}
+
+		$this->session->data['success'] = $success_text;
+		if(file_exists(DIR_BACKUP . 'developer_tools_autosave_' . $data['extension_txt_id'])){
+			unlink(DIR_BACKUP . 'developer_tools_autosave_' . $data['extension_txt_id']);
+		}
+
+		if(versionCompare(VERSION,'1.2.4','>=')){
+			$url = $this->html->getSecureURL('design/template');
+		}else{
+			$url = $this->html->getSecureURL('setting/setting', '&active=appearance&tmpl_id='.$data['extension_txt_id']);
+		}
+
+
+
+		$this->load->library('json');
+		$this->response->addJSONHeader();
+		$this->response->setOutput(AJson::encode(
+				array(
+						'result_text' => $success_text,
+						'redirect_url' => $url
+				)));
 	}
 
 	public function summary() {
