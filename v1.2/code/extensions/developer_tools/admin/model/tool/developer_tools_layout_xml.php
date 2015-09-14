@@ -203,11 +203,11 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 		$output = array ();
 		foreach ($result->rows as $row){
 			$output['block_txt_id'] = $row['block_txt_id'];
-			if($this->template_id_src != 'default'){
+			if( $this->template_id_src != 'default' || versionCompare(VERSION,'1.2.4', '<') ){
 				$output['controller'] = $row['controller'];
 			}
 
-			if ($this->template_id_src != 'default' && $this->placeholder_block_id == $row['parent_block_id']){
+			if (($this->template_id_src != 'default'  || versionCompare(VERSION,'1.2.4', '<')) && $this->placeholder_block_id == $row['parent_block_id']){
 				$output['templates']['template'][] = array (
 						'parent_block'  => $row['parent_block_txt_id'],
 						'template_name' => $row['template']);
