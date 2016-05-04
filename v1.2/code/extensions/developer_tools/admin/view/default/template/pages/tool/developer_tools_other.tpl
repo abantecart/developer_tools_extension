@@ -50,7 +50,6 @@
 				}else{
 					success_alert(json.message);
 				}
-				goTo()
 			}
 		});
 	return false;
