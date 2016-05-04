@@ -11,7 +11,7 @@
 				<label class="control-label col-sm-3 col-xs-12" ><?php echo $developer_tools_layout_xml_file; ?></label>
 				<div class="input-group afield col-sm-7 col-xs-12">
 					<a href="Javascript: void(0);" title="<?php echo $developer_tools_text_view_layout_xml?>"
-					   id="view_layout_xml"><?php echo $filepath; ?></a>
+					   id="view_layout_xml"><?php echo $filepath; ?>&nbsp;&nbsp;<i class="fa fa-eye"></i></a>
 				</div>
 			</div>
 		<?php } ?>
@@ -19,9 +19,6 @@
 				<label class="control-label col-sm-3 col-xs-12" ><?php echo $developer_tools_text_select_template; ?></label>
 				<div class="input-group afield col-sm-7 col-xs-12">	<?php echo $form[ 'template' ]; ?></div>
 			</div>
-
-
-
 	</div>
 	<div class="panel-footer col-xs-12">
 			<div class="text-center">
