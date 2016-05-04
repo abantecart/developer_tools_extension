@@ -33,6 +33,9 @@ class ControllerPagesToolDeveloperToolsOther extends AController{
 		$this->loadLanguage('developer_tools/developer_tools');
 
 		$prj_id = $this->session->data['dev_tools_prj_id'];
+		if(!$prj_id){
+			$this->redirect($this->html->getSecureURL('tool/developer_tools'));
+		}
 		$prj_config = $this->model_tool_developer_tools->getProjectConfig($prj_id);
 
 		$this->data['text_layout_xml_title'] = $this->language->get('text_layout_xml_title');
