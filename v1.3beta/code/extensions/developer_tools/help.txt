@@ -1,0 +1,27 @@
+<center><b><a href="#admin#rt=tool/developer_tools">Extension Developer Tools</a> Quick Manual</b></center>
+<p>
+
+This extension was contributes by AbanteCart team to help developers quickly get into building extensions for AbanteCart without dealing with tedious file and settings organizational work. 
+</p>
+<p>
+Features included in version 1.2. 
+<ul>
+<li>Create and manage projects (Each extension settings can be saved as a project)
+<li>Create controllers, models, templates and more
+<li>Create an extension and install into AbanteCart
+<li>Build distribution package. 
+</ul>
+</p>
+
+<p>
+What is required:
+1. Make sure [path to AbanteCart]/extensions directory is writable for your web-server user. 
+2. Backup installed(working) extension if you want to create a new one from the project. 
+3. Do not keep backups or unwanted extensions in [path to AbanteCart]/extensions directory. 
+These can cause conflicts and slow AbanteCart performance. 
+
+</p>
+
+<p>
+Everyone is welcome to help and contribute into these tools development. Join <a href="https://github.com/abantecart/developer_tools_extension">Github</a> and let's make AbanteCart extension development easy and fun for everyone. 
+</p>
