@@ -1,4 +1,6 @@
-<?php include($tpl_common_dir . 'action_confirm.tpl'); ?>
+<?php
+
+include($tpl_common_dir . 'action_confirm.tpl'); ?>
 <?php if ($dt_attention){ ?>
 	<div class="info alert alert-warning">
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -9,66 +11,89 @@
 <?php } ?>
 <?php echo $project_summary ?>
 <?php echo $dev_tabs ?>
-<?php echo $prj_tabs ?>
+<?php echo $prj_tabs;
+
+
+
+?>
 
 <div id="content" class="panel panel-default">
 	<?php echo $form['form_open']; ?>
 	<div class="panel-body panel-body-nopadding tab-content col-xs-12">
-		<label class="h4 heading" id="common"><?php echo ${'developer_tools_tab_common_section'}; ?></label>
-		<?php foreach ($form['fields']['common'] as $name => $field){
+		<?php foreach (array('common', 'language_extension_settings') as $section){?>
+			<div id="section_<?php echo $section;?>">
+			<label class="h4 heading"
+			       id="<?php echo $section; ?>"><?php echo ${'developer_tools_tab_' . $section . '_section'}; ?></label>
+			<?php
+			foreach ($form['fields'][$section] as $name => $field){
 
-			if (is_array($field)){
-				$widthcasses = "col-sm-7 col-xs-12";
-			} else{
-				//Logic to calculate fields width
-				$widthcasses = "col-sm-7";
-				if (is_int(stripos($field->style, 'large-field'))){
+				if (is_array($field)){
+					$widthcasses = "col-sm-7 col-xs-12";
+				} else{
+					//Logic to calculate fields width
 					$widthcasses = "col-sm-7";
-				} else if (is_int(stripos($field->style, 'medium-field')) || is_int(stripos($field->style, 'date'))){
-					$widthcasses = "col-sm-5";
-				} else if (is_int(stripos($field->style, 'small-field')) || is_int(stripos($field->style, 'btn_switch'))){
-					$widthcasses = "col-sm-3";
-				} else if (is_int(stripos($field->style, 'tiny-field'))){
-					$widthcasses = "col-sm-2";
-				}
-				$widthcasses .= " col-xs-12";
-			} ?>
-			<div class="form-group <?php if (!empty($error[$name])){
-				echo "has-error";
-			} ?>">
-				<label class="control-label col-sm-3 col-xs-12"
-				       for="<?php echo $field->element_id; ?>"><?php echo ${'developer_tools_entry_' . $name}; ?></label>
-				<div id="<?php echo $name ?>"
-				     class="input-group afield <?php echo $widthcasses; ?> <?php echo($name == 'description' ? 'ml_ckeditor' : '') ?>">
-					<?php
-					//when a few fields in row
-					if (is_array($field)){ ?>
-						<?php foreach ($field as $subfldgroup){ ?>
-							<div class="grouped input-group afield col-sm-12">
-								<?php
-								if (is_array($subfldgroup)){
-									foreach ($subfldgroup as $i => $subfld){
-										if (is_object($subfld) && !$subfld->required){
-											$subfld->attr = $subfld->attr . ' style="width: auto; float:none;margin-bottom: 10px;"';
+					if (is_int(stripos($field->style, 'large-field'))){
+						$widthcasses = "col-sm-7";
+					} else if (is_int(stripos($field->style, 'medium-field')) || is_int(stripos($field->style, 'date'))){
+						$widthcasses = "col-sm-5";
+					} else if (is_int(stripos($field->style, 'small-field')) || is_int(stripos($field->style, 'btn_switch'))){
+						$widthcasses = "col-sm-3";
+					} else if (is_int(stripos($field->style, 'tiny-field'))){
+						$widthcasses = "col-sm-2";
+					}
+					$widthcasses .= " col-xs-12";
+				} ?>
+				<div class="form-group <?php if (!empty($error[$name])){
+					echo "has-error";
+				} ?>">
+					<label class="control-label col-sm-3 col-xs-12"
+					       for="<?php echo $field->element_id; ?>"><?php echo ${'developer_tools_entry_' . $name}; ?></label>
+					<div id="<?php echo $name ?>"
+					     class="input-group afield <?php echo $widthcasses; ?> <?php echo($name == 'description' ? 'ml_ckeditor' : '') ?>">
+						<?php
+						//when a few fields in row
+						if (is_array($field)){ ?>
+							<?php foreach ($field as $subfldgroup){ ?>
+								<div class="grouped input-group afield col-sm-12">
+									<?php
+									if (is_array($subfldgroup)){
+										foreach ($subfldgroup as $i => $subfld){
+											if (is_object($subfld) && !$subfld->required){
+												$subfld->attr = $subfld->attr . ' style="width: auto; float:none;margin-bottom: 10px;"';
+											}
+											echo $subfld;
 										}
-										echo $subfld;
+									} else{
+										echo $subfldgroup;
 									}
-								} else{
-									echo $subfldgroup;
-								}
-								?>
-							</div>
-						<?php }
-					} else{
-						echo $field;
-					} ?>
-				</div>
-				<?php if (!empty($error[$name])){ ?>
-					<span class="help-block field_err"><?php echo $error[$name]; ?></span>
-				<?php } ?>
-			</div>
-		<?php } ?>
+									?>
+								</div>
+							<?php }
+						} else{
+							echo $field;
+						} ?>
+					</div>
+					<?php if (!empty($error[$name])){ ?>
+						<span class="help-block field_err"><?php echo $error[$name]; ?></span>
+					<?php }
 
+					if($name == 'translation_method'){ ?>
+					<div class="panel-footer col-xs-12">
+						<div class="text-center">
+						  <button class="btn btn-primary task_run"
+						        data-run-task-url="<?php echo $build_task_url_language; ?>"
+						        data-complete-task-url="<?php echo $complete_task_url_language; ?>">
+						  <i class="fa fa-save"></i> <?php echo $developer_tools_translate_text; ?>
+						  </button>
+						</div>
+					</div>
+					<?php } ?>
+				</div>
+			<?php }
+			unset($form['fields'][$section]);?>
+			</div>
+		<?php }
+		if(sizeof($form['fields'])){ ?>
 
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -82,7 +107,7 @@
 			<div class="panel-body panel-body-nopadding table-responsive">
 				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 					<?php
-					unset($form['fields']['common']);
+
 					foreach ($form['fields'] as $section => $fields){ ?>
 						<div class="panel panel-default">
 							<div class="panel-heading" role="tab" id="heading<?php echo $section ?>">
@@ -130,8 +155,7 @@
 												if (is_array($field)){ ?>
 													<?php foreach ($field as $subfldgroup){ ?>
 														<div class="grouped input-group afield col-sm-12">
-															<?php
-															if (is_array($subfldgroup)){
+													<?php	if (is_array($subfldgroup)){
 																foreach ($subfldgroup as $i => $subfld){
 																	if (is_object($subfld) && !$subfld->required){
 																		$subfld->attr = $subfld->attr . ' style="width: auto; float:none;margin-bottom: 10px;"';
@@ -140,8 +164,7 @@
 																}
 															} else{
 																echo $subfldgroup;
-															}
-															?>
+															} ?>
 														</div>
 													<?php }
 												} else{
@@ -161,7 +184,9 @@
 			</div>
 		</div>
 
+		<?php }
 
+		?>
 	</div>
 
 	<div class="panel-footer col-xs-12">
@@ -244,9 +269,27 @@
 
 
 	$('#extFrm_extension_type').change(function () {
-		if ($(this).val() == 'template' || $(this).val() == 'language') {
+		var value = $(this).val();
+		//switch category
+		/*var v;
+		$("#extFrm_extension_category").find('option[value*='+value+']').attr('selected', 'selected');
+
+					$("#extFrm_extension_category").change();
+				return false;
+
+		});*/
+
+		if( value != 'language' ) {
+			toggle_language_form('hide');
+			$('#tr_language_extension_settings').hide();
+		}
+		if( value == 'language' ) {
+			toggle_language_form('show');
+
 			$('#tr_copy_default').show();
-		} else if ($(this).val() == 'payment' || $(this).val() == 'shipping') {
+		}else if (value == 'template' ){
+			$('#tr_copy_default').show();
+		} else if (value == 'payment' || value == 'shipping') {
 			$('#extFrm_storefront_model_routes, ' +
 					'#extFrm_storefront_page_controller_routes, ' +
 					'#extFrm_storefront_response_controller_routes, ' +
@@ -257,21 +300,32 @@
 						$(this).val('extension');
 					});
 			$('#tr_copy_default').hide();
-		} else if ($(this).val() == 'total') {
+		} else if (value == 'total') {
 			$('#extFrm_storefront_model_routes, ' +
 					'#extFrm_storefront_page_controller_routes, ' +
 					'#extFrm_storefront_response_controller_routes, ' +
 					'#extFrm_storefront_view_routes, ' +
 					'#extFrm_storefront_page_view_routes, ' +
 					'#extFrm_storefront_response_view_routes')
-					.each(function () {
-						$(this).val('total');
-					});
+			.each(function () {
+				$(this).val('total');
+			});
+			$('#tr_copy_default').hide();
+		}else {
 			$('#tr_copy_default').hide();
 		}
-		else {
-			$('#tr_copy_default').hide();
+	});
+
+	function toggle_language_form(action){
+		if(action == 'show' || !action) {
+			$('#section_language_extension_settings').slideDown();
+		}else{
+			$('#section_language_extension_settings').slideUp();
 		}
+	}
+
+	$(document).ready(function(){
+		$('#extFrm_extension_type').change();
 	});
 
 

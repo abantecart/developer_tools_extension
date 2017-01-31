@@ -72,7 +72,7 @@ class ModelToolDeveloperTools extends Model{
 
 		$data['header_comment'] = "<?php\n" . $data['header_comment'];
 		$data['header_comment'] .= "\n\n";
-		$data['header_comment'] .= "if (! defined ( 'DIR_CORE' )) {\nheader ( 'Location: static_pages/' );\n}\n\n";
+		$data['header_comment'] .= "if (! defined ( 'DIR_CORE' )) {\n header ( 'Location: static_pages/' );\n}\n\n";
 
 		$project_xml['header_comment'] = $data['header_comment'];
 
@@ -102,10 +102,10 @@ class ModelToolDeveloperTools extends Model{
 				}
 				unset($r);
 				$class_name = implode('', $t);
-				$content = "class Extension" . $class_name . " extends Extension {\n\n }\n";
+				$pre_content = "class Extension" . $class_name . " extends Extension {\n\n }\n";
 				$hook_class_name = "Extension" . $class_name;
 				$project_xml['hook_class_name'] = $hook_class_name;
-				file_put_contents($extension_directory . '/core/' . $data['hook_file'], $data['header_comment'] . $content);
+				file_put_contents($extension_directory . '/core/' . $data['hook_file'], $data['header_comment'] . $pre_content);
 			}
 		}
 
@@ -126,7 +126,7 @@ class ModelToolDeveloperTools extends Model{
 					$route = trim($route, '\/ ');
 					$file = substr($file, -4) != '.php' ? $file . '.php' : $file;
 
-					$content = $data['header_comment'];
+					$pre_content = $data['header_comment'];
 					// build class name
 					$class_name = 'Model';
 					$rt = str_replace('/', '_', $route);
@@ -143,7 +143,7 @@ class ModelToolDeveloperTools extends Model{
 					}
 					unset($r);
 					$class_name .= implode('', $rt);
-					$content .= "class " . $class_name . " extends Model {\n
+					$pre_content .= "class " . $class_name . " extends Model {\n
 			public \$data = array ();
 			private \$error = array ();\n }\n";
 
@@ -152,7 +152,7 @@ class ModelToolDeveloperTools extends Model{
 						mkdir($dir, 0777, true);
 					}
 					if (!file_exists($dir . '/' . $file)){
-						file_put_contents($dir . '/' . $file, $content);
+						file_put_contents($dir . '/' . $file, $pre_content);
 					}
 					$rt = str_replace('.php', '', $file);
 					$models[$section][] = $route . '/' . $rt;
@@ -201,7 +201,7 @@ class ModelToolDeveloperTools extends Model{
 						$route = trim($route, '\/ ');
 						$file = rtrim($file, '.php');
 
-						$content = $data['header_comment'];
+						$pre_content = $data['header_comment'];
 						$route_prefix = $this->getRtPrefixByControllerType($ctrl_type);
 						// build class name
 						$class_name = 'Controller' . ucfirst($route_prefix);
@@ -219,7 +219,7 @@ class ModelToolDeveloperTools extends Model{
 						}
 						unset($r);
 						$class_name .= implode('', $rt);
-						$content .= "class " . $class_name . " extends AController {\n
+						$pre_content .= "class " . $class_name . " extends AController {\n
 		public \$data = array ();
 		private \$error = array ();\n }\n";
 
@@ -228,7 +228,7 @@ class ModelToolDeveloperTools extends Model{
 							mkdir($dir, 0777, true);
 						}
 						if (!file_exists($dir . '/' . $file . '.php')){
-							file_put_contents($dir . '/' . $file . '.php', $content);
+							file_put_contents($dir . '/' . $file . '.php', $pre_content);
 						}
 						$rt = str_replace('.php', '', $file);
 						$controllers[$section][$ctrl_type][] = $route_prefix . '/' . $route . '/' . $rt;
@@ -237,7 +237,7 @@ class ModelToolDeveloperTools extends Model{
 				}
 			}
 		}
-		unset($content);
+		unset($pre_content);
 		// LANGUAGE files for extension translates
 		$languages = array ('admin' => array (), 'storefront' => array ());
 		//NOTE! unacceptable extension without at least one admin language file
@@ -246,8 +246,8 @@ class ModelToolDeveloperTools extends Model{
 		}
 
 		foreach ($this->sections as $section){
-			if (!isset($data['extension_' . $section . '_language_files'])) continue;
-			foreach ($data['extension_' . $section . '_language_files'] as $language_name){
+			if (!isset($data['extension_' . $section . '_get_source_xml_files'])) continue;
+			foreach ($data['extension_' . $section . '_get_source_xml_files'] as $language_name){
 				if ($language_name){
 					$language_name = strtolower($language_name);
 					$file = $extension_name . '.xml';
@@ -274,37 +274,33 @@ class ModelToolDeveloperTools extends Model{
 
 		// COMMON PART
 		if ($data['install_php']){
-			$content = $data['header_comment'] . "\n\n\n";
-			$install_content = '';
+			$pre_content = $data['header_comment'] . "\n\n\n";
+			$install_content = $uninstall_content = '';
 			//build layout.xml for template clone
 			if ($project_xml['extension_type'] == 'template'){
-				$this->load->model('tool/developer_tools_layout_xml');
-				$this->model_tool_developer_tools_layout_xml->saveXml($data['extension_txt_id'], 'default');
-				$install_content =
-						"\$file = DIR_EXT . '/" . $data['extension_txt_id'] . "/layout.xml';\n" .
-						"\$layout = new ALayoutManager('default');\n" .
-						"\$layout->loadXml(array('file' => \$file));\n";
-			}
-			if (!is_file($extension_directory . '/install.php')){
-				file_put_contents($extension_directory . '/install.php', $content . $install_content);
+				$this->_build_template_install_php($data, $install_content);
+			}elseif ($project_xml['extension_type'] == 'language'){
+				$project_xml['language_extension_code'] = strtolower($data['language_extension_code']);
+				$project_xml['language_extension_name'] = $data['language_extension_name'];
+				$project_xml['language_extension_directory'] = $data['language_extension_directory'];
+				$project_xml['language_extension_locale'] = $data['language_extension_locale'];
+				$this->_build_language_install_php($data, $install_content);
 			}
 
+			if (!is_file($extension_directory . '/install.php')){
+				file_put_contents($extension_directory . '/install.php', $pre_content . $install_content);
+			}
 
 			if ($project_xml['extension_type'] == 'template'){
-				$uninstall_content =
-						"\$extension_id = '" . $data['extension_txt_id'] . "';\n" .
-						"// delete template layouts\n".
-						"try{\n".
-						"\$layout = new ALayoutManager(\$extension_id);\n" .
-						"\$layout->deleteTemplateLayouts();\n" .
-						"}catch(AException \$e){}\n";
+				$this->_build_template_uninstall_php($data, $uninstall_content);
+			}elseif($project_xml['extension_type'] == 'language'){
+				$this->_build_language_uninstall_php($data, $uninstall_content);
 			}
 
 			if (!is_file($extension_directory . '/uninstall.php')){
-				file_put_contents($extension_directory . '/uninstall.php', $content . $uninstall_content);
+				file_put_contents($extension_directory . '/uninstall.php', $pre_content . $uninstall_content);
 			}
-			unset($content, $install_content, $uninstall_content);
-
+			unset($pre_content, $install_content, $uninstall_content);
 		}
 		$project_xml['install_php'] = $config_xml['install_php'] = (int)$data['install_php'];
 		if ($data['install_sql']){
@@ -372,7 +368,7 @@ class ModelToolDeveloperTools extends Model{
 
 		$this->saveConfigXml($config_xml);
 
-		// change mode recurcive
+		// change mode recursive
 		$this->_chmod_R($extension_directory, 0777, 0777);
 		// when cloning template check clone_method var
 		// plus add tpls for case "clone to ext"
@@ -398,6 +394,85 @@ class ModelToolDeveloperTools extends Model{
 		}
 
 		return true;
+	}
+
+	protected function _build_template_install_php($data, &$file_content){
+		$this->load->model('tool/developer_tools_layout_xml');
+		$this->model_tool_developer_tools_layout_xml->saveXml($data['extension_txt_id'], 'default');
+		$file_content .=
+				"\$file = DIR_EXT . '/" . $data['extension_txt_id'] . "/layout.xml';\n" .
+				"\$layout = new ALayoutManager('default');\n" .
+				"\$layout->loadXml(array('file' => \$file));\n";
+	}
+	protected function _build_template_uninstall_php($data, &$file_content){
+		$file_content .=
+			"\$extension_id = '" . $data['extension_txt_id'] . "';\n" .
+			"// delete template layouts\n".
+			"try{\n".
+			"\$layout = new ALayoutManager(\$extension_id);\n" .
+			"\$layout->deleteTemplateLayouts();\n" .
+			"}catch(AException \$e){}\n";
+	}
+
+	protected function _build_language_install_php($data, &$file_content){
+
+		$file_content .= '
+//before install validate it is unique
+$lng_code = "'.strtolower($data['language_extension_code']).'";
+$lng_name = "'.$data['language_extension_name'].'";
+$lng_directory = "'.$data['language_extension_directory'].'";
+$lng_locale = "'.$data['language_extension_locale'].'";
+$lng_flag_path = "extensions/'.$data['extension_txt_id'].'/storefront/language/'.$data['language_extension_directory'].'/flag.png";
+$lng_sort = 2; // sorting order with other languages
+$lng_status = 0; // Status on installation of extension
+
+$query = $this->db->query("SELECT language_id
+							FROM ".$this->db->table("languages")."
+							WHERE code=\'".$this->db->escape($lng_code)."\'");
+if ($query->row["language_id"]) {
+	$this->session->data["error"] = "Error: Language with ".$lng_code." code is already installed! Can not install duplicate languages! Uninstall this extension before attempting again.";
+	$error = new AError ($this->session->data["error"]);
+	$error->toLog()->toDebug();
+	return false;
+}
+
+$this->db->query("INSERT INTO ".$this->db->table("languages")." 
+				(`name`,`code`,`locale`,`image`,`directory`,`filename`,`sort_order`, `status`)
+				VALUES (
+				\'".$this->db->escape($lng_name)."\', 
+				\'".$this->db->escape($lng_code)."\', 
+				\'".$this->db->escape($lng_locale)."\', 
+				\'".$this->db->escape($lng_flag_path)."\',
+				\'".$this->db->escape($lng_directory)."\',
+				\'".$lng_directory."\',
+				".(int)$lng_sort.",
+				".(int)$lng_status.");");
+$new_language_id = $this->db->getLastId();
+';
+	}
+
+	protected function _build_language_uninstall_php($data, &$file_content){
+		$file_content .= '		
+$language_code = "'.strtolower($data['language_extension_code']).'";
+$language_directory = "'.$data['language_extension_directory'].'";
+
+$query = $this->db->query(
+	"SELECT language_id FROM ".$this->db->table("languages")." 
+	WHERE code=\'".$language_code."\' AND directory=\'".$language_directory."\'");
+$language_id = $query->row["language_id"];
+//delete menu
+$storefront_menu = new AMenu_Storefront();
+$storefront_menu->deleteLanguage($language_id);
+
+//delete all other language related tables
+$lm = new ALanguageManager($this->registry, $language_code);
+$lm->deleteAllLanguageEntries($language_id);
+
+//delete language
+$this->db->query("DELETE FROM ".$this->db->table("languages")." WHERE `code`=\'".$language_code."\'");
+
+$this->cache->remove("localization");';
+
 	}
 
 	/**
@@ -455,7 +530,7 @@ class ModelToolDeveloperTools extends Model{
 				$value = trim($value);
 				$value = ltrim($value, "<?php\n");
 
-				$value = str_replace("\n\nif (! defined ( 'DIR_CORE' )) {\nheader ( 'Location: static_pages/' );\n}\n\n", '', $value);
+				$value = str_replace("\n\nif (! defined ( 'DIR_CORE' )) {\n header ( 'Location: static_pages/' );\n}\n\n", '', $value);
 				$value = trim($value);
 
 				$value = str_replace(array ('<?php', '?>'), '', $value);
@@ -598,8 +673,8 @@ class ModelToolDeveloperTools extends Model{
 		if ($clone_method == 'full_clone'){
 			$this->_copyDir($src_template_dir, $template_dir, true);
 		} elseif ($clone_method == 'jscss_clone'){
-			$subdirs = scandir($src_template_dir);
-			foreach ($subdirs as $file){
+			$sub_dirs = scandir($src_template_dir);
+			foreach ($sub_dirs as $file){
 				//skip all tpl-files when clone only js and css
 				if (is_int(strpos($file, 'template'))){
 					return true;
@@ -636,7 +711,7 @@ class ModelToolDeveloperTools extends Model{
 						`value`,
 						NOW()
 				FROM " . $this->db->table('settings') . "
-				WHERE `group`='" . ($source == 'defaut' ? 'appearance' : $source) . "'";
+				WHERE `group`='" . ($source == 'default' ? 'appearance' : $source) . "'";
 		$this->db->query($sql);
 		return true;
 	}
@@ -652,7 +727,7 @@ class ModelToolDeveloperTools extends Model{
 		// replicate
 		$language_dir = DIR_EXT . $project_xml['extension_txt_id'] . '/storefront/language/' . $project_xml['extension_txt_id'];
 		if (!is_dir($language_dir)){
-			$result = mkdir($language_dir, 0777, true);
+			$result = mkdir($language_dir, 0755, true);
 		} else{
 			$result = true;
 		}
@@ -660,12 +735,12 @@ class ModelToolDeveloperTools extends Model{
 			$this->error[] = 'Cannot make directory ' . $language_dir;
 			return false;
 		}
-		$this->_chmod_R($language_dir, 0777, 0777);
+		$this->_chmod_R($language_dir, 0644, 0755);
 		$this->_copyDir(DIR_STOREFRONT . 'language/' . $src_language_name, $language_dir, $copy_file_content);
 
 		$language_dir = DIR_EXT . $project_xml['extension_txt_id'] . '/admin/language/' . $project_xml['extension_txt_id'];
 		if (!is_dir($language_dir)){
-			$result = mkdir($language_dir, 0777, true);
+			$result = mkdir($language_dir, 0755, true);
 		} else{
 			$result = true;
 		}
@@ -673,12 +748,12 @@ class ModelToolDeveloperTools extends Model{
 			$this->error[] = 'Cannot make directory ' . $language_dir;
 			return false;
 		}
-		$this->_chmod_R($language_dir, 0777, 0777);
+		$this->_chmod_R($language_dir, 0644, 0755);
 		$this->_copyDir(DIR_APP_SECTION . 'language/' . $src_language_name, $language_dir, $copy_file_content);
 		//rename common language file (mean english.xml,russian.xml etc)
-		$newname = $language_dir . '/' . str_replace('_language', '', $project_xml['extension_txt_id']) . '.xml';
-		if (!is_file($newname)){
-			rename($language_dir . '/' . $src_language_name . '.xml', $newname);
+		$new_name = $language_dir . '/' . str_replace('_language', '', $project_xml['extension_txt_id']) . '.xml';
+		if (!is_file($new_name)){
+			rename($language_dir . '/' . $src_language_name . '.xml', $new_name);
 		}
 		return true;
 	}
@@ -839,6 +914,14 @@ class ModelToolDeveloperTools extends Model{
 		$xml = Array2XML::createXML('definitions', $xml_data);
 		$xml = $xml->saveXML();
 		if ($xml){
+			//create file if needed
+			if(!is_file($path)){
+				if(!is_dir(dirname($path))){
+					mkdir(dirname($path),0755,true);
+				}
+				$handle = fopen($path, 'a+');
+				fclose($handle);
+			}
 			$result = file_put_contents($path, $xml);
 			if ($result){
 				return true;
@@ -875,6 +958,16 @@ class ModelToolDeveloperTools extends Model{
 						'version'          => $data['version'],
 						'priority'         => $data['priority']
 				));
+
+		if($data['extension_type'] == 'language'){
+			$xml_data['extension']['language_extension_name'] = $data['language_extension_name'];
+			$xml_data['extension']['language_extension_code'] = $data['language_extension_code'];
+			$xml_data['extension']['language_extension_locale'] = $data['language_extension_locale'];
+			$xml_data['extension']['language_extension_directory'] = $data['language_extension_directory'];
+			$xml_data['extension']['source_language'] = $data['source_language'];
+			$xml_data['extension']['translation_method'] = $data['translation_method'];
+		}
+
 		if ($data['cartversions']){
 			$xml_data['extension']['cartversions'] = $data['cartversions'];
 		}
@@ -941,6 +1034,9 @@ class ModelToolDeveloperTools extends Model{
 		if ($data['views']['storefront']){
 			$xml_data['extension']['views']['storefront'] = array ('item' => $data['views']['storefront']);
 		}
+
+
+
 
 		$xml = Array2XML::createXML('project', $xml_data);
 		$file_name = 'dev_tools_project_' . $data['extension_txt_id'] . '_v' . $data['version'] . '.xml';
@@ -1054,15 +1150,15 @@ class ModelToolDeveloperTools extends Model{
 			if (!chmod($path, $dirmode)){
 				$dirmode_str = decoct($dirmode);
 				$error = "Failed applying filemode '" . $dirmode_str . "' on directory '" . $path . "\n -> the directory '" . $path . "' will be skipped from recursive chmod\n";
-				$this->messages->SaveNotice('Developer Tool Error', $error);
+				$this->messages->saveNotice('Developer Tool Error', $error);
 				$this->error[] = $error;
 				return;
 			}
 			$dh = opendir($path);
 			while (($file = readdir($dh)) !== false){
 				if ($file != '.' && $file != '..'){ // skip self and parent pointing directories
-					$fullpath = $path . '/' . $file;
-					$this->_chmod_R($fullpath, $filemode, $dirmode);
+					$full_path = $path . '/' . $file;
+					$this->_chmod_R($full_path, $filemode, $dirmode);
 				}
 			}
 			closedir($dh);
@@ -1073,7 +1169,7 @@ class ModelToolDeveloperTools extends Model{
 			if (!chmod($path, $filemode)){
 				$filemode_str = decoct($filemode);
 				$error = "Failed applying filemode " . $filemode_str . " on file " . $path . "\n";
-				$this->messages->SaveNotice('Developer Tool Error!', $error);
+				$this->messages->saveNotice('Developer Tool Error!', $error);
 				$this->error[] = $error;
 				return;
 			}
@@ -1262,6 +1358,7 @@ class ModelToolDeveloperTools extends Model{
 	 */
 	public function getGenericBlocksTemplates($path){
 		$files = $this->_glob_recursive($path . '*');
+		$output = array();
 		foreach ($files as $k => $file){
 			if (is_dir($file) || (!is_int(strpos($file, '/template/blocks')) && !is_int(strpos($file, '/template/common')))){
 				unset($files[$k]);
@@ -1292,6 +1389,7 @@ class ModelToolDeveloperTools extends Model{
 	public function getDefaultGenericBlocksTemplates(){
 		$path = DIR_ROOT . '/storefront/view/default/template/';
 		$files = $this->_glob_recursive($path . '*');
+		$output = array();
 		foreach ($files as $k => $file){
 			if (is_dir($file) || (!is_int(strpos($file, '/template/blocks')) && !is_int(strpos($file, '/template/common')))){
 				unset($files[$k]);
@@ -1343,8 +1441,8 @@ class ModelToolDeveloperTools extends Model{
 
 		$xml_result = $this->model_tool_developer_tools_layout_xml->saveXml($template_txt_id, $data['proto_template'], DIR_STOREFRONT . 'view/' . $template_txt_id);
 		//then import layout.xml into database
+		$layout_xml_filename = DIR_STOREFRONT . 'view/' . $template_txt_id . '/layout.xml';
 		if ($xml_result){
-			$layout_xml_filename = DIR_STOREFRONT . 'view/' . $template_txt_id . '/layout.xml';
 			if (is_file($layout_xml_filename) && is_readable($layout_xml_filename)){
 				$xml_string = file_get_contents($layout_xml_filename);
 				$this->load->model('tool/backup');
@@ -1361,6 +1459,7 @@ class ModelToolDeveloperTools extends Model{
 		$this->_clone_template_settings($data);
 
 		//and finally set template as default for current store
+		$current_store_id = !isset($this->session->data['current_store_id']) ? 0 : $this->session->data['current_store_id'];
 		$this->model_setting_setting->editSetting('appearance', array ('config_storefront_template' => $template_txt_id), $current_store_id);
 		return true;
 	}
@@ -1381,7 +1480,7 @@ class ModelToolDeveloperTools extends Model{
 			//need to know what store_id of clone
 			$result = $this->db->query("SELECT DISTINCT `store_id`
 										FROM " . $this->db->table("settings") . "
-									    WHERE `group` = '" . $this->db->escape($group) . "'");
+									    WHERE `group` = '" . $this->db->escape($settings_group) . "'");
 			$store_ids = array ();
 			$current_store_id = $this->session->data['current_store_id'];
 			foreach ($result->rows as $row){
@@ -1403,6 +1502,7 @@ class ModelToolDeveloperTools extends Model{
 		if ($settings){
 			//remove settings related to core
 			unset($settings['config_storefront_template'], $settings['admin_template']);
+			$current_store_id = !isset($this->session->data['current_store_id']) ? 0 : $this->session->data['current_store_id'];
 			$this->model_setting_setting->editSetting($data['extension_txt_id'], $settings, $current_store_id);
 		}
 
@@ -1444,7 +1544,7 @@ class ModelToolDeveloperTools extends Model{
 		foreach ($objects as $obj) {
 			if ($obj != "." && $obj != "..") {
 				chmod($dir . "/" . $obj, 0777);
-				$err = is_dir($dir . "/" . $obj) ? $this->_remove_Dir($dir . "/" . $obj) : unlink($dir . "/" . $obj);
+				$err = is_dir($dir . "/" . $obj) ? $this->_remove_dir($dir . "/" . $obj) : unlink($dir . "/" . $obj);
 				if (!$err) {
 					$error = "Error: Can't to delete file or directory: '" . $dir . "/" . $obj . "'.";
 					$error = new AError ($error);

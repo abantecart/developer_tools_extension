@@ -42,7 +42,6 @@ class ControllerResponsesToolDeveloperTools extends AController {
         fclose($fp);
     }
 
-
 	public function cloneTemplate(){
 		$this->loadLanguage('developer_tools/developer_tools');
 

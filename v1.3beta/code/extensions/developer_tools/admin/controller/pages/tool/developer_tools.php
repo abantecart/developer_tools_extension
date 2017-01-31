@@ -157,8 +157,14 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 		$this->loadLanguage('developer_tools/developer_tools');
 		if ($this->request->is_POST() && $this->_validate_create_data($this->request->post)){
+
+			$post_data = $this->request->post;
+			if($post_data['extension_type'] == 'language'){
+				// add installation trigger
+				$post_data['install_php'] = 1;
+			}
 			$this->loadModel('tool/developer_tools');
-			$result = $this->model_tool_developer_tools->generateExtension($this->request->post);
+			$result = $this->model_tool_developer_tools->generateExtension($post_data);
 
 			if ($result){
 				$this->session->data['success'] = $this->language->get('developer_tools_text_success_generated_extension');
@@ -180,7 +186,10 @@ class ControllerPagesToolDeveloperTools extends AController{
 			}
 		}
 
+
+
 		$this->data['error'] = $this->error;
+
 
 		$this->document->setTitle($this->language->get('developer_tools_name'));
 		$this->data['heading_title'] = $this->language->get('developer_tools_name') . ': ' . $this->session->data['dev_tools_prj_id'];
@@ -204,10 +213,12 @@ class ControllerPagesToolDeveloperTools extends AController{
 		$this->data['dev_tabs'] = $tabs_obj->dispatchGetOutput();
 
 		$this->_getForm('short');
-
-		$this->addChild('responses/tool/developer_tools/summary', 'project_summary', 'responses/tool/developer_tools_project_summary.tpl');
+		if(!$this->error){
+			$this->addChild('responses/tool/developer_tools/summary', 'project_summary', 'responses/tool/developer_tools_project_summary.tpl');
+		}
 
 		$this->view->batchAssign($this->data);
+
 		$this->processTemplate('pages/tool/developer_tools_edit_form.tpl');
 	}
 
@@ -259,6 +270,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 		}
 		//when project-xml not found
 		if ($this->session->data['dev_tools_prj_id'] && !$project_info){
+			unset($this->session->data['dev_tools_prj_id']);
 			$this->redirect($this->html->getSecureURL('tool/developer_tools'));
 		}
 
@@ -346,8 +358,10 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 		//build common part
 		$this->_build_common($form, $mode);
+		$this->_build_language_settings($form);
 		if ($mode == 'full'){
 			$this->data['all_languages'] = (array)$this->language->getAvailableLanguages();
+
 
 			$this->_build_languages($form);
 
@@ -530,33 +544,40 @@ class ControllerPagesToolDeveloperTools extends AController{
 				array ('type'  => 'file',
 				       'name'  => 'icon',
 				       'value' => $this->data['icon']));
+		//do not show this part for language-extensions
+		if($this->data['extension_type'] == 'language'){
+			//parameters for task of translation
+			$this->data['build_task_url_language'] = $this->html->getSecureURL('r/tool/developer_tools_other/buildTask');
+			$this->data['complete_task_url_language'] = $this->html->getSecureURL('r/tool/developer_tools_other/complete');
+			$this->data['abort_task_url_language'] = $this->html->getSecureURL('r/tool/developer_tools_other/abort');
+		}
+		else{
 
-		preg_match_all('#/\*(.*?)\*/#sm', $this->data['header_comment'], $matches_slashes_tar);
+			preg_match_all('#/\*(.*?)\*/#sm', $this->data['header_comment'], $matches_slashes_tar);
+			$this->data['form']['fields']['common']['header_comment'] = $form->getFieldHtml(
+					array ('type'  => 'textarea',
+					       'name'  => 'header_comment',
+					       'value' => implode("\n", $matches_slashes_tar[1]),
+					       'style' => 'large-field'
+			));
+			$this->data['form']['fields']['common']['route'] = $form->getFieldHtml(
+					array ('type'     => 'input',
+					       'name'     => 'route',
+					       'value'    => $this->data['route'],
+					       'default'  => '',
+					       'required' => true,
+					       'style'    => 'large-field'
+			));
+			$this->data['form']['fields']['common']['hook_file'] = $form->getFieldHtml(
+					array ('type'     => 'input',
+					       'name'     => 'hook_file',
+					       'value'    => $this->data['hook_file'],
+					       'default'  => '',
+					       'required' => true,
+					       'style'    => 'large-field'
+			));
 
-		$this->data['form']['fields']['common']['header_comment'] = $form->getFieldHtml(
-				array ('type'  => 'textarea',
-				       'name'  => 'header_comment',
-				       'value' => implode("\n", $matches_slashes_tar[1]),
-				       'style' => 'large-field'
-				));
-
-		$this->data['form']['fields']['common']['route'] = $form->getFieldHtml(
-				array ('type'     => 'input',
-				       'name'     => 'route',
-				       'value'    => $this->data['route'],
-				       'default'  => '',
-				       'required' => true,
-				       'style'    => 'large-field'
-				));
-
-		$this->data['form']['fields']['common']['hook_file'] = $form->getFieldHtml(
-				array ('type'     => 'input',
-				       'name'     => 'hook_file',
-				       'value'    => $this->data['hook_file'],
-				       'default'  => '',
-				       'required' => true,
-				       'style'    => 'large-field'
-				));
+		}
 	}
 
 	/**
@@ -606,6 +627,61 @@ class ControllerPagesToolDeveloperTools extends AController{
 				       'value'   => $storefront_languages,
 				       'style'   => 'chosen'
 				));
+	}
+	/**
+	 * @param AForm $form
+	 */
+	private function _build_language_settings($form){
+
+		$this->data['form']['fields']['language_extension_settings']['language_extension_name'] = $form->getFieldHtml(array(
+				'type' => 'input',
+				'name' => 'language_extension_name',
+				'value' => $this->data['language_extension_name'],
+				'required' => true
+		));
+
+		$this->data['form']['fields']['language_extension_settings']['language_extension_code'] = $form->getFieldHtml(array(
+				'type' => 'input',
+				'name' => 'language_extension_code',
+				'value' => $this->data['language_extension_code'],
+				'required' => true,
+				'help_url' => 'https://docs.moodle.org/dev/Table_of_locales',
+		));
+
+		$this->data['form']['fields']['language_extension_settings']['language_extension_locale'] = $form->getFieldHtml(array(
+				'type' => 'input',
+				'name' => 'language_extension_locale',
+				'value' => $this->data['language_extension_locale'],
+				'required' => true,
+				'help_url' => 'https://docs.moodle.org/dev/Table_of_locales',
+		));
+
+		$this->data['form']['fields']['language_extension_settings']['language_extension_directory'] = $form->getFieldHtml(array(
+				'type' => 'input',
+				'name' => 'language_extension_directory',
+				'value' => $this->data['language_extension_directory'],
+				'required' => true,
+				'help_url' => 'http://docs.abantecart.com/pages/localization/languages/edit_language.html',
+		));
+
+		$all_languages = array();
+		foreach ($this->language->getAvailableLanguages() as $result) {
+			$all_languages[$result['language_id']] = $result['name'];
+		}
+		$this->data['form']['fields']['language_extension_settings']['source_language'] = $form->getFieldHtml(array(
+						'type' => 'selectbox',
+						'name' => 'source_language',
+						'value' => $this->data['source_language'],
+						'options' => $all_languages,
+					));
+
+		$translate_methods = $this->language->getTranslationMethods();
+		$this->data['form']['fields']['language_extension_settings']['translation_method'] = $form->getFieldHtml(array(
+			'type' => 'selectbox',
+			'name' => 'translation_method',
+			'value' => $this->data['translation_method'],
+			'options' => $translate_methods,
+		));
 	}
 
 	/**
@@ -1007,6 +1083,31 @@ class ControllerPagesToolDeveloperTools extends AController{
 		$this->error = array ();
 		if (!$data['extension_type']){
 			$this->error['extension_type'] = 'Please choose extension type!';
+		}
+
+		if ($data['extension_type']=='language'){
+
+			if(!$data['language_extension_name']){
+				$this->error['language_extension_name'] = 'Please Fill Language Name!';
+			}
+			if(!$data['language_extension_code'] || strlen($data['language_extension_code']) != 2){
+				$this->error['language_extension_code'] = 'Incorrect Language Code!';
+			}
+			if(!$data['language_extension_directory']){
+				$this->error['language_extension_directory'] = 'Incorrect Language Directory!';
+			}
+
+			$locale_array = explode(".",$data['language_extension_locale']);
+			if($locale_array && $locale_array[1]){
+				$locale_array[1] = explode(",", $locale_array[1]);
+			}
+
+			if(!$locale_array
+				|| sizeof($locale_array) != 2
+				|| sizeof($locale_array[1]) != 4 ){
+				$this->error['language_extension_locale'] = 'Please Fill Correct Language Locale!';
+			}
+
 		}
 
 		if (!strlen($data['extension_title'])){

@@ -36,12 +36,14 @@ $controllers = array(
 	    'pages/tool/developer_tools_other',
 	    'responses/tool/developer_tools_other',
 	    'pages/tool/developer_tools_languages',
+	    'task/developer_tools/language',
     ),
 );
 
 $models = array(
     'storefront' => array(),
     'admin' => array( 'tool/developer_tools',
+					  'tool/developer_tools_language',
 					  'tool/developer_tools_layout_xml'	),
 );
 

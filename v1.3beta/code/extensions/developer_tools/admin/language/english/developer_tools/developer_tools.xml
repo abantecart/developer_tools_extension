@@ -10,7 +10,8 @@
 	</definition>
 	<definition>
 		<key>developer_tools_note</key>
-		<value><![CDATA[This is an extension development wizard to help developers save time with organizing and creating extension components. Click this link to access <a href="#admin#rt=tool/developer_tools">Developer Tools</a> ]]></value>
+		<value>
+			<![CDATA[This is an extension development wizard to help developers save time with organizing and creating extension components. Click this link to access <a href="#admin#rt=tool/developer_tools">Developer Tools</a> ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_project_summary</key>
@@ -70,11 +71,13 @@
 	</definition>
 	<definition>
 		<key>developer_tools_text_about_creation</key>
-		<value><![CDATA[ This page is intended to generate a template for new extension.<br>Generated extension package will contain most of the files needed to start creating extension.<br>This tool will save you time with repetitive and tedious work of creating files with correct names,etc.<br>Just fill in the form and extension will be generated and installed on this instance of the cart and ready to be developed on.  ]]></value>
+		<value>
+			<![CDATA[ This page is intended to generate a template for new extension.<br>Generated extension package will contain most of the files needed to start creating extension.<br>This tool will save you time with repetitive and tedious work of creating files with correct names,etc.<br>Just fill in the form and extension will be generated and installed on this instance of the cart and ready to be developed on.  ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_about_edit</key>
-		<value><![CDATA[ Attention!<br>Edit form will overwrite some files such as config.xml, main.php, help.txt etc. <br>Please do backup directory %s and file %s before editing.<br>NOTE: Do not use "extensions" folder to keep backups! ]]></value>
+		<value>
+			<![CDATA[ Attention!<br>Edit form will overwrite some files such as config.xml, main.php, help.txt etc. <br>Please do backup directory %s and file %s before editing.<br>NOTE: Do not use "extensions" folder to keep backups! ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_about_cloning</key>
@@ -90,11 +93,44 @@
 	</definition>
 	<definition>
 		<key>developer_tools_text_error_generated_extension</key>
-		<value><![CDATA[ Error: Extension creation has failed. Please check form for provided details and required fields.]]></value>
+		<value>
+			<![CDATA[ Error: Extension creation has failed. Please check form for provided details and required fields.]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_tab_common_section</key>
 		<value><![CDATA[ Extension Config Parameters]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_tab_language_extension_settings_section</key>
+		<value><![CDATA[ Language Settings]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_language_extension_name</key>
+		<value><![CDATA[ Language Name]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_language_extension_code</key>
+		<value><![CDATA[ Language Code<span class="help">Two-letter language code</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_language_extension_locale</key>
+		<value><![CDATA[ Language Locale<span class="help">For example en_US.UTF-8,en_US,en-gb,english</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_language_extension_directory</key>
+		<value><![CDATA[ Language Directory<span class="help">Sub-directory name inside "language" directory, for example "english"</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_source_language</key>
+		<value><![CDATA[ Source Language for Translation]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_translation_method</key>
+		<value><![CDATA[ Translation Method]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_translate_text</key>
+		<value><![CDATA[ Translate ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_extension_title</key>
@@ -102,7 +138,8 @@
 	</definition>
 	<definition>
 		<key>developer_tools_entry_extension_txt_id</key>
-		<value><![CDATA[Extension Unique Text ID<span class="help">This is an unique extension text ID that can not conflict with other extensions. Note: You can use only alphanumeric characters and _. If extension project is created, extension key cannot be changed. </span>]]></value>
+		<value>
+			<![CDATA[Extension Unique Text ID<span class="help">This is an unique extension text ID that can not conflict with other extensions. Note: You can use only alphanumeric characters and _. If extension project is created, extension key cannot be changed. </span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_version</key>
@@ -110,11 +147,13 @@
 	</definition>
 	<definition>
 		<key>developer_tools_entry_cart_version</key>
-		<value><![CDATA[ Cart Version <span class="help">If you set only major and minor version, extensions will be supported for all builds of them. For example, 1.1 extension will work on AbanteCart 1.1.0, 1.1.2 etc but will show warning if installed on 1.2.x.  If third built number is used (Example: 1.2.1) installation will not be allowed for any prior versions.</span>]]></value>
+		<value>
+			<![CDATA[ Cart Version <span class="help">If you set only major and minor version, extensions will be supported for all builds of them. For example, 1.1 extension will work on AbanteCart 1.1.0, 1.1.2 etc but will show warning if installed on 1.2.x.  If third built number is used (Example: 1.2.1) installation will not be allowed for any prior versions.</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_priority</key>
-		<value><![CDATA[ Priority<span class="help">Priority is an order in which hooks will be called when few extensions hooks will run for the same controller. ex: 10,20,30 etc. This setting also effects the sorting of extension in the listing</span> ]]></value>
+		<value>
+			<![CDATA[ Priority<span class="help">Priority is an order in which hooks will be called when few extensions hooks will run for the same controller. ex: 10,20,30 etc. This setting also effects the sorting of extension in the listing</span> ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_dependencies</key>
@@ -122,11 +161,13 @@
 	</definition>
 	<definition>
 		<key>developer_tools_entry_install_sql</key>
-		<value><![CDATA[ Generate and save install.sql file? <span class="help">SQL install script will runs during installation process and should contain only database SQL syntax</span>]]></value>
+		<value>
+			<![CDATA[ Generate and save install.sql file? <span class="help">SQL install script will runs during installation process and should contain only database SQL syntax</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_install_php</key>
-		<value><![CDATA[ Generate and save install.php file? <span class="help">Created install.php will runs during installation process and should contain only PHP code</span>]]></value>
+		<value>
+			<![CDATA[ Generate and save install.php file? <span class="help">Created install.php will runs during installation process and should contain only PHP code</span>]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_already_created</key>
