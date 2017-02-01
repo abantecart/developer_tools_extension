@@ -447,9 +447,14 @@
 			<![CDATA[ Clone XML from:</br><span class="help">You can select to export layout from existing template and save into this extension. After, this XML can be edited manually in location above</span> ]]></value>
 	</definition>
 	<definition>
+		<key>developer_tools_text_destination_directory</key>
+		<value>
+			<![CDATA[ Destination Folder for saving of file.<br>Note: directory name will use as template_id inside xml.  ]]></value>
+	</definition>
+	<definition>
 		<key>developer_tools_text_success_layout_xml</key>
 		<value>
-			<![CDATA[ Layout XML saved successfully. You can now <a href="#admin#rt=extension/extensions/template" target="_blank">install</a> template extension. ]]></value>
+			<![CDATA[ Layout XML saved successfully. ]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_text_error_layout_xml</key>

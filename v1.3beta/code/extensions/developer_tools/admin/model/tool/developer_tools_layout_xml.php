@@ -29,19 +29,23 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 	private $placeholder_block_id;
 	private $template_id_src;
 
-	public function saveXml($extension_txt_id, $template_id_src, $path = ''){
-		$this->template_id_src = $template_id_src;
+	public function saveXml($dst_template_id, $src_template_id, $path = ''){
+		$this->template_id_src = $src_template_id;
 
-		$layouts = $this->getLayoutsByTemplate($template_id_src);
+		$layouts = $this->getLayoutsByTemplate($src_template_id);
 		$xml_data = array ();
 
 		foreach ($layouts as $i => $layout){
 			$xml_data['layout'][$i] = array ('name'        => $layout['layout_name'],
-			                                 'template_id' => $extension_txt_id,
+			                                 'template_id' => $dst_template_id,
 			                                 'type'        => $this->_getTextLayoutType($layout['layout_type']),
 			                                 'pages'       => array ('page' => $this->_getLayoutPages4Xml($layout['layout_id'])),
 			                                 'blocks'      => $this->_getLayoutBlocks4Xml($layout['layout_id']));
+
+			$this->log->write(var_export($xml_data['layout'][$i]['blocks'], true));
 		}
+
+
 
 		$xml = Array2XML::createXML('template_layouts', $xml_data);
 		$xml = $xml->saveXML();
@@ -51,7 +55,7 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 			$core_path = substr($core_path, 0, -11);
 		}
 
-		$path = !$path ? DIR_EXT . $extension_txt_id . '/layout.xml' : $core_path . '/layout.xml';
+		$path = !$path ? DIR_EXT . $dst_template_id . '/layout.xml' : $core_path . '/layout.xml';
 
 		if ($xml){
 			$result = file_put_contents($path, $xml);
@@ -82,7 +86,7 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 		$template_id = trim($template_id);
 		if (!$template_id) return array ();
 		$result = $this->db->query("SELECT *
-						FROM " . DB_PREFIX . "layouts
+						FROM " . $this->db->table('layouts') . "
 						WHERE template_id='" . $template_id . "'");
 		return $result->rows;
 	}
@@ -119,10 +123,10 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 						pd.language_id,
 						l.directory as language_name,
 						pd.name, pd.title, pd.seo_url, pd.keywords, pd.description, pd.content
-				FROM " . DB_PREFIX . "pages_layouts pl
-				LEFT JOIN " . DB_PREFIX . "pages p ON p.page_id = pl.page_id
-				LEFT JOIN " . DB_PREFIX . "page_descriptions pd ON pd.page_id = pl.page_id
-				LEFT JOIN " . DB_PREFIX . "languages l ON l.language_id = pd.language_id
+				FROM " . $this->db->table('pages_layouts') . " pl
+				LEFT JOIN " . $this->db->table('pages') . " p ON p.page_id = pl.page_id
+				LEFT JOIN " . $this->db->table('page_descriptions') . " pd ON pd.page_id = pl.page_id
+				LEFT JOIN " . $this->db->table('languages') . " l ON l.language_id = pd.language_id
 				WHERE pl.layout_id = " . $layout_id;
 
 		$result = $this->db->query($sql);
@@ -166,7 +170,7 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 		if (!$layout_id) return array ();
 		$output = array ();
 		$sql = "SELECT *
-				FROM " . DB_PREFIX . "block_layouts bl
+				FROM " . $this->db->table('block_layouts'). " bl
 				WHERE bl.layout_id = " . $layout_id . " AND parent_instance_id = " . $parent_instance_id . "
 				ORDER BY position";
 		$result = $this->db->query($sql);
@@ -195,9 +199,9 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 				            bt.parent_block_id as parent_block_id,
 				            bt.template as template,
 				            pb.block_txt_id as parent_block_txt_id
-			   FROM " . DB_PREFIX . "blocks as b
-			   LEFT JOIN " . DB_PREFIX . "block_templates as bt ON (b.block_id = bt.block_id)
-			   LEFT JOIN " . DB_PREFIX . "blocks as pb ON (pb.block_id = bt.parent_block_id)
+			   FROM " . $this->db->table('blocks')." as b
+			   LEFT JOIN " . $this->db->table('block_templates') . " as bt ON (b.block_id = bt.block_id)
+			   LEFT JOIN " . $this->db->table('blocks') . " as pb ON (pb.block_id = bt.parent_block_id)
 			   WHERE b.block_id = " . $block_id;
 		$result = $this->db->query($sql);
 		$output = array ();
@@ -221,10 +225,10 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 	private function _getCustomBlockInfo4Xml($custom_block_id){
 		$custom_block_id = (int)$custom_block_id;
 		$sql = "SELECT bd.*, l.directory as language_name, cb.block_id, b.block_txt_id as base_block_txt_id
-				FROM " . DB_PREFIX . "block_descriptions bd
-				LEFT JOIN " . DB_PREFIX . "custom_blocks cb ON cb.custom_block_id = bd.custom_block_id
-				LEFT JOIN " . DB_PREFIX . "blocks b ON b.block_id = cb.block_id
-				LEFT JOIN " . DB_PREFIX . "languages l ON l.language_id = bd.language_id
+				FROM " . $this->db->table('block_description') . "s bd
+				LEFT JOIN " . $this->db->table('custom_blocks') . " cb ON cb.custom_block_id = bd.custom_block_id
+				LEFT JOIN " . $this->db->table('blocks') . " b ON b.block_id = cb.block_id
+				LEFT JOIN " . $this->db->table('languages') . " l ON l.language_id = bd.language_id
 				WHERE bd.custom_block_id = '" . ( int )$custom_block_id . "'
 				ORDER BY bd.language_id";
 		$result = $this->db->query($sql);

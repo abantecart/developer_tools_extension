@@ -24,19 +24,27 @@ if (! defined ( 'DIR_CORE' )) {
 /**
  * @property  ModelToolDeveloperToolsLayoutXml $model_tool_developer_tools_layout_xml
  * @property  ModelToolDeveloperToolsLanguage $model_tool_developer_tools_language
- * */
+ * @property  ModelToolDeveloperTools $model_tool_developer_tools
+ **/
+
 class ControllerResponsesToolDeveloperToolsOther extends AController {
 	public $data = array ();
 	public $errors = array ();
 	public function saveLayoutXml(){
+		$this->loadModel('tool/developer_tools');
+		$this->loadLanguage('developer_tools/developer_tools');
 
 		$error = 0;
 		$message = '';
 		$prj_id = $this->request->get['prj_id'];
 
-		if($this->request->is_GET() || empty($prj_id)){
+		if($this->request->is_GET()){
 			$error = 1;
 			$message = 'Error: Empty project name.';
+		}
+
+		if($prj_id){
+			$prj_config = $this->model_tool_developer_tools->getProjectConfig($prj_id);
 		}
 
 		if(!$error && empty($this->request->post['template_id'])){
@@ -58,27 +66,24 @@ class ControllerResponsesToolDeveloperToolsOther extends AController {
 			$message = 'Error: No Layouts found of template '.$this->request->post['template_id'];
 		}
 
-		if(!$error && !is_writable(DIR_EXT . $prj_config['extension_txt_id'])){
+		if(!$error && $prj_id && !is_writable(DIR_EXT . $prj_config['extension_txt_id'])){
 			$error = 1;
 			$message = 'Error: Directory'. DIR_EXT . $prj_config['extension_txt_id'].' is not writable.';
 		}
-		if(!$error && file_exists(DIR_EXT . $prj_config['extension_txt_id'] . '/layout.xml') && !is_writable(DIR_EXT . $prj_config['extension_txt_id'] . '/layout.xml')){
+		if(!$error && $prj_id && file_exists(DIR_EXT . $prj_config['extension_txt_id'] . '/layout.xml') && !is_writable(DIR_EXT . $prj_config['extension_txt_id'] . '/layout.xml')){
 			$error = 1;
 			$message = 'Error: File'. DIR_EXT . $prj_config['extension_txt_id'] . '/layout.xml'.' is not writable.';
 		}
 
 		if(!$error){
-			$this->loadModel('tool/developer_tools');
 			$this->loadModel('tool/developer_tools_layout_xml');
-			$this->loadLanguage('developer_tools/developer_tools');
-
-			$prj_config = $this->model_tool_developer_tools->getProjectConfig($prj_id);
-			if(!$prj_config){
-				$error = 1;
-				$message = 'Error: Cannot open config file of project '.$prj_id;
+			if($prj_config){
+				$dst_txt_id = $prj_config['extension_txt_id'];
+			}else{
+				$dst_txt_id = $this->request->post['destination_directory'];
 			}
 			if(!$error){
-				$result = $this->model_tool_developer_tools_layout_xml->saveXml($prj_config['extension_txt_id'], $this->request->post['template_id']);
+				$result = $this->model_tool_developer_tools_layout_xml->saveXml($dst_txt_id, $this->request->post['template_id']);
 				if($result){
 					$message = $this->language->get('developer_tools_text_success_layout_xml');
 				} else{

@@ -27,26 +27,25 @@ if (!defined('DIR_CORE')){
  * */
 class ControllerPagesToolDeveloperToolsOther extends AController{
 	public $data = array ();
-	public function main(){
+	public function main(){}
+	public function exportLayout(){
 
 		$this->loadModel('tool/developer_tools');
 		$this->loadLanguage('developer_tools/developer_tools');
 
 		$prj_id = $this->session->data['dev_tools_prj_id'];
-		if(!$prj_id){
-			$this->redirect($this->html->getSecureURL('tool/developer_tools'));
+		if($prj_id){
+			$prj_config = $this->model_tool_developer_tools->getProjectConfig($prj_id);
+			$this->data['filepath'] = DIR_EXT . $prj_config['extension_txt_id'] . '/layout.xml';
+			$this->data['relative_path'] = 'extensions/' . $prj_config['extension_txt_id'] . '/layout.xml';
 		}
-		$prj_config = $this->model_tool_developer_tools->getProjectConfig($prj_id);
 
 		$this->data['text_layout_xml_title'] = $this->language->get('text_layout_xml_title');
 		$this->data['text_select_template'] = $this->language->get('text_select_template');
-		$this->data['filepath'] = DIR_EXT . $prj_config['extension_txt_id'] . '/layout.xml';
 
 		if (!is_file($this->data['filepath']) || !is_readable($this->data['filepath'])){
 			$this->data['filepath'] = null;
 		}
-
-		$this->data['relative_path'] = 'extensions/' . $prj_config['extension_txt_id'] . '/layout.xml';
 
 		$this->document->initBreadcrumb(array (
 				'href'      => $this->html->getSecureURL('index/home'),
@@ -99,6 +98,22 @@ class ControllerPagesToolDeveloperToolsOther extends AController{
 				       'options' => $templates,
 				       'value'   => $prj_config['extension_txt_id']
 				));
+		if(!$prj_id){
+			$extensions = array();
+			$all_dirs = scandir(DIR_EXT);
+
+			foreach($all_dirs as $dir){
+				if(is_dir(DIR_EXT.$dir) && !in_array($dir, array('.','..'))){
+					$extensions[$dir] = $dir;
+				}
+			}
+
+			$this->data['form']['destination_directory'] = $form->getFieldHtml(
+					array ('type'    => 'selectbox',
+					       'name'    => 'destination_directory',
+					       'options' => $extensions
+					));
+		}
 
 		$this->data['xml_build_url'] = $this->html->getSecureUrl('r/tool/developer_tools_other/savelayoutxml', '&prj_id=' . $prj_id);
 		$this->data['text_save_layout_xml'] = $this->language->get('text_save_layout_xml');
@@ -107,6 +122,6 @@ class ControllerPagesToolDeveloperToolsOther extends AController{
 
 		$this->view->batchAssign($this->data);
 
-		$this->processTemplate('pages/tool/developer_tools_other.tpl');
+		$this->processTemplate('pages/tool/developer_tools_layout_xml.tpl');
 	}
 }

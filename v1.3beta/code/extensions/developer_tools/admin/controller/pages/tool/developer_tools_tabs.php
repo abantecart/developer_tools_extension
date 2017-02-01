@@ -74,7 +74,7 @@ class ControllerPagesToolDeveloperToolsTabs extends AController{
 			$btn_list = array(
 					'edit'      => $this->html->getSecureURL('tool/developer_tools/edit'),
 					'languages' => $this->html->getSecureURL('tool/developer_tools_languages'),
-					'other'     => $this->html->getSecureURL('tool/developer_tools_other'));
+					'other'     => $this->html->getSecureURL('tool/developer_tools_other/exportLayout'));
 			foreach($btn_list as $btn=>$href){
 				$this->data['buttons'][$btn] = array(
 								'href'   => $href,

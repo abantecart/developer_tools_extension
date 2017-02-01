@@ -5,7 +5,8 @@
 	<type>extensions</type>
 	<category>Development</category>
     <cartversions>
-	    <item>1.2.0</item>
+	    <item>1.2.9</item>
+	    <item>2.0.0</item>
    </cartversions>
     <layout></layout>
     <priority>10</priority>

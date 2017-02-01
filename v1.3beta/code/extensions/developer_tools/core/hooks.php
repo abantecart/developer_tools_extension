@@ -8,7 +8,7 @@
   Copyright (c) 2015 Belavier Commerce LLC
 
   Released under the GNU General Public License
-  Lincence details is bundled with this package in the file LICENSE.txt.
+  Licence details is bundled with this package in the file LICENSE.txt.
   It is also available at this URL:
   <http://www.gnu.org/licenses/>
 
@@ -45,15 +45,6 @@ class ExtensionDeveloperTools extends Extension {
 	public function onControllerPagesSettingSetting_InitData(){
 		if(!$this->_is_enabled()){ return false; }
 		$this->baseObject->loadLanguage('developer_tools/developer_tools');
-	}
-
-	public function onControllerPagesSettingSetting_UpdateData(){
-		if(!$this->_is_enabled()){ return false; }
-		$that = &$this->baseObject;
-		if($this->baseObject_method!='main' || $that->data['active']!='appearance' ){
-			return null;
-		}
-		$this->_change_clone_button($that);
 	}
 
 	public function onControllerPagesDesignTemplate_InitData(){
@@ -93,6 +84,8 @@ class ExtensionDeveloperTools extends Extension {
 			}
 			$that->view->assign('templates', $templates);
 			$this->_add_modal($that);
+
+			$this->_change_clone_button($that);
 		}
 
 	}
@@ -109,12 +102,12 @@ class ExtensionDeveloperTools extends Extension {
 		$clone_button = $that->view->getData('clone_button');
 		if($clone_button){
 			//TODO: remove this conditions in the future
-			if (in_array(VERSION, array ('1.2.0', '1.2.1'))){
-				$clone_button->href = $that->html->getSecureURL('p/tool/developer_tools/cloneTemplate');
-			} else{
-				$clone_button->href = $that->html->getSecureURL('r/tool/developer_tools/cloneTemplate');
+			if (version_compare(VERSION, '1.2.9', '>')){
+				$clone_button->attr = ' data-target="#clone_modal" data-toggle="modal" ';
+			}else{
+				$clone_button->target .= '" data-target="#clone_modal" data-toggle="modal" ';
 			}
-			$clone_button->attr = ' data-target="#clone_modal" data-toggle="modal" ';
+			$clone_button->href = $that->html->getSecureURL('r/tool/developer_tools/cloneTemplate');
 			$that->view->assign('clone_button', $clone_button);
 		}
 		$this->_add_modal($that);

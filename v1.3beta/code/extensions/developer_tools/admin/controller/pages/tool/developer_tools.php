@@ -70,7 +70,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 						'icon' => 'plus-square'),
 				'layout'         => array (
 						'text' => $this->language->get('developer_tools_text_export_layout'),
-						'href' => $this->html->getSecureURL('tool/developer_tools/create'),
+						'href' => $this->html->getSecureURL('tool/developer_tools_other/exportLayout'),
 						'icon' => 'file-code-o'),
 				'blocks'         => array (
 						'text' => $this->language->get('developer_tools_text_manage_blocks'),
