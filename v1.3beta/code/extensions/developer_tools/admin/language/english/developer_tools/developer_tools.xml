@@ -121,6 +121,10 @@
 		<value><![CDATA[ Language Directory<span class="help">Sub-directory name inside "language" directory, for example "english"</span>]]></value>
 	</definition>
 	<definition>
+		<key>developer_tools_entry_language_extension_flag_icon</key>
+		<value><![CDATA[ Language Flag Icon<span class="help">Only png file allowed with image size 16 x 11 px.</span>]]></value>
+	</definition>
+	<definition>
 		<key>developer_tools_entry_source_language</key>
 		<value><![CDATA[ Source Language for Translation]]></value>
 	</definition>
@@ -130,7 +134,11 @@
 	</definition>
 	<definition>
 		<key>developer_tools_translate_text</key>
-		<value><![CDATA[ Translate ]]></value>
+		<value><![CDATA[ Translate XML-files Now]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_translation_note</key>
+		<value><![CDATA[ Note: You can have ability to start automatic translation of all xml-files of newly created extension after generation.]]></value>
 	</definition>
 	<definition>
 		<key>developer_tools_entry_extension_title</key>

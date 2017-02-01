@@ -78,19 +78,23 @@ include($tpl_common_dir . 'action_confirm.tpl'); ?>
 					<?php }
 
 					if($name == 'translation_method'){ ?>
-					<div class="panel-footer col-xs-12">
-						<div class="text-center">
+						<div class="text-center col-xs-12 mt10">
 						  <button class="btn btn-primary task_run"
 						        data-run-task-url="<?php echo $build_task_url_language; ?>"
 						        data-complete-task-url="<?php echo $complete_task_url_language; ?>">
 						  <i class="fa fa-save"></i> <?php echo $developer_tools_translate_text; ?>
 						  </button>
 						</div>
-					</div>
 					<?php } ?>
 				</div>
 			<?php }
-			unset($form['fields'][$section]);?>
+			unset($form['fields'][$section]);
+
+			if($developer_tools_translation_note && $section == 'language_extension_settings'){?>
+				<div class="text-center col-xs-12">
+					<div class="info alert alert-info"><i class="fa fa fa-check fa-fw"></i> <?php echo $developer_tools_translation_note; ?></div>
+				</div>
+			<?php }	?>
 			</div>
 		<?php }
 		if(sizeof($form['fields'])){ ?>
@@ -106,8 +110,7 @@ include($tpl_common_dir . 'action_confirm.tpl'); ?>
 			</div>
 			<div class="panel-body panel-body-nopadding table-responsive">
 				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-					<?php
-
+			<?php
 					foreach ($form['fields'] as $section => $fields){ ?>
 						<div class="panel panel-default">
 							<div class="panel-heading" role="tab" id="heading<?php echo $section ?>">
@@ -183,12 +186,8 @@ include($tpl_common_dir . 'action_confirm.tpl'); ?>
 				</div>
 			</div>
 		</div>
-
-		<?php }
-
-		?>
+		<?php } ?>
 	</div>
-
 	<div class="panel-footer col-xs-12">
 		<div class="text-center">
 			<button class="btn btn-primary lock-on-click">
@@ -271,13 +270,13 @@ include($tpl_common_dir . 'action_confirm.tpl'); ?>
 	$('#extFrm_extension_type').change(function () {
 		var value = $(this).val();
 		//switch category
-		/*var v;
-		$("#extFrm_extension_category").find('option[value*='+value+']').attr('selected', 'selected');
-
-					$("#extFrm_extension_category").change();
+		$('#extFrm_extension_category option').each(function(){
+			if( $(this).attr('value').search(new RegExp(value, "i")) >= 0 ){
+				$('#extFrm_extension_category').val($(this).attr('value'));
 				return false;
+			}
+		});
 
-		});*/
 
 		if( value != 'language' ) {
 			toggle_language_form('hide');

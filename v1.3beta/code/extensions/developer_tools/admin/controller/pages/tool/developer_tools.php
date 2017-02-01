@@ -185,14 +185,12 @@ class ControllerPagesToolDeveloperTools extends AController{
 				}
 			}
 		}
-
-
+		//close opened project
+		unset($this->session->data['dev_tools_prj_id']);
 
 		$this->data['error'] = $this->error;
-
-
 		$this->document->setTitle($this->language->get('developer_tools_name'));
-		$this->data['heading_title'] = $this->language->get('developer_tools_name') . ': ' . $this->session->data['dev_tools_prj_id'];
+		$this->data['heading_title'] = $this->language->get('developer_tools_name');
 
 		if (!$this->_checkWritable()){
 			$this->data['error_warning'] = implode('<br>', $this->error);
@@ -365,11 +363,13 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 			$this->_build_languages($form);
 
-			//build admin section settings
-			$this->_build_admin($form);
+			if($this->session->data['dev_tools_prj_id'] && $this->data['extension_type'] != 'language'){
+				//build admin section settings
+				$this->_build_admin($form);
 
-			//storefront section settings
-			$this->_build_storefront($form);
+				//storefront section settings
+				$this->_build_storefront($form);
+			}
 		}
 	}
 
@@ -402,7 +402,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 				       'value'    => $val,
 				       'options'  => $options,
 				       'required' => true,
-				       'style'    => 'large-field',
+				       'style'    => 'large-field'
 				));
 
 		$this->data['form']['fields']['common']['extension_title'] = $form->getFieldHtml(
@@ -425,9 +425,10 @@ class ControllerPagesToolDeveloperTools extends AController{
 				}
 				$options[$cat['name']] = $cat['name'];
 			}
-			if (!in_array($this->data['category'], $options)){
+			if ($this->data['category'] && !in_array($this->data['category'], $options)){
 				$options[$this->data['category']] = $this->data['category'];
 			}
+
 			$this->data['form']['fields']['common']['extension_category'] = $form->getFieldHtml(
 					array ('type'     => 'selectbox',
 					       'name'     => 'extension_category',
@@ -664,24 +665,35 @@ class ControllerPagesToolDeveloperTools extends AController{
 				'help_url' => 'http://docs.abantecart.com/pages/localization/languages/edit_language.html',
 		));
 
-		$all_languages = array();
-		foreach ($this->language->getAvailableLanguages() as $result) {
-			$all_languages[$result['language_id']] = $result['name'];
-		}
-		$this->data['form']['fields']['language_extension_settings']['source_language'] = $form->getFieldHtml(array(
-						'type' => 'selectbox',
-						'name' => 'source_language',
-						'value' => $this->data['source_language'],
-						'options' => $all_languages,
-					));
+		$this->data['form']['fields']['language_extension_settings']['language_extension_flag_icon'] = $form->getFieldHtml(array(
+				'type' => 'file',
+				'name' => 'language_extension_flag_icon',
+				'value' => 'flag_icon'
+		));
+
 
 		$translate_methods = $this->language->getTranslationMethods();
-		$this->data['form']['fields']['language_extension_settings']['translation_method'] = $form->getFieldHtml(array(
-			'type' => 'selectbox',
-			'name' => 'translation_method',
-			'value' => $this->data['translation_method'],
-			'options' => $translate_methods,
-		));
+		if($this->session->data['dev_tools_prj_id']){
+			$all_languages = array ();
+			foreach ($this->language->getAvailableLanguages() as $result){
+				$all_languages[$result['language_id']] = $result['name'];
+			}
+			$this->data['form']['fields']['language_extension_settings']['source_language'] = $form->getFieldHtml(array (
+					'type'    => 'selectbox',
+					'name'    => 'source_language',
+					'value'   => $this->data['source_language'],
+					'options' => $all_languages,
+			));
+
+			$this->data['form']['fields']['language_extension_settings']['translation_method'] = $form->getFieldHtml(array (
+					'type'    => 'selectbox',
+					'name'    => 'translation_method',
+					'value'   => $this->data['translation_method'],
+					'options' => $translate_methods,
+			));
+		}elseif(sizeof($translate_methods)>1){
+			$this->data['form']['language_extension_settings']['note'] = $this->language->get('developer_tools_translation_note');
+		}
 	}
 
 	/**
@@ -1079,6 +1091,8 @@ class ControllerPagesToolDeveloperTools extends AController{
 	}
 
 	protected function _validate_create_data($data){
+
+
 		unset($this->session->data['dev_tools_prj_id']);
 		$this->error = array ();
 		if (!$data['extension_type']){
@@ -1106,6 +1120,15 @@ class ControllerPagesToolDeveloperTools extends AController{
 				|| sizeof($locale_array) != 2
 				|| sizeof($locale_array[1]) != 4 ){
 				$this->error['language_extension_locale'] = 'Please Fill Correct Language Locale!';
+			}
+
+			if( $this->request->files['language_extension_flag_icon']
+				&& (
+					$this->request->files['language_extension_flag_icon']['size']==0
+					|| 	$this->request->files['language_extension_flag_icon']['error'] == 1
+					)
+			){
+				$this->error['language_extension_flag_icon'] = 'Incorrect Language Flag Icon!';
 			}
 
 		}

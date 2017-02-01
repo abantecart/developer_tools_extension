@@ -118,7 +118,7 @@ class ControllerTaskDeveloperToolsLanguage extends AController{
 						'created_by' => 1,
 						'settings'   => array ()
 					));
-			$task_step_text_result = sizeof($new_definitions).' definitions have been translated.';
+			$task_step_text_result = sizeof($new_definitions).' definitions of file '.$destination_file.' have been translated.';
 		} else{
 			$step_result = false;
 		}

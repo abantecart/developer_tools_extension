@@ -243,11 +243,18 @@ class ModelToolDeveloperTools extends Model{
 		//NOTE! unacceptable extension without at least one admin language file
 		if (!$data['extension_admin_language_files']){
 			$data['extension_admin_language_files'] = array ('english');
+			//add help note for language-extension
+			if(!$data['help_note'] && $data['extension_type'] == 'language'){
+				$data['help_note'] = '<b>Attention!</b> Please enable extension and enable language in System->Localizations-><a href="#admin#rt=localisation/language">Languages</a>.'
+						.'<br><b>Edit text</b>: If you notice incorrect translations, you can correct language text in System->Localizations-><a href="#admin#rt=localisation/language_definitions">Language Definitions</a>'
+						.'<br><b>Missing text:</b> If you add new language you need to update store content (dynamic shopping cart data) to have new language translation.'
+						.'<br>This can be done automatically with "Load missing language data" in edit language section';
+			}
 		}
 
 		foreach ($this->sections as $section){
-			if (!isset($data['extension_' . $section . '_get_source_xml_files'])) continue;
-			foreach ($data['extension_' . $section . '_get_source_xml_files'] as $language_name){
+			if (!isset($data['extension_' . $section . '_language_files'])) continue;
+			foreach ($data['extension_' . $section . '_language_files'] as $language_name){
 				if ($language_name){
 					$language_name = strtolower($language_name);
 					$file = $extension_name . '.xml';
@@ -416,13 +423,34 @@ class ModelToolDeveloperTools extends Model{
 
 	protected function _build_language_install_php($data, &$file_content){
 
+		if($this->request->files['language_extension_flag_icon']){
+
+			$flag_filename = 'flag.'.pathinfo($this->request->files['language_extension_flag_icon']['name'], PATHINFO_EXTENSION);
+			if(!is_dir(DIR_EXT.$data['extension_txt_id'].'/storefront/language/'.$data['language_extension_directory'])){
+				mkdir(DIR_EXT.$data['extension_txt_id'].'/storefront/language/'.$data['language_extension_directory'], 0755, true);
+			}
+			if(!is_dir(DIR_EXT.$data['extension_txt_id'].'/admin/language/'.$data['language_extension_directory'])){
+				mkdir(DIR_EXT.$data['extension_txt_id'].'/admin/language/'.$data['language_extension_directory'], 0755, true);
+			}
+			$result = copy($this->request->files['language_extension_flag_icon']['tmp_name'],
+										DIR_EXT.$data['extension_txt_id'].'/storefront/language/'.$data['language_extension_directory'].'/'.$flag_filename);
+			copy($this->request->files['language_extension_flag_icon']['tmp_name'],
+													DIR_EXT.$data['extension_txt_id'].'/admin/language/'.$data['language_extension_directory'].'/'.$flag_filename);
+			if($result){
+				$flag_icon_path = 'extensions/'.$data['extension_txt_id'].'/storefront/language/'.$data['language_extension_directory'].'/'.$flag_filename;
+				unlink($this->request->files['language_extension_flag_icon']['tmp_name']);
+			}else{
+				$flag_icon_path = '';
+			}
+		}
+
 		$file_content .= '
 //before install validate it is unique
 $lng_code = "'.strtolower($data['language_extension_code']).'";
 $lng_name = "'.$data['language_extension_name'].'";
 $lng_directory = "'.$data['language_extension_directory'].'";
 $lng_locale = "'.$data['language_extension_locale'].'";
-$lng_flag_path = "extensions/'.$data['extension_txt_id'].'/storefront/language/'.$data['language_extension_directory'].'/flag.png";
+$lng_flag_path = "'.$flag_icon_path.'";
 $lng_sort = 2; // sorting order with other languages
 $lng_status = 0; // Status on installation of extension
 

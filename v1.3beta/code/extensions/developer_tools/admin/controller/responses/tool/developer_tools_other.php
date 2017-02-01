@@ -275,7 +275,7 @@ class ControllerResponsesToolDeveloperToolsOther extends AController {
 				'result_text' => $result_text))
 		);
 	}
-/*
+
 	public function restartTask(){
 		$this->data['output'] = array ();
 		//init controller data
@@ -341,6 +341,5 @@ class ControllerResponsesToolDeveloperToolsOther extends AController {
 		$this->response->setOutput(AJson::encode($this->data['output']));
 
 	}
-*/
 
 }
