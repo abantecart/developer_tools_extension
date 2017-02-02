@@ -752,8 +752,11 @@ $this->cache->remove("localization");';
 	public function copyLanguage($project_xml, $src_language_name = 'english'){
 		$src_language_name = !$src_language_name ? 'english' : $src_language_name;
 		$copy_file_content = $project_xml['copy_default'];
+
+		$lang_dir = $project_xml['language_extension_directory'] ? $project_xml['language_extension_directory'] : $project_xml['extension_txt_id'];
+
 		// replicate
-		$language_dir = DIR_EXT . $project_xml['extension_txt_id'] . '/storefront/language/' . $project_xml['extension_txt_id'];
+		$language_dir = DIR_EXT . $project_xml['extension_txt_id'] . '/storefront/language/' . $lang_dir;
 		if (!is_dir($language_dir)){
 			$result = mkdir($language_dir, 0755, true);
 		} else{
@@ -766,7 +769,7 @@ $this->cache->remove("localization");';
 		$this->_chmod_R($language_dir, 0644, 0755);
 		$this->_copyDir(DIR_STOREFRONT . 'language/' . $src_language_name, $language_dir, $copy_file_content);
 
-		$language_dir = DIR_EXT . $project_xml['extension_txt_id'] . '/admin/language/' . $project_xml['extension_txt_id'];
+		$language_dir = DIR_EXT . $project_xml['extension_txt_id'] . '/admin/language/' . $lang_dir;
 		if (!is_dir($language_dir)){
 			$result = mkdir($language_dir, 0755, true);
 		} else{

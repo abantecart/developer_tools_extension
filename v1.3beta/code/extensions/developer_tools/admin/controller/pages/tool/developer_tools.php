@@ -30,6 +30,10 @@ class ControllerPagesToolDeveloperTools extends AController{
 	public $data = array ();
 	private $error = array ();
 
+	protected function _is_open_project(){
+		return ($this->session->data['dev_tools_prj_id']) ? true : false;
+	}
+
 	public function main(){
 		$this->loadLanguage('developer_tools/developer_tools');
 
@@ -222,7 +226,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 	public function edit(){
 
-		if (!$this->session->data['dev_tools_prj_id'] && !$this->request->get['prj_id']){
+		if (!$this->_is_open_project() && !$this->request->get['prj_id']){
 			$this->redirect($this->html->getSecureURL('tool/developer_tools'));
 		}
 
@@ -261,13 +265,13 @@ class ControllerPagesToolDeveloperTools extends AController{
 			}
 		}
 
-		if ($this->session->data['dev_tools_prj_id']){
+		if ($this->_is_open_project()){
 			$project_info = $this->model_tool_developer_tools->getProjectConfig($this->session->data['dev_tools_prj_id']);
 		} else{
 			$project_info = null;
 		}
 		//when project-xml not found
-		if ($this->session->data['dev_tools_prj_id'] && !$project_info){
+		if ($this->_is_open_project() && !$project_info){
 			unset($this->session->data['dev_tools_prj_id']);
 			$this->redirect($this->html->getSecureURL('tool/developer_tools'));
 		}
@@ -278,7 +282,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 			$this->data['error_warning'] .= implode('<br>', $this->model_tool_developer_tools->error);
 		}
 
-		$mode = $this->session->data['dev_tools_prj_id'] ? 'full' : 'short';
+		$mode = $this->_is_open_project() ? 'full' : 'short';
 		$this->_getForm($mode);
 		$this->data['dt_attention'] = sprintf(
 				$this->language->get('developer_tools_text_about_edit'),
@@ -359,16 +363,15 @@ class ControllerPagesToolDeveloperTools extends AController{
 		$this->_build_language_settings($form);
 		if ($mode == 'full'){
 			$this->data['all_languages'] = (array)$this->language->getAvailableLanguages();
+			if( $this->data['extension_type'] != 'language' ){
+				$this->_build_languages($form);
+				if( $this->_is_open_project() ){
+					//build admin section settings
+					$this->_build_admin($form);
 
-
-			$this->_build_languages($form);
-
-			if($this->session->data['dev_tools_prj_id'] && $this->data['extension_type'] != 'language'){
-				//build admin section settings
-				$this->_build_admin($form);
-
-				//storefront section settings
-				$this->_build_storefront($form);
+					//storefront section settings
+					$this->_build_storefront($form);
+				}
 			}
 		}
 	}
@@ -673,7 +676,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 
 		$translate_methods = $this->language->getTranslationMethods();
-		if($this->session->data['dev_tools_prj_id']){
+		if($this->_is_open_project()){
 			$all_languages = array ();
 			foreach ($this->language->getAvailableLanguages() as $result){
 				$all_languages[$result['language_id']] = $result['name'];
@@ -691,7 +694,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 					'value'   => $this->data['translation_method'],
 					'options' => $translate_methods,
 			));
-		}elseif(sizeof($translate_methods)>1){
+		}elseif(sizeof($translate_methods)>1 && !$this->_is_open_project()){
 			$this->data['form']['language_extension_settings']['note'] = $this->language->get('developer_tools_translation_note');
 		}
 	}
@@ -1164,7 +1167,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 	public function package(){
 
-		if (!$this->session->data['dev_tools_prj_id']){
+		if (!$this->_is_open_project()){
 			$this->redirect($this->html->getSecureURL('tool/developer_tools'));
 		}
 
@@ -1610,7 +1613,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 	 */
 	private function _check4NewTemplates($data){
 		//check is templates already in main.php file of extension
-		if (has_value($this->session->data['dev_tools_prj_id']) && has_value($data['templates'])){
+		if ($this->_is_open_project() && has_value($data['templates'])){
 			$prj_config = $this->model_tool_developer_tools->getProjectConfig($this->session->data['dev_tools_prj_id']);
 
 			foreach ($data['templates'] as $template){
@@ -1721,7 +1724,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 		// list of templates for block
 		//if project opened - include list of tpls of extension first
 		$templates = array ();
-		if (has_value($this->session->data['dev_tools_prj_id'])){
+		if ($this->_is_open_project()){
 			$extension_id = $this->model_tool_developer_tools->getProjectConfig($this->session->data['dev_tools_prj_id']);
 			$extension_id = $extension_id['extension_txt_id'];
 			$tpl_path = DIR_EXT . $extension_id . '/storefront/view/my_template/template/';

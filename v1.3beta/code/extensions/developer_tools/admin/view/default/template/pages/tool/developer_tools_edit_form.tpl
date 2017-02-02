@@ -90,15 +90,14 @@ include($tpl_common_dir . 'action_confirm.tpl'); ?>
 			<?php }
 			unset($form['fields'][$section]);
 
-			if($developer_tools_translation_note && $section == 'language_extension_settings'){?>
+			if($form['language_extension_settings']['note'] && $section == 'language_extension_settings'){?>
 				<div class="text-center col-xs-12">
-					<div class="info alert alert-info"><i class="fa fa fa-check fa-fw"></i> <?php echo $developer_tools_translation_note; ?></div>
+					<div class="info alert alert-info"><i class="fa fa fa-check fa-fw"></i> <?php echo $form['language_extension_settings']['note']; ?></div>
 				</div>
 			<?php }	?>
 			</div>
 		<?php }
 		if(sizeof($form['fields'])){ ?>
-
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<label class="h4 heading"
