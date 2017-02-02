@@ -732,7 +732,7 @@ $this->cache->remove("localization");';
 		}
 		$this->copied = array ();
 		//copy settings of default template into db
-		$sql = " INSERT INTO " . $this->db->table('settings') . " (`group`,`store_id`, `key`, `value`,`date_added`)
+		$sql = "INSERT INTO " . $this->db->table('settings') . " (`group`,`store_id`, `key`, `value`,`date_added`)
 				SELECT '" . $project_xml['extension_txt_id'] . "' as `group`,
 						'" . (int)$this->config->get('config_store_id') . "' as store_id,
 						`key`,

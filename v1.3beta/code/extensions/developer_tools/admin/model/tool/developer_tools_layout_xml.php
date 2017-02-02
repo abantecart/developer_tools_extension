@@ -34,18 +34,22 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 
 		$layouts = $this->getLayoutsByTemplate($src_template_id);
 		$xml_data = array ();
-
 		foreach ($layouts as $i => $layout){
+			$layout_id = $layout['layout_id'];
 			$xml_data['layout'][$i] = array ('name'        => $layout['layout_name'],
 			                                 'template_id' => $dst_template_id,
-			                                 'type'        => $this->_getTextLayoutType($layout['layout_type']),
-			                                 'pages'       => array ('page' => $this->_getLayoutPages4Xml($layout['layout_id'])),
-			                                 'blocks'      => $this->_getLayoutBlocks4Xml($layout['layout_id']));
-
-			$this->log->write(var_export($xml_data['layout'][$i]['blocks'], true));
+			                                 'type'        => $this->_getTextLayoutType($layout['layout_type'])
+			);
+			//note: layout can be orphan and do not assigned to any pages and do not contains any blocks
+			$pages = $this->_getLayoutPages4Xml($layout_id);
+			if($pages){
+				$xml_data['layout'][$i]['pages'] = array ('page' => $pages);
+			}
+			$blocks = $this->_getLayoutBlocks4Xml($layout_id);
+			if($blocks){
+				$xml_data['layout'][$i]['blocks'] = $blocks;
+			}
 		}
-
-
 
 		$xml = Array2XML::createXML('template_layouts', $xml_data);
 		$xml = $xml->saveXML();
@@ -117,12 +121,43 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 	private function _getLayoutPages4Xml($layout_id){
 		$layout_id = (int)$layout_id;
 		if (!$layout_id) return array ();
+
+		// do trick for bug in layout db-data structure for 1.2.9
+	//	if(VERSION == '1.2.9'){
+			$sql = "SELECT page_id 
+					FROM ".$this->db->table('pages')."
+					WHERE controller = 'pages/checkout/cart'";
+			$result = $this->db->query($sql);
+			$page_id = (int)$result->row['page_id'];
+			if($page_id){
+				$result = $this->db->query("SELECT *  
+											FROM ".$this->db->table('page_descriptions')."
+											WHERE page_id = '".$page_id."'");
+
+				if(!$result->num_rows){
+					$languages = $this->language->getAvailableLanguages();
+					foreach($languages as $lang){
+						$sql = "REPLACE INTO `".$this->db->table('page_descriptions')."` 
+									(`page_id`, `language_id`, `name`, `title`, 
+										`seo_url`, `keywords`, `description`, `content`, `date_added`)
+								VALUES 
+									(".$page_id.", ".$lang['language_id'].", 'Cart Page', '', '', '', '', '', NOW() );";
+						$this->db->query($sql);
+					}
+				}
+			}
+		//}
 		$output = array ();
 		$sql = "SELECT pl.page_id,
 						p.controller, p.key_param, p.key_value,
 						pd.language_id,
 						l.directory as language_name,
-						pd.name, pd.title, pd.seo_url, pd.keywords, pd.description, pd.content
+						pd.name, 
+						pd.title, 
+						pd.seo_url, 
+						pd.keywords, 
+						pd.description, 
+						pd.content
 				FROM " . $this->db->table('pages_layouts') . " pl
 				LEFT JOIN " . $this->db->table('pages') . " p ON p.page_id = pl.page_id
 				LEFT JOIN " . $this->db->table('page_descriptions') . " pd ON pd.page_id = pl.page_id
@@ -235,13 +270,13 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 		if (!$result->num_rows){
 			return array ();
 		}
+
 		$output['custom_block_txt_id'] = preformatTextID($result->rows[0]['name']) . "_" . $custom_block_id;
 		/**
 		 * @deprecated
 		 * TODO : need to delete processing of tags <kind> from layout manager in the future
 		 */
 		$output['kind'] = 'custom';
-
 		$output['type'] = $result->rows[0]['base_block_txt_id'];
 		foreach ($result->rows as $row){
 			$output['block_descriptions']['block_description'][] = array (
