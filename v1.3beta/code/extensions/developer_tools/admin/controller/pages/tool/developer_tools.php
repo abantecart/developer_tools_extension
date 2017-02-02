@@ -1123,11 +1123,13 @@ class ControllerPagesToolDeveloperTools extends AController{
 			}
 
 			if( $this->request->files['language_extension_flag_icon']
-				&& (
+				&& $this->request->files['language_extension_flag_icon']['name']
+					&&	(
 					$this->request->files['language_extension_flag_icon']['size']==0
-					|| 	$this->request->files['language_extension_flag_icon']['error'] == 1
+					|| 	$this->request->files['language_extension_flag_icon']['error'] != 0
 					)
 			){
+
 				$this->error['language_extension_flag_icon'] = 'Incorrect Language Flag Icon!';
 			}
 
@@ -1162,7 +1164,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 
 	public function package(){
 
-		if (!$this->session->data['dev_tools_prj_id'] || !$this->request->get['extension_txt_id']){
+		if (!$this->session->data['dev_tools_prj_id']){
 			$this->redirect($this->html->getSecureURL('tool/developer_tools'));
 		}
 

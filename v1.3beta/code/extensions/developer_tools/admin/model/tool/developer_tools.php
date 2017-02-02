@@ -692,7 +692,7 @@ $this->cache->remove("localization");';
 			$result = mkdir($template_dir, 0777, true);
 		}
 		if (!$result){
-			$this->error[] = 'cannot create directory ' . $template_dir;
+			$this->error[] = 'Cannot create directory ' . $template_dir;
 		}
 		$this->_chmod_R($template_dir, 0777, 0777);
 		$this->copied = array ();

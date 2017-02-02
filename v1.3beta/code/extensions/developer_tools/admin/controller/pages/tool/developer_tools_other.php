@@ -27,7 +27,9 @@ if (!defined('DIR_CORE')){
  * */
 class ControllerPagesToolDeveloperToolsOther extends AController{
 	public $data = array ();
-	public function main(){}
+	public function main(){
+		$this->redirect( $this->html->getSecureURL('tool/developer_tools/exportLayout'));
+	}
 	public function exportLayout(){
 
 		$this->loadModel('tool/developer_tools');
