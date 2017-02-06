@@ -93,12 +93,33 @@ class ModelToolDeveloperToolsLanguage extends Model{
 
 		//create steps
 		$sort_order = 1;
+
+		$source_directories = array(
+				'storefront' => DIR_STOREFRONT . 'language/'.$language['directory'].'/',
+				'admin'      => DIR_APP_SECTION . 'language/'.$language['directory'].'/'
+		);
+
+		//check directories
+		foreach($source_directories as $section => &$dir){
+			if(!is_dir($dir)){
+				$dir = DIR_EXT.$language['directory'].'/'.$section.'/language/'.$language['directory'].'/';
+			}
+			if(!is_dir($dir)){
+				$dir = DIR_EXT.'default_'.$language['directory'].'/'.$section.'/language/'.$language['directory'].'/';
+			}
+			if(!is_dir($dir)){
+				$dir = '';
+			}
+		}
+
+
+
 		foreach($xml_files as $section=>$files){
 			foreach($files as $xml_file){
 				if ($section == 'storefront'){
-					$destination_file = DIR_EXT . $data['extension_txt_id'] . '/' . $section . '/language/'.$data['language_extension_directory'].'/' . str_replace(DIR_STOREFRONT . 'language/'.$language['directory'].'/', '', $xml_file);
+					$destination_file = DIR_EXT.$data['extension_txt_id'].'/'.$section.'/language/'.$data['language_extension_directory'].'/'.str_replace($source_directories['storefront'], '', $xml_file);
 				} else{
-					$destination_file = DIR_EXT . $data['extension_txt_id'] . '/' . $section . '/language/'.$data['language_extension_directory'].'/' . str_replace(DIR_APP_SECTION . 'language/'.$language['directory'].'/', '', $xml_file);
+					$destination_file = DIR_EXT.$data['extension_txt_id'].'/'.$section.'/language/'.$data['language_extension_directory'].'/'.str_replace($source_directories['admin'], '', $xml_file);
 				}
 
 				if(basename($destination_file) == $language['directory'].'.xml'){
@@ -156,26 +177,43 @@ class ModelToolDeveloperToolsLanguage extends Model{
 
 		// seek storefront side
 		$language_dir = DIR_STOREFRONT . 'language/' . $src_language_directory;
-		$items = new RecursiveIteratorIterator(
-		    new RecursiveDirectoryIterator($language_dir, RecursiveDirectoryIterator::SKIP_DOTS)
-		);
 
-		foreach($items as $item) {
-			$filename = (string)$item;
-			if(pathinfo($filename,PATHINFO_EXTENSION) == 'xml'){
-				$output['storefront'][] = $filename;
+		if(!is_dir($language_dir)){
+			$language_dir = DIR_EXT.$src_language_directory. '/storefront/language/' . $src_language_directory;
+		}
+		if(!is_dir($language_dir)){
+			$language_dir = DIR_EXT.'default_'.$src_language_directory. '/storefront/language/' . $src_language_directory;
+		}
+
+		if(is_dir($language_dir)){
+			$items = new RecursiveIteratorIterator(
+					new RecursiveDirectoryIterator($language_dir, RecursiveDirectoryIterator::SKIP_DOTS)
+			);
+			foreach ($items as $item){
+				$filename = (string)$item;
+				if (pathinfo($filename, PATHINFO_EXTENSION) == 'xml'){
+					$output['storefront'][] = $filename;
+				}
 			}
 		}
 
 		$language_dir = DIR_APP_SECTION . 'language/' . $src_language_directory;
-		$items = new RecursiveIteratorIterator(
-		    new RecursiveDirectoryIterator($language_dir, RecursiveDirectoryIterator::SKIP_DOTS)
-		);
+		if(!is_dir($language_dir)){
+			$language_dir = DIR_EXT.$src_language_directory. '/admin/language/' . $src_language_directory;
+		}
+		if(!is_dir($language_dir)){
+			$language_dir = DIR_EXT.'default_'.$src_language_directory. '/admin/language/' . $src_language_directory;
+		}
 
-		foreach($items as $item) {
-			$filename = (string)$item;
-			if(pathinfo($filename,PATHINFO_EXTENSION) == 'xml'){
-				$output['admin'][] = $filename;
+		if(is_dir($language_dir)){
+			$items = new RecursiveIteratorIterator(
+					new RecursiveDirectoryIterator($language_dir, RecursiveDirectoryIterator::SKIP_DOTS)
+			);
+			foreach ($items as $item){
+				$filename = (string)$item;
+				if (pathinfo($filename, PATHINFO_EXTENSION) == 'xml'){
+					$output['admin'][] = $filename;
+				}
 			}
 		}
 

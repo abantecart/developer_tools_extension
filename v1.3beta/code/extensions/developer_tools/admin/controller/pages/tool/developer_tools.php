@@ -1242,6 +1242,7 @@ class ControllerPagesToolDeveloperTools extends AController{
 		$this->data['form']['cancel'] = $form->getFieldHtml(
 				array ('type'  => 'button',
 				       'name'  => 'cancel',
+				       'href' => $this->html->getSecureURL('tool/developer_tools/edit'),
 				       'text'  => $this->language->get('button_cancel'),
 				       'style' => 'button2',
 				));
