@@ -674,6 +674,76 @@ class ControllerPagesToolDeveloperTools extends AController{
 				'value' => 'flag_icon'
 		));
 
+		$value = $this->data['language_extension_direction'] ? $this->data['language_extension_direction'] : 'ltr';
+		$this->data['form']['fields']['language_extension_settings']['language_extension_direction'] = $form->getFieldHtml(array(
+				'type' => 'input',
+				'name' => 'language_extension_direction',
+				'value' => $value,
+				'required' => true,
+				'placeholder' => 'set language direction - ltr or rtr',
+				'help_url' => 'http://docs.abantecart.com/pages/localization/languages/edit_language.html',
+		));
+
+		$value = $this->data['language_extension_date_format_short'] ? $this->data['language_extension_date_format_short'] : 'm/d/Y';
+		$this->data['form']['fields']['language_extension_settings']['language_extension_date_format_short'] = $form->getFieldHtml(array(
+				'type' => 'input',
+				'name' => 'language_extension_date_format_short',
+				'value' => $value,
+				'required' => true,
+				'placeholder' => 'set language short date format',
+				'help_url' => 'http://php.net/manual/en/function.date.php',
+		));
+
+		$value = $this->data['language_extension_date_format_long'] ? $this->data['language_extension_date_format_long'] : 'l dS F Y';
+		$this->data['form']['fields']['language_extension_settings']['language_extension_date_format_long'] = $form->getFieldHtml(array(
+				'type' => 'input',
+				'name' => 'language_extension_date_format_long',
+				'value' => $value,
+				'required' => true,
+				'placeholder' => 'set language long date format',
+				'help_url' => 'http://php.net/manual/en/function.date.php',
+		));
+
+		$value = $this->data['language_extension_time_format_short'] ? $this->data['language_extension_time_format_short'] : 'H:i';
+		$this->data['form']['fields']['language_extension_settings']['language_extension_time_format_short'] = $form->getFieldHtml(array(
+				'type' => 'input',
+				'name' => 'language_extension_time_format_short',
+				'value' => $value,
+				'required' => true,
+				'placeholder' => 'set language time format_short',
+				'help_url' => 'http://php.net/manual/en/function.date.php',
+		));
+
+		$value = $this->data['language_extension_time_format'] ? $this->data['language_extension_time_format'] : 'h:i:s A';
+		$this->data['form']['fields']['language_extension_settings']['language_extension_time_format'] = $form->getFieldHtml(array(
+				'type' => 'input',
+				'name' => 'language_extension_time_format',
+				'value' => $value,
+				'required' => true,
+				'placeholder' => 'set language long time format',
+				'help_url' => 'http://php.net/manual/en/function.date.php',
+		));
+
+		$value = $this->data['language_extension_decimal_point'] ? $this->data['language_extension_decimal_point'] : '.';
+		$this->data['form']['fields']['language_extension_settings']['language_extension_decimal_point'] = $form->getFieldHtml(array(
+				'type' => 'input',
+				'name' => 'language_extension_decimal_point',
+				'value' => $value,
+				'required' => true,
+				'placeholder' => 'set language decimal point',
+				'help_url' => 'http://php.net/manual/ru/function.number-format.php',
+		));
+
+		$value = $this->data['language_extension_thousand_point'] ? $this->data['language_extension_thousand_point'] : ',';
+		$this->data['form']['fields']['language_extension_settings']['language_extension_thousand_point'] = $form->getFieldHtml(array(
+				'type' => 'input',
+				'name' => 'language_extension_thousand_point',
+				'value' => $value,
+				'required' => true,
+				'placeholder' => 'set language decimal point',
+				'help_url' => 'http://php.net/manual/ru/function.number-format.php',
+		));
+
 
 		$translate_methods = $this->language->getTranslationMethods();
 		if($this->_is_open_project()){
@@ -1132,9 +1202,26 @@ class ControllerPagesToolDeveloperTools extends AController{
 					|| 	$this->request->files['language_extension_flag_icon']['error'] != 0
 					)
 			){
-
 				$this->error['language_extension_flag_icon'] = 'Incorrect Language Flag Icon!';
 			}
+
+			if(!$data['language_extension_direction'] || !in_array(strtolower($data['language_extension_direction']),array('rtl','ltr'))){
+				$this->error['language_extension_direction'] = 'Please Fill Language Direction! It Must be RTL or LTR';
+			}
+
+			$fields = array('date_format_short',
+							'date_format_long',
+							'time_format',
+							'time_format_short',
+							'decimal_point',
+							'thousand_point');
+
+			foreach($fields as $field_name){
+				if (!$data['language_extension_'.$field_name]){
+					$this->error['language_extension_'.$field_name] = 'Please Fill '.$this->language->get('developer_tools_entry_language_extension_'.$field_name).'!';
+				}
+			}
+
 
 		}
 

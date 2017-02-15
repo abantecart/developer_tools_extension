@@ -90,7 +90,11 @@ class ControllerTaskDeveloperToolsLanguage extends AController{
 		if($definitions){
 			foreach($definitions as $def_key=> $def_value){
 				if(in_array($def_key, $exclude_keys)){
-					$translate_result = $def_value;
+					//todo: think how to get excluded keys from system locale etc
+					$translate_result = $step_settings['language_extension_'.$def_key];
+					if($def_key == 'code'){
+						$translate_result = $dst_language_code;
+					}
 				}else{
 					$translate_result = $this->language->translate(
 							$src_language_code,

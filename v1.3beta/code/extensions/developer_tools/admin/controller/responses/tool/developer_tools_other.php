@@ -105,7 +105,7 @@ class ControllerResponsesToolDeveloperToolsOther extends AController {
 		$this->response->setOutput(AJson::encode(array('error'=>$error,'message'=>$message)));
 	}
 
-	//method for builing translation task
+	//method for building translation task
 	public function buildTask(){
 		//init controller data
 		$this->extensions->hk_InitData($this, __FUNCTION__);

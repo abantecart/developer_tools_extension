@@ -125,6 +125,34 @@
 		<value><![CDATA[ Language Flag Icon<span class="help">Only png file allowed with image size 16 x 11 px.</span>]]></value>
 	</definition>
 	<definition>
+		<key>developer_tools_entry_language_extension_direction</key>
+		<value><![CDATA[ Language Direction<span class="help">Can be only LTR or RTL!</span>]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_language_extension_date_format_short</key>
+		<value><![CDATA[ Short Date Format ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_language_extension_date_format_long</key>
+		<value><![CDATA[ Long Date Format ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_language_extension_time_format_short</key>
+		<value><![CDATA[ Short Time Format ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_language_extension_time_format</key>
+		<value><![CDATA[ Long Time Format ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_language_extension_decimal_point</key>
+		<value><![CDATA[ Decimal Point ]]></value>
+	</definition>
+	<definition>
+		<key>developer_tools_entry_language_extension_thousand_point</key>
+		<value><![CDATA[ Thousand Point ]]></value>
+	</definition>
+	<definition>
 		<key>developer_tools_entry_source_language</key>
 		<value><![CDATA[ Source Language for Translation]]></value>
 	</definition>

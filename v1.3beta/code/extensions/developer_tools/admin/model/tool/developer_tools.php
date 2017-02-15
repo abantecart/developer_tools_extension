@@ -145,7 +145,7 @@ class ModelToolDeveloperTools extends Model{
 					$class_name .= implode('', $rt);
 					$pre_content .= "class " . $class_name . " extends Model {\n
 			public \$data = array ();
-			private \$error = array ();\n }\n";
+			public \$error = array ();\n }\n";
 
 					$dir = $extension_directory . '/' . $section . '/model/' . $route;
 					if (!is_dir($dir)){
@@ -221,7 +221,7 @@ class ModelToolDeveloperTools extends Model{
 						$class_name .= implode('', $rt);
 						$pre_content .= "class " . $class_name . " extends AController {\n
 		public \$data = array ();
-		private \$error = array ();\n }\n";
+		public \$error = array ();\n }\n";
 
 						$dir = $extension_directory . '/' . $section . '/controller/' . $route_prefix . '/' . $route;
 						if (!is_dir($dir)){
@@ -288,9 +288,20 @@ class ModelToolDeveloperTools extends Model{
 				$this->_build_template_install_php($data, $install_content);
 			}elseif ($project_xml['extension_type'] == 'language'){
 				$project_xml['language_extension_code'] = strtolower($data['language_extension_code']);
-				$project_xml['language_extension_name'] = $data['language_extension_name'];
-				$project_xml['language_extension_directory'] = $data['language_extension_directory'];
-				$project_xml['language_extension_locale'] = $data['language_extension_locale'];
+				$project_xml['language_extension_direction'] = strtolower($data['language_extension_direction']);
+				$fields = array('name',
+								'directory',
+								'locale',
+								'date_format_short',
+								'date_format_long',
+								'time_format',
+								'time_format_short',
+								'decimal_point',
+								'thousand_point');
+
+				foreach($fields as $field_name){
+					$project_xml['language_extension_'.$field_name] = $data['language_extension_'.$field_name];
+				}
 				$this->_build_language_install_php($data, $install_content);
 			}
 
@@ -768,6 +779,11 @@ $this->cache->remove("localization");';
 		}
 		$this->_chmod_R($language_dir, 0644, 0755);
 		$this->_copyDir(DIR_STOREFRONT . 'language/' . $src_language_name, $language_dir, $copy_file_content);
+		//rename common language file (mean english.xml,russian.xml etc)
+		$new_name = $language_dir . '/' . str_replace('_language', '', $project_xml['extension_txt_id']) . '.xml';
+		if (!is_file($new_name)){
+			rename($language_dir . '/' . $src_language_name . '.xml', $new_name);
+		}
 
 		$language_dir = DIR_EXT . $project_xml['extension_txt_id'] . '/admin/language/' . $lang_dir;
 		if (!is_dir($language_dir)){
@@ -991,10 +1007,23 @@ $this->cache->remove("localization");';
 				));
 
 		if($data['extension_type'] == 'language'){
-			$xml_data['extension']['language_extension_name'] = $data['language_extension_name'];
-			$xml_data['extension']['language_extension_code'] = $data['language_extension_code'];
-			$xml_data['extension']['language_extension_locale'] = $data['language_extension_locale'];
-			$xml_data['extension']['language_extension_directory'] = $data['language_extension_directory'];
+
+			$fields = array(
+							'name',
+							'code',
+							'directory',
+							'locale',
+							'date_format_short',
+							'date_format_long',
+							'time_format',
+							'time_format_short',
+							'decimal_point',
+							'thousand_point');
+
+			foreach($fields as $field_name){
+				$xml_data['extension']['language_extension_'.$field_name] = $data['language_extension_'.$field_name];
+			}
+
 			$xml_data['extension']['source_language'] = $data['source_language'];
 			$xml_data['extension']['translation_method'] = $data['translation_method'];
 		}

@@ -122,20 +122,31 @@ class ModelToolDeveloperToolsLanguage extends Model{
 					$destination_file = DIR_EXT.$data['extension_txt_id'].'/'.$section.'/language/'.$data['language_extension_directory'].'/'.str_replace($source_directories['admin'], '', $xml_file);
 				}
 
+				$settings = array (
+									'src_language_code'            => $language['code'],
+									'language_extension_code'      => $data['language_extension_code'],
+									'language_extension_directory' => $data['language_extension_directory'],
+									'translation_method'           => $data['translation_method'],
+									'source_file'                  => $xml_file
+							);
+
 				if(basename($destination_file) == $language['directory'].'.xml'){
 					$destination_file = dirname($destination_file).'/'.$data['language_extension_directory'].'.xml';
-
+					//add this to step settings for base.xml file
+					$fields = array(
+									'locale',
+									'date_format_short',
+									'date_format_long',
+									'time_format',
+									'time_format_short',
+									'decimal_point',
+									'thousand_point');
+					foreach($fields as $field_name){
+						$settings['language_extension_'.$field_name] = $data['language_extension_'.$field_name];
+					}
 				}
 
-				$settings = array (
-						'src_language_code'            => $language['code'],
-						'language_extension_code'      => $data['language_extension_code'],
-						'language_extension_directory' => $data['language_extension_directory'],
-						'translation_method'           => $data['translation_method'],
-						'source_file'                  => $xml_file,
-						'destination_file'             => $destination_file
-				);
-
+				$settings['destination_file'] = $destination_file;
 				$step_id = $tm->addStep(array (
 						'task_id'            => $task_id,
 						'sort_order'         => $sort_order,
