@@ -437,21 +437,23 @@ class ModelToolDeveloperTools extends Model{
 		if($this->request->files['language_extension_flag_icon']){
 
 			$flag_filename = 'flag.'.pathinfo($this->request->files['language_extension_flag_icon']['name'], PATHINFO_EXTENSION);
-			if(!is_dir(DIR_EXT.$data['extension_txt_id'].'/storefront/language/'.$data['language_extension_directory'])){
-				mkdir(DIR_EXT.$data['extension_txt_id'].'/storefront/language/'.$data['language_extension_directory'], 0755, true);
-			}
-			if(!is_dir(DIR_EXT.$data['extension_txt_id'].'/admin/language/'.$data['language_extension_directory'])){
-				mkdir(DIR_EXT.$data['extension_txt_id'].'/admin/language/'.$data['language_extension_directory'], 0755, true);
-			}
-			$result = copy($this->request->files['language_extension_flag_icon']['tmp_name'],
-										DIR_EXT.$data['extension_txt_id'].'/storefront/language/'.$data['language_extension_directory'].'/'.$flag_filename);
-			copy($this->request->files['language_extension_flag_icon']['tmp_name'],
-													DIR_EXT.$data['extension_txt_id'].'/admin/language/'.$data['language_extension_directory'].'/'.$flag_filename);
-			if($result){
-				$flag_icon_path = 'extensions/'.$data['extension_txt_id'].'/storefront/language/'.$data['language_extension_directory'].'/'.$flag_filename;
-				unlink($this->request->files['language_extension_flag_icon']['tmp_name']);
-			}else{
-				$flag_icon_path = '';
+			if($flag_filename){
+				if (!is_dir(DIR_EXT . $data['extension_txt_id'] . '/storefront/language/' . $data['language_extension_directory'])){
+					mkdir(DIR_EXT . $data['extension_txt_id'] . '/storefront/language/' . $data['language_extension_directory'], 0755, true);
+				}
+				if (!is_dir(DIR_EXT . $data['extension_txt_id'] . '/admin/language/' . $data['language_extension_directory'])){
+					mkdir(DIR_EXT . $data['extension_txt_id'] . '/admin/language/' . $data['language_extension_directory'], 0755, true);
+				}
+				$result = copy($this->request->files['language_extension_flag_icon']['tmp_name'],
+						DIR_EXT . $data['extension_txt_id'] . '/storefront/language/' . $data['language_extension_directory'] . '/' . $flag_filename);
+				copy($this->request->files['language_extension_flag_icon']['tmp_name'],
+						DIR_EXT . $data['extension_txt_id'] . '/admin/language/' . $data['language_extension_directory'] . '/' . $flag_filename);
+				if ($result){
+					$flag_icon_path = 'extensions/' . $data['extension_txt_id'] . '/storefront/language/' . $data['language_extension_directory'] . '/' . $flag_filename;
+					unlink($this->request->files['language_extension_flag_icon']['tmp_name']);
+				} else{
+					$flag_icon_path = '';
+				}
 			}
 		}
 
@@ -1012,6 +1014,7 @@ $this->cache->remove("localization");';
 							'name',
 							'code',
 							'directory',
+							'direction',
 							'locale',
 							'date_format_short',
 							'date_format_long',
