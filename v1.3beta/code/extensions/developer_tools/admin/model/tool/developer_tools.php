@@ -444,10 +444,12 @@ class ModelToolDeveloperTools extends Model{
 				if (!is_dir(DIR_EXT . $data['extension_txt_id'] . '/admin/language/' . $data['language_extension_directory'])){
 					mkdir(DIR_EXT . $data['extension_txt_id'] . '/admin/language/' . $data['language_extension_directory'], 0755, true);
 				}
-				$result = copy($this->request->files['language_extension_flag_icon']['tmp_name'],
-						DIR_EXT . $data['extension_txt_id'] . '/storefront/language/' . $data['language_extension_directory'] . '/' . $flag_filename);
-				copy($this->request->files['language_extension_flag_icon']['tmp_name'],
-						DIR_EXT . $data['extension_txt_id'] . '/admin/language/' . $data['language_extension_directory'] . '/' . $flag_filename);
+				if($this->request->files['language_extension_flag_icon']['tmp_name']){
+					$result = copy($this->request->files['language_extension_flag_icon']['tmp_name'],
+							DIR_EXT . $data['extension_txt_id'] . '/storefront/language/' . $data['language_extension_directory'] . '/' . $flag_filename);
+					copy($this->request->files['language_extension_flag_icon']['tmp_name'],
+							DIR_EXT . $data['extension_txt_id'] . '/admin/language/' . $data['language_extension_directory'] . '/' . $flag_filename);
+				}
 				if ($result){
 					$flag_icon_path = 'extensions/' . $data['extension_txt_id'] . '/storefront/language/' . $data['language_extension_directory'] . '/' . $flag_filename;
 					unlink($this->request->files['language_extension_flag_icon']['tmp_name']);
@@ -782,9 +784,14 @@ $this->cache->remove("localization");';
 		$this->_chmod_R($language_dir, 0644, 0755);
 		$this->_copyDir(DIR_STOREFRONT . 'language/' . $src_language_name, $language_dir, $copy_file_content);
 		//rename common language file (mean english.xml,russian.xml etc)
+
 		$new_name = $language_dir . '/' . str_replace('_language', '', $project_xml['extension_txt_id']) . '.xml';
 		if (!is_file($new_name)){
 			rename($language_dir . '/' . $src_language_name . '.xml', $new_name);
+		}
+
+		if(is_file($language_dir . '/' . $src_language_name . '.xml')){
+			unlink($language_dir . '/' . $src_language_name . '.xml');
 		}
 
 		$language_dir = DIR_EXT . $project_xml['extension_txt_id'] . '/admin/language/' . $lang_dir;
@@ -803,6 +810,9 @@ $this->cache->remove("localization");';
 		$new_name = $language_dir . '/' . str_replace('_language', '', $project_xml['extension_txt_id']) . '.xml';
 		if (!is_file($new_name)){
 			rename($language_dir . '/' . $src_language_name . '.xml', $new_name);
+		}
+		if(is_file($language_dir . '/' . $src_language_name . '.xml')){
+			unlink($language_dir . '/' . $src_language_name . '.xml');
 		}
 		return true;
 	}

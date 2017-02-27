@@ -95,13 +95,19 @@ class ControllerPagesToolDeveloperToolsLanguages extends AController{
 				      'style' => 'button2',
 				));
 
+		$filenames = array('admin' => array(), 'storefront' => array());
 		foreach($language_files as $section => $language){
 			foreach($language as $lang => $file){
 				foreach($file as $filename){
+					//prevent duplicates
+					if(in_array($filename, $filenames[$section])){
+						continue;
+					}
 					$this->data['form']['fields'][$section][$lang][] = array(
 							'text' => $filename,
 					        'href' => $this->html->getSecureUrl('tool/developer_tools_languages/edit',
 							                                    '&block=' . $filename . '&section=' . $section));
+					$filenames[$section][] = $filename;
 				}
 			}
 		}

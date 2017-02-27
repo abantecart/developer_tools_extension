@@ -215,7 +215,8 @@ include($tpl_common_dir . 'action_confirm.tpl'); ?>
 		title = title.toLowerCase()
 				.replace(/\s/gi, '_')
 				.replace(/[\u0250-\ue007]/gi, '')
-				.replace(/__/gi, '_');
+				.replace(/__/gi, '_')
+				.replace(/language/gi, '');
 		$(this).val(title);
 	});
 	//Language Name

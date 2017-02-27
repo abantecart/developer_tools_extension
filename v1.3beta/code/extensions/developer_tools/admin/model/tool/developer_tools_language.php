@@ -135,6 +135,7 @@ class ModelToolDeveloperToolsLanguage extends Model{
 					//add this to step settings for base.xml file
 					$fields = array(
 									'locale',
+									'direction',
 									'date_format_short',
 									'date_format_long',
 									'time_format',

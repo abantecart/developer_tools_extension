@@ -496,32 +496,6 @@ class ControllerPagesToolDeveloperTools extends AController{
 		if ($mode == 'short'){
 			return true;
 		}
-		/* //disabled yet
-				$this->data['dependency']['name'] = (array)$this->data['dependency']['name'];
-				$this->data['dependency']['name']['new'] = array();
-				foreach($this->data['dependency']['name'] as $k => $route){
-					$this->data['form']['fields']['common']['dependencies'][$k][] = $form->getFieldHtml(
-							array('type'        => 'input',
-								  'name'        => 'dependency[name][]',
-								  'value'       => $route,
-								  'placeholder' => 'Name'
-							));
-					$this->data['form']['fields']['common']['dependencies'][$k][] = $form->getFieldHtml(
-							array('type'        => 'input',
-								  'name'        => 'dependency[prior_versions][]',
-								  'value'       => $this->data['dependency']['prior_versions'][$k],
-								  'placeholder' => 'Prior version'
-							));
-					$this->data['form']['fields']['common']['dependencies'][$k][] = $form->getFieldHtml(
-							array('type'        => 'input',
-								  'name'        => 'dependency[versions][]',
-								  'value'       => $this->data['dependency']['versions'][$k],
-								  'placeholder' => 'Version'
-							));
-				}
-				$add_button = $this->dispatch('responses/tool/developer_tools/addbutton', array('id' => 'dependencies'));
-				$this->data['form']['fields']['common']['dependencies'][]['btn_add'] = $add_button->dispatchGetOutput();
-		*/
 
 		$this->data['form']['fields']['common']['install_sql'] = $form->getFieldHtml(
 				array ('type'    => 'checkbox',
@@ -1173,6 +1147,10 @@ class ControllerPagesToolDeveloperTools extends AController{
 		}
 
 		if ($data['extension_type']=='language'){
+
+			if(is_int(strpos($data['extension_txt_id'],'language'))){
+				$this->error['extension_txt_id'] = 'Extension Text ID cannot contain word "language"!';
+			}
 
 			if(!$data['language_extension_name']){
 				$this->error['language_extension_name'] = 'Please Fill Language Name!';
