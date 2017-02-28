@@ -144,6 +144,11 @@ class ControllerPagesToolDeveloperToolsLanguages extends AController{
 				if($language_name == $config['extension_txt_id']){
 					$path = DIR_EXT . $config['extension_txt_id'] . '/' . $this->request->get['section'] . '/language/' . $this->request->get['block'];
 				}
+
+				foreach($values as &$val){
+					$val = trim(html_entity_decode($val, ENT_QUOTES, 'UTF-8'));
+				}
+
 				$this->model_tool_developer_tools->saveLanguageXML($path, $values);
 				if($this->model_tool_developer_tools->error){
 					$this->messages->saveNotice('Developer Tools Notice ("' . $this->request->get['block'] . '")', implode('<br>', $this->model_tool_developer_tools->error));

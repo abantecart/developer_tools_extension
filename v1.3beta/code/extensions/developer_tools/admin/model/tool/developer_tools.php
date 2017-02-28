@@ -491,6 +491,27 @@ $this->db->query("INSERT INTO ".$this->db->table("languages")."
 				".(int)$lng_sort.",
 				".(int)$lng_status.");");
 $new_language_id = $this->db->getLastId();
+
+//Load language specific data
+$xml = simplexml_load_file(DIR_EXT . \''.$data['extension_txt_id'].'/storefront/language/\' . $lng_directory . \'/menu.xml\');
+$routes = array(
+			\'text_index_home_menu\'=>\'index/home\',
+			\'text_index_special_menu\'=>\'product/special\',
+			\'text_account_login_menu\'=>\'account/login\',
+			\'text_account_logout_menu\'=>\'account/logout\',
+			\'text_account_account_menu\'=>\'account/account\',
+			\'text_checkout_cart_menu\'=>\'checkout/cart\',
+			\'text_checkout_shipping_menu\'=>\'checkout/shipping\'
+);
+
+if($xml){
+	foreach($xml->definition as $item){
+		$translates[$routes[(string)$item->key]] = (string)$item->value;
+	}
+
+	$storefront_menu = new AMenu_Storefront();
+	$storefront_menu->addLanguage($new_language_id,$translates);
+}
 ';
 	}
 
@@ -960,7 +981,7 @@ $this->cache->remove("localization");';
 	public function saveLanguageXML($path, $data = array ()){
 		$xml_data = array ('definition' => array ());
 		foreach ($data as $key => $value){
-			$value = trim(html_entity_decode($value));
+			$value = trim($value);
 			if ($key){
 				$xml_data['definition'][] = array ('key' => $key, 'value' => array ('@cdata' => $value));
 				if (!$value){
