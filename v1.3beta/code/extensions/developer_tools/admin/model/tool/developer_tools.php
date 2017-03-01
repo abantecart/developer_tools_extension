@@ -493,7 +493,7 @@ $this->db->query("INSERT INTO ".$this->db->table("languages")."
 $new_language_id = $this->db->getLastId();
 
 //Load language specific data
-$xml = simplexml_load_file(DIR_EXT . \''.$data['extension_txt_id'].'/storefront/language/\' . $lng_directory . \'/menu.xml\');
+$xml = simplexml_load_file(DIR_EXT . \''.$data['extension_txt_id'].'/menu.xml\');
 $routes = array(
 			\'text_index_home_menu\'=>\'index/home\',
 			\'text_index_special_menu\'=>\'product/special\',
@@ -811,7 +811,7 @@ $this->cache->remove("localization");';
 			rename($language_dir . '/' . $src_language_name . '.xml', $new_name);
 		}
 
-		if(is_file($language_dir . '/' . $src_language_name . '.xml')){
+		if (is_file($language_dir . '/' . $src_language_name . '.xml')){
 			unlink($language_dir . '/' . $src_language_name . '.xml');
 		}
 
@@ -832,9 +832,31 @@ $this->cache->remove("localization");';
 		if (!is_file($new_name)){
 			rename($language_dir . '/' . $src_language_name . '.xml', $new_name);
 		}
-		if(is_file($language_dir . '/' . $src_language_name . '.xml')){
+		if (is_file($language_dir . '/' . $src_language_name . '.xml')){
 			unlink($language_dir . '/' . $src_language_name . '.xml');
 		}
+
+		if($src_language_name == 'english'){
+			$menu = new AMenu_Storefront('storefront');
+			$items = current($menu->getMenuItems());
+			$lang_keys = array();
+			$languages = $this->language->getAvailableLanguages();
+			foreach($languages as $lang){
+				if($lang['name'] = $src_language_name){
+					$lang_id = $lang['language_id'];
+					break;
+				}
+			}
+
+			foreach($items as $item){
+				$def_key = 'text_'.str_replace('/','_',$item['item_url']).'_menu';
+				$lang_keys[$def_key] = $item['item_text'][$lang_id];
+			}
+			if($lang_keys){
+				$this->saveLanguageXML(DIR_EXT . $project_xml['extension_txt_id'] . '/menu.xml', $lang_keys);
+			}
+		}
+
 		return true;
 	}
 
@@ -1219,9 +1241,11 @@ $this->cache->remove("localization");';
 		file_put_contents($package_directory . 'package.xml', $xml);
 
 		if ($data['license']){
+			$data['license'] = html_entity_decode($data['license']);
 			file_put_contents($package_directory . 'license.txt', $data['license']);
 		}
 		if ($data['copyright']){
+			$data['copyright'] = html_entity_decode($data['copyright'],ENT_QUOTES,'UTF-8');
 			file_put_contents($package_directory . 'copyright.txt', $data['copyright']);
 		}
 

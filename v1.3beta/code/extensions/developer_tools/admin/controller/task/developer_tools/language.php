@@ -31,6 +31,7 @@ class ControllerTaskDeveloperToolsLanguage extends AController{
 	public function main(){	}
 
 	public function translate(){
+
 		list($task_id,$step_id,) = func_get_args();
 		$this->load->library('json');
 
@@ -105,6 +106,7 @@ class ControllerTaskDeveloperToolsLanguage extends AController{
 				if($translate_result){
 					$new_definitions[$def_key] = $translate_result;
 				}
+				usleep(1000);
 			}
 		}
 
