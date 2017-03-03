@@ -47,6 +47,10 @@ class ModelToolDeveloperToolsLanguage extends Model{
 
 		//get URIs of recipients
 		$xml_files = $this->_get_source_xml_files($language['directory']);
+		if(is_file(DIR_EXT.$data['extension_txt_id'].'/menu.xml')){
+			$xml_files['storefront'][] = DIR_EXT.$data['extension_txt_id'].'/menu.xml';
+		}
+
 		$task_controller = 'task/developer_tools/language/translate';
 
 		if (!$xml_files){
@@ -55,8 +59,6 @@ class ModelToolDeveloperToolsLanguage extends Model{
 		}
 
 		$total_files_count = sizeof($xml_files);
-
-
 
 		//timeout in seconds for one item translation
 		$time_per_file = 20;
@@ -118,6 +120,9 @@ class ModelToolDeveloperToolsLanguage extends Model{
 			foreach($files as $xml_file){
 				if ($section == 'storefront'){
 					$destination_file = DIR_EXT.$data['extension_txt_id'].'/'.$section.'/language/'.$data['language_extension_directory'].'/'.str_replace($source_directories['storefront'], '', $xml_file);
+					if($xml_file == DIR_EXT.$data['extension_txt_id'].'/menu.xml'){
+						$destination_file = $xml_file;
+					}
 				} else{
 					$destination_file = DIR_EXT.$data['extension_txt_id'].'/'.$section.'/language/'.$data['language_extension_directory'].'/'.str_replace($source_directories['admin'], '', $xml_file);
 				}
