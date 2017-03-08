@@ -118,9 +118,10 @@ class ControllerTaskDeveloperToolsLanguage extends AController{
                 * if at least one definition have no translation - skip file.
                 */
 				if($def_key && !$translate_result){
-					$this->log->write('Error: Definition '.$def_key.' from file '.$source_file.' has been not translated! Interrupt translation of file.');
-					$new_definitions = array();
-					break;
+					$task_step_text_result = 'Error: Definition '.$def_key.' from file '.$source_file.' has been not translated! Interrupt translation of file.';
+					$this->log->write($task_step_text_result);
+					$this->_return_error($task_step_text_result);
+					return null;
 				}
 
 				usleep(1000);
@@ -156,7 +157,7 @@ class ControllerTaskDeveloperToolsLanguage extends AController{
 	}
 
 	private function _return_error($error_text){
-		$this->response->setOutput(AJson::encode(array ('result' => false, 'message' => $error_text)));
+		$this->response->setOutput(AJson::encode(array ('result' => false, 'error_text' => $error_text)));
 	}
 
 }
