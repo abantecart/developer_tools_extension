@@ -101,11 +101,28 @@ class ControllerTaskDeveloperToolsLanguage extends AController{
 							$src_language_code,
 							$def_value,
 							$dst_language_code,
-							$translation_method);
+							$translation_method,
+							'strict');
 				}
+				if(version_compare(VERSION,'1.2.10','<')){
+					if ($def_value == $translate_result){
+						$translate_result = '';
+					}
+				}
+
 				if($translate_result){
 					$new_definitions[$def_key] = $translate_result;
 				}
+
+				/*
+                * if at least one definition have no translation - skip file.
+                */
+				if($def_key && !$translate_result){
+					$this->log->write('Error: Definition '.$def_key.' from file '.$source_file.' has been not translated! Interrupt translation of file.');
+					$new_definitions = array();
+					break;
+				}
+
 				usleep(1000);
 			}
 		}
