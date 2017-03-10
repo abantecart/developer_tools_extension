@@ -57,12 +57,23 @@ class ModelToolDeveloperToolsLanguage extends Model{
 			$this->errors[] = 'No xml-files found in directory "'.$language['directory'].'"!';
 			return false;
 		}
+		$tm = new ATaskManager();
+		//check existing incomplete tasks
+
+		$prev = $tm->getTaskByName($task_name);
+		if($prev){
+			$this->errors[] = 'Task with name "'.$task_name.'" is already exists. Please restart or remove it on <a href="'.$this->html->getSecureURL('tool/task').'">Scheduled Tasks Page</a>';
+			return false;
+		}
+
+
+
 
 		$total_files_count = sizeof($xml_files);
 
 		//timeout in seconds for one item translation
 		$time_per_file = 20;
-		$tm = new ATaskManager();
+
 
 		//create new task
 		$task_id = $tm->addTask(
