@@ -496,10 +496,11 @@ $new_language_id = $this->db->getLastId();
 $xml = simplexml_load_file(DIR_EXT . \''.$data['extension_txt_id'].'/menu.xml\');
 $routes = array(
 			\'text_index_home_menu\'=>\'index/home\',
-			\'text_index_special_menu\'=>\'product/special\',
+			\'text_product_special_menu\'=>\'product/special\',
 			\'text_account_login_menu\'=>\'account/login\',
 			\'text_account_logout_menu\'=>\'account/logout\',
 			\'text_account_account_menu\'=>\'account/account\',
+			\'text_account_invoice_menu\'=>\'account/invoice\',
 			\'text_checkout_cart_menu\'=>\'checkout/cart\',
 			\'text_checkout_shipping_menu\'=>\'checkout/shipping\'
 );
@@ -838,7 +839,12 @@ $this->cache->remove("localization");';
 
 		if($src_language_name == 'english'){
 			$menu = new AMenu_Storefront('storefront');
-			$items = current($menu->getMenuItems());
+			$all_items = $menu->getMenuItems();
+			$items = array();
+			foreach($all_items as $section){
+				$items = array_merge($items,$section);
+			}
+
 			$lang_keys = array();
 			$languages = $this->language->getAvailableLanguages();
 			foreach($languages as $lang){
