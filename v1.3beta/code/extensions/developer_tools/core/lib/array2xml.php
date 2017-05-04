@@ -70,6 +70,7 @@ class Array2XML {
 	 * @param string $node_name - name of the root node to be converted
 	 * @param array $arr - aray to be converterd
 	 * @return DOMNode
+	 * @throws AException
 	 */
 	private static function &convert($node_name, $arr=array()) {
 
@@ -204,12 +205,14 @@ class XML2Array {
 		self::$encoding = $encoding;
     }
 
-    /**
-     * Convert an XML to Array
-     * @param string $node_name - name of the root node to be converted
-     * @param array $arr - aray to be converterd
-     * @return DOMDocument
-     */
+	/**
+	 * Convert an XML to Array
+	 * @param $input_xml
+	 * @return DOMDocument
+	 * @throws AException
+	 * @internal param string $node_name - name of the root node to be converted
+	 * @internal param array $arr - aray to be converterd
+	 */
     public static function &createArray($input_xml) {
         $xml = self::getXMLRoot();
 		if(is_string($input_xml)) {

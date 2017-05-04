@@ -159,7 +159,7 @@ class ControllerPagesToolDeveloperToolsLanguages extends AController{
 
 				$langs = $lm->getAvailableLanguages();
 				foreach($langs as $lang){
-					$lm->definitionAutoLoad($lang['language_id'], $this->request->get['section'], $block, 'update');
+					$lm->definitionAutoLoad($lang['language_id'], $this->request->get['section'], $block);
 				}
 				$this->data['success'] = $this->language->get('developer_tools_text_language_file_edit_success');
 			}

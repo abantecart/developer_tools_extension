@@ -44,10 +44,14 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 			$pages = $this->_getLayoutPages4Xml($layout_id);
 			if($pages){
 				$xml_data['layout'][$i]['pages'] = array ('page' => $pages);
+			}else{
+				$xml_data['layout'][$i]['pages'] = array ();
 			}
 			$blocks = $this->_getLayoutBlocks4Xml($layout_id);
 			if($blocks){
 				$xml_data['layout'][$i]['blocks'] = $blocks;
+			}else{
+				$xml_data['layout'][$i]['blocks'] = array();
 			}
 		}
 

@@ -50,6 +50,34 @@ class ExtensionDeveloperTools extends Extension {
 	public function onControllerPagesDesignTemplate_InitData(){
 		if(!$this->_is_enabled()){ return false; }
 		$this->baseObject->loadLanguage('developer_tools/developer_tools');
+
+		if($this->baseObject_method != 'set_default'){
+			return null;
+		}
+
+		$that = $this->baseObject;
+		if($that->request->get['tmpl_id']){
+			$that->loadModel('setting/setting');
+			if ($that->request->get['store_id']){
+				$store_id = (int)$that->request->get['store_id'];
+			} else{
+				$store_id = (int)$that->config->get('config_store_id');
+			}
+			$old_tmpl = $that->config->get('config_storefront_template');
+			$new_tmpl = $that->request->get['tmpl_id'];
+			if($new_tmpl == 'default') {
+				$that->model_setting_setting->editSetting(
+										'appearance',
+										array ('config_storefront_template' => 'default'),
+										$store_id);
+				//delete wrong setting for extension-template
+				$sql = "DELETE FROM " . $that->db->table("settings") . " 
+						WHERE `group` = '" . $that->db->escape($old_tmpl) . "'
+								AND `key` = 'config_storefront_template'
+								AND `store_id` = '" . $store_id . "'";
+				$that->db->query($sql);
+			}
+		}
 	}
 
 	public function onControllerPagesDesignTemplate_UpdateData(){
