@@ -72,7 +72,7 @@ class ExtensionDeveloperTools extends Extension {
 										$store_id);
 				//delete wrong setting for extension-template
 				$sql = "DELETE FROM " . $that->db->table("settings") . " 
-						WHERE `group` = '" . $that->db->escape($old_tmpl) . "'
+						WHERE `group` <> 'default'
 								AND `key` = 'config_storefront_template'
 								AND `store_id` = '" . $store_id . "'";
 				$that->db->query($sql);
