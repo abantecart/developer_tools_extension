@@ -547,7 +547,7 @@ $this->cache->remove("localization");';
 	 */
 	public function saveMainFileByProjectConfig($prj_config){
 		// make parameters for main.php build
-		$views = array ();
+		$views = $controllers = $models = $languages = array ();
 		$mvcs = array ('models', 'views', 'controllers', 'languages');
 		foreach ($this->sections as $section){
 			foreach ($mvcs as $mvc){
@@ -573,7 +573,6 @@ $this->cache->remove("localization");';
 		                           'views'           => $views,
 		                           'languages'       => $languages);
 		$this->_write_main_file($main_file_params);
-
 	}
 
 	// method prepares data before save
@@ -776,7 +775,8 @@ $this->cache->remove("localization");';
 						`value`,
 						NOW()
 				FROM " . $this->db->table('settings') . "
-				WHERE `group`='" . ($source == 'default' ? 'appearance' : $source) . "'";
+				WHERE `group`='" . ($source == 'default' ? 'appearance' : $source) . "'
+				AND `key` NOT IN ('config_storefront_template', 'admin_template')";
 		$this->db->query($sql);
 		return true;
 	}
