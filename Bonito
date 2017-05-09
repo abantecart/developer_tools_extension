@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en" xml:lang="en" >
+<head><title>Bonito Fashion</title>
+<meta charset="UTF-8">
+<!--[if IE]>
+	<meta http-equiv="x-ua-compatible" content="IE=Edge" />
+<![endif]-->
+<meta name="keywords" content="keyword1,keyword2,keyword3" />
+<meta name="description" content="Web Store Meta Description" />
+<meta name="generator" content="AbanteCart v1.2.0 - Open Source eCommerce solution" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<base href="http://bonitofashion.com/" />
+
+<link href="resources/image/18/73/4.ico" type="image/png" rel="icon" />
+
+<link href="storefront/view/default/image/apple-touch-icon.png" rel="apple-touch-icon" />
+<link href="storefront/view/default/image/apple-touch-icon-76x76.png" rel="apple-touch-icon" sizes="76x76" />
+<link href="storefront/view/default/image/apple-touch-icon-120x120.png" rel="apple-touch-icon" sizes="120x120" />
+<link href="storefront/view/default/image/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" />
+<link href="storefront/view/default/image/apple-touch-icon-precomposed.png" rel="apple-touch-icon-precomposed" />
+
+
+<link href='//fonts.googleapis.com/css?family=Open+Sans:400,300italic,400italic,600,600italic' rel='stylesheet' type='text/css' />
+<link href='//fonts.googleapis.com/css?family=Crete+Round' rel='stylesheet' type='text/css' />
+<link href="storefront/view/default/stylesheet/style.css" rel="stylesheet" type='text/css' />
+
+
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+      <script type="text/javascript" src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+<!-- fav -->
+
+
+<script type="text/javascript"
+        src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript">
+    if (typeof jQuery == 'undefined') {
+        var include = '<script type="text/javascript" src="storefront/view/default/javascript/jquery-1.11.0.min.js"><\/script>';
+        document.write(include);
+    }
+</script>
+<script type="text/javascript" src="storefront/view/default/javascript/jquery-migrate-1.2.1.min.js"></script>
+
+<script type="text/javascript" src="storefront/view/default/javascript/common.js"></script>
+
+<script type="text/javascript">
+	$(document).on('click', 'a.productcart', function() {
+        var item = $(this);
+        //check if href provided for product details access
+        if ( item.attr('href') && item.attr('href') != '#') {
+        	return true;
+        }
+        
+        if(item.attr('data-id')){
+            $.ajax({
+                    url:'http://bonitofashion.com/index.php?rt=r/product/product/addToCart',
+                    type:'GET',
+                    dataType:'json',
+                    data: {product_id:  item.attr('data-id') },
+                    success:function (data) {
+                    	var alert_msg = '<div class="alert alert-info added_to_cart"> \
+                    		<button type="button" class="close" data-dismiss="alert">&times;</button> \
+                    		&nbsp;&nbsp;<a href="http://bonitofashion.com/index.php?rt=checkout/cart">Added to cart \
+                    		&nbsp;<img src="storefront/view/default/image/addcart.png"></a> \
+                    		</div>';
+						item.closest('.thumbnail .pricetag').prepend(alert_msg);
+
+						//topcart
+						$('.nav.topcart .dropdown-toggle span').first().html(data.item_count);
+						$('.nav.topcart .dropdown-toggle .cart_total').html(data.total);
+						if($('#top_cart_product_list')){
+							$('#top_cart_product_list').html(data.cart_details);
+						};
+                    }
+            });
+        }
+    return false;
+});
+$('a.call_to_order').on('click',function(){
+	location='http://bonitofashion.com/index.php?rt=content/contact';
+	return false;
+});
+</script>
+
+</head>
+<body>
+<div class="container-fixed" style="max-width: 100%">
+
+<header>
+<div class="headerstrip navbar navbar-inverse" role="navigation">
+	<div class="container-fluid">
+	  <div class="navbar-header header-logo">
+	    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+	      <span class="sr-only"></span>
+	      <span class="icon-bar"></span>
+	      <span class="icon-bar"></span>
+	      <span class="icon-bar"></span>
+	    </button>
+	    	    <a class="logo" href="http://bonitofashion.com/"><img src="C:\Viveka_N_B\Viveka\Viveka\Products\Shop\LOGO.png"
+	        														   title="Web Store Name"
+	        														   alt="Web Store Name"/></a>
+	    	  </div>
+	  <div class="navbar-collapse collapse">
+	  	<div class="navbar-right headerstrip_blocks">
+	  	    <div class="block_1"></div>
+	  	    <div class="block_2"></div>
+	  	    <div class="block_3"><div class="navbar" id="topnav">
+	<span class="sr-only">Main Menu</span>
+ 	<ul id="main_menu_top" class="nav navbar-nav main_menu">
+		    	    <li  data-id="menu_specials"  class="dropdown hover "><a  class="top menu_specials"  href="http://bonitofashion.com/index.php?rt=product/special" ><span class="menu_text">Specials</span></a></li>
+<li  data-id="menu_login"  class="dropdown hover "><a  class="top menu_login"  href="http://bonitofashion.com/index.php?rt=account/login" ><span class="menu_text">Login</span></a></li>
+<li  data-id="menu_account"  class="dropdown hover "><a  class="top menu_account"  href="http://bonitofashion.com/index.php?rt=account/account" ><span class="menu_text">Account</span></a></li>
+<li  data-id="menu_cart"  class="dropdown hover "><a  class="top menu_cart"  href="http://bonitofashion.com/index.php?rt=checkout/cart" ><span class="menu_text">Cart</span></a></li>
+<li  data-id="menu_checkout"  class="dropdown hover "><a  class="top menu_checkout"  href="http://bonitofashion.com/index.php?rt=checkout/shipping" ><span class="menu_text">Checkout</span></a></li>
+	</ul>
+</div>
+
+</div>
+	  	    <div class="block_4"><form id="search_form" class="form-search top-search">
+    <input  type="hidden" name="filter_category_id" id="filter_category_id" value="0"/>
+    <div class="btn-group search-bar">
+    	<input type="text"
+			   id="filter_keyword"
+			   name="filter_keyword"
+			   autocomplete="off"
+    		   class="pull-left input-medium search-query dropdown-toggle"
+			   placeholder="Search Keywords"
+			   value=""
+    		   data-toggle="dropdown"/>
+    	 <div class="button-in-search" title="Go"><i class="fa fa-search"></i></div>
+        	<ul class="dropdown dropdown-menu col-md-2 noclose">
+    		<!-- dropdown menu links -->
+    		<li class="active"><a id="category_selected">All Categories</a></li>
+    		<li class="divider"></li>
+			<li>
+				<ul id="search-category">
+									<li><a id="category_0">All Categories</a></li>
+									<li><a id="category_36">Top Wear</a></li>
+									<li><a id="category_43">Bottom Wear</a></li>
+									<li><a id="category_49">Traditional Wear</a></li>
+									<li><a id="category_58">Jewellery / Accesaries</a></li>
+								</ul>
+			</li>
+    	</ul>
+        </div>
+</form></div>
+	  	</div>
+	   </div><!--/.navbar-collapse -->
+	</div>         
+</div>
+<div class="container-fluid">
+    <div class="col-md-12 headerdetails">
+    	<!-- header blocks placeholder -->
+    	<div class="block_5"></div>			
+    	<div class="block_6"></div>
+    	<div class="block_7"><ul class="nav topcart pull-left">
+    <li class="dropdown hover"> 
+        <a href="http://bonitofashion.com/index.php?rt=checkout/cart" class="dropdown-toggle"><i class="fa fa-shopping-cart fa-fw"></i>&nbsp;&nbsp;<span
+            class="label label-orange font14">0</span> Items - <span
+            class="cart_total">?0/-</span> <b class="caret"></b></a>
+        <ul class="dropdown-menu topcartopen ">
+            <li>
+				<div id="top_cart_product_list">
+				<div class="products">
+<table>
+	<tbody>
+								                	
+	</tbody>
+</table>
+</div>
+<table class="totals pull-right mr20">
+	<tbody>
+			<tr>
+			<td><span class="cart_block_total"><b>Sub-Total:</b></span></td>
+			<td><span class="cart_block_total">?0/-</span></td>
+		</tr>
+			<tr>
+			<td><span class="cart_block_total"><b>Total:</b></span></td>
+			<td><span class="cart_block_total">?0/-</span></td>
+		</tr>
+		</tbody>
+</table>				</div>
+					
+				<div class="buttonwrap">
+				    				    <a class="btn btn-orange btn-xs pull-left" href="http://bonitofashion.com/index.php?rt=checkout/cart"><i class="fa fa-shopping-cart fa-fw"></i> View Cart</a>&nbsp;&nbsp;
+				    <a class="btn btn-orange btn-xs pull-right"
+				       href="http://bonitofashion.com/index.php?rt=checkout/shipping"><i class="fa fa-pencil fa-fw"></i>  Checkout</a>
+				    				</div>
+            </li>
+        </ul>
+    </li>
+</ul></div>
+    	<div class="block_8"><div class="header_block">
+			      <div class="social_icons">
+        <a href="http://www.facebook.com/AbanteCart" target="_blank" title="Facebook" class="facebook">Facebook</a>
+        <a href="https://twitter.com/abantecart" target="_blank" title="Twitter" class="twitter">Twitter</a>
+        <a href="#" title="Linkedin" class="linkedin">Linkedin</a>
+        <a href="#" title="rss" class="rss">rss</a>
+        <a href="#" target="_blank" title="Googleplus" class="googleplus">Googleplus</a>
+        <a href="#" target="_blank" title="Skype" class="skype">Skype</a>
+        <a href="#" target="_blank" title="Flickr" class="flickr">Flickr</a>
+      </div>
+		</div></div>
+    	<!-- header blocks placeholder (EOF) -->
+    </div>
+</div>
+
+</header>
+
+<!-- header_bottom blocks placeholder -->
+	<div class="container-fluid">
+		<div class="col-md-12">
+	    <section id="categorymenu">
+    <nav class="subnav">
+    	<ul class="nav-pills categorymenu">
+    		<li><a class="active menu_home" href="http://bonitofashion.com/">Home</a>
+
+    			<div>
+    				<ul id="main_menu" class="nav">
+    					    					<!-- Top Nav Start -->
+    					<li  data-id="menu_specials"  class="dropdown hover "><a  class="top menu_specials"  href="http://bonitofashion.com/index.php?rt=product/special" ><span class="menu_text">Specials</span></a></li>
+<li  data-id="menu_login"  class="dropdown hover "><a  class="top menu_login"  href="http://bonitofashion.com/index.php?rt=account/login" ><span class="menu_text">Login</span></a></li>
+<li  data-id="menu_account"  class="dropdown hover "><a  class="top menu_account"  href="http://bonitofashion.com/index.php?rt=account/account" ><span class="menu_text">Account</span></a></li>
+<li  data-id="menu_cart"  class="dropdown hover "><a  class="top menu_cart"  href="http://bonitofashion.com/index.php?rt=checkout/cart" ><span class="menu_text">Cart</span></a></li>
+<li  data-id="menu_checkout"  class="dropdown hover "><a  class="top menu_checkout"  href="http://bonitofashion.com/index.php?rt=checkout/shipping" ><span class="menu_text">Checkout</span></a></li>
+    				</ul>
+    			</div>
+    		</li>
+    		  		
+    			    				<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=36">&nbsp;&nbsp;Top Wear</a>
+    					    					    						<!-- Subcategories -->
+    						<div class="subcategories">
+    							<ul>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=36_39">&nbsp;&nbsp;&nbsp;&nbsp;Anarkali Kurtis</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/72/demo_product_47_png-100136-120x120.png"
+    											 alt="Anarkali Kurtis"
+    											 title="Anarkali Kurtis">
+    									</li>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=36_41">&nbsp;&nbsp;&nbsp;&nbsp;Jackets</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/72/demo_product_08_3_jpg-100134-120x120.jpg"
+    											 alt="Jackets"
+    											 title="Jackets">
+    									</li>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=36_38">&nbsp;&nbsp;&nbsp;&nbsp;Kurtis</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/72/demo_product_05_jpg-100132-120x120.jpg"
+    											 alt="Kurtis"
+    											 title="Kurtis">
+    									</li>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=36_40">&nbsp;&nbsp;&nbsp;&nbsp;T-Shirts</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/72/demo_product_07_jpg-100133-120x120.jpg"
+    											 alt="T-Shirts"
+    											 title="T-Shirts">
+    									</li>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=36_37">&nbsp;&nbsp;&nbsp;&nbsp;Tunics</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/72/demo_product_11_2_jpg-100137-120x120.jpg"
+    											 alt="Tunics"
+    											 title="Tunics">
+    									</li>
+    								    							</ul>
+    							    								<ul>
+    									<li class="parent_cat_image" style="display:none"><img class="root_cat_image" style="display:block" src="http://bonitofashion.com/image/thumbnails/18/71/demo_product_04_jpg-100124-120x120.jpg"
+    											 alt="Top Wear"
+    											 title="Top Wear">
+    									</li>
+    									<li class="cat_image"><img class="root_cat_image" style="display:block" src="http://bonitofashion.com/image/thumbnails/18/71/demo_product_04_jpg-100124-120x120.jpg"
+    											 alt="Top Wear"
+    											 title="Top Wear">
+    									</li>
+    								</ul>
+    							    						</div>
+    					    				</li>
+    			    				<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=43">&nbsp;&nbsp;Bottom Wear</a>
+    					    					    						<!-- Subcategories -->
+    						<div class="subcategories">
+    							<ul>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=43_45">&nbsp;&nbsp;&nbsp;&nbsp;Jeggings</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/73/demo_product_37_jpg-100145-120x120.jpg"
+    											 alt="Jeggings"
+    											 title="Jeggings">
+    									</li>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=43_44">&nbsp;&nbsp;&nbsp;&nbsp;Leggings</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/73/demo_product_18_jpg-100144-120x120.jpg"
+    											 alt="Leggings"
+    											 title="Leggings">
+    									</li>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=43_46">&nbsp;&nbsp;&nbsp;&nbsp;Patiala Salwar-Dupatta Set</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/72/demo_product_42_jpg-100142-120x120.jpg"
+    											 alt="Patiala Salwar-Dupatta Set"
+    											 title="Patiala Salwar-Dupatta Set">
+    									</li>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=43_48">&nbsp;&nbsp;&nbsp;&nbsp;Shorts</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/73/demo_product_49_1_png-100146-120x120.png"
+    											 alt="Shorts"
+    											 title="Shorts">
+    									</li>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=43_47">&nbsp;&nbsp;&nbsp;&nbsp;Skirts</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/72/demo_product_46_jpg-100143-120x120.jpg"
+    											 alt="Skirts"
+    											 title="Skirts">
+    									</li>
+    								    							</ul>
+    							    								<ul>
+    									<li class="parent_cat_image" style="display:none"><img class="root_cat_image" style="display:block" src="http://bonitofashion.com/image/thumbnails/18/71/demo_product_15_jpg-100125-120x120.jpg"
+    											 alt="Bottom Wear"
+    											 title="Bottom Wear">
+    									</li>
+    									<li class="cat_image"><img class="root_cat_image" style="display:block" src="http://bonitofashion.com/image/thumbnails/18/71/demo_product_15_jpg-100125-120x120.jpg"
+    											 alt="Bottom Wear"
+    											 title="Bottom Wear">
+    									</li>
+    								</ul>
+    							    						</div>
+    					    				</li>
+    			    				<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=49">&nbsp;&nbsp;Traditional Wear</a>
+    					    					    						<!-- Subcategories -->
+    						<div class="subcategories">
+    							<ul>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=49_50">&nbsp;&nbsp;&nbsp;&nbsp;Anarkali Suits</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/72/demo_product_34_jpg-100128-120x120.jpg"
+    											 alt="Anarkali Suits"
+    											 title="Anarkali Suits">
+    									</li>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=49_65">&nbsp;&nbsp;&nbsp;&nbsp;Dress Materials</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/no_image-120x120.jpg"
+    											 alt="Dress Materials"
+    											 title="Dress Materials">
+    									</li>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=49_51">&nbsp;&nbsp;&nbsp;&nbsp;Patiala Suits</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/72/demo_product_30_2_jpg-100129-120x120.jpg"
+    											 alt="Patiala Suits"
+    											 title="Patiala Suits">
+    									</li>
+    								    							</ul>
+    							    								<ul>
+    									<li class="parent_cat_image" style="display:none"><img class="root_cat_image" style="display:block" src="http://bonitofashion.com/image/thumbnails/18/71/demo_product_14_2_jpg-100126-120x120.jpg"
+    											 alt="Traditional Wear"
+    											 title="Traditional Wear">
+    									</li>
+    									<li class="cat_image"><img class="root_cat_image" style="display:block" src="http://bonitofashion.com/image/thumbnails/18/71/demo_product_14_2_jpg-100126-120x120.jpg"
+    											 alt="Traditional Wear"
+    											 title="Traditional Wear">
+    									</li>
+    								</ul>
+    							    						</div>
+    					    				</li>
+    			    				<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=58">&nbsp;&nbsp;Jewellery / Accesaries</a>
+    					    					    						<!-- Subcategories -->
+    						<div class="subcategories">
+    							<ul>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=58_61">&nbsp;&nbsp;&nbsp;&nbsp;Bangles</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/72/demo_product_29_jpg-100140-120x120.jpg"
+    											 alt="Bangles"
+    											 title="Bangles">
+    									</li>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=58_62">&nbsp;&nbsp;&nbsp;&nbsp;Bracelets</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/no_image-120x120.jpg"
+    											 alt="Bracelets"
+    											 title="Bracelets">
+    									</li>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=58_63">&nbsp;&nbsp;&nbsp;&nbsp;Finger Rings</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/72/demo_product_27_jpg-100141-120x120.jpg"
+    											 alt="Finger Rings"
+    											 title="Finger Rings">
+    									</li>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=58_59">&nbsp;&nbsp;&nbsp;&nbsp;Necklaces</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/72/demo_product_40_2_jpg-100138-120x120.jpg"
+    											 alt="Necklaces"
+    											 title="Necklaces">
+    									</li>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=58_66">&nbsp;&nbsp;&nbsp;&nbsp;Other</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/no_image-120x120.jpg"
+    											 alt="Other"
+    											 title="Other">
+    									</li>
+    								     									<li ><a href="http://bonitofashion.com/index.php?rt=product/category&amp;path=58_60">&nbsp;&nbsp;&nbsp;&nbsp;Pendent Sets</a>
+    									<img class="sub_cat_image" style="display:none" src="http://bonitofashion.com/image/thumbnails/18/72/demo_product_44_jpg-100139-120x120.jpg"
+    											 alt="Pendent Sets"
+    											 title="Pendent Sets">
+    									</li>
+    								    							</ul>
+    							    								<ul>
+    									<li class="parent_cat_image" style="display:none"><img class="root_cat_image" style="display:block" src="http://bonitofashion.com/image/thumbnails/18/71/demo_product_31_jpg-100127-120x120.jpg"
+    											 alt="Jewellery / Accesaries"
+    											 title="Jewellery / Accesaries">
+    									</li>
+    									<li class="cat_image"><img class="root_cat_image" style="display:block" src="http://bonitofashion.com/image/thumbnails/18/71/demo_product_31_jpg-100127-120x120.jpg"
+    											 alt="Jewellery / Accesaries"
+    											 title="Jewellery / Accesaries">
+    									</li>
+    								</ul>
+    							    						</div>
+    					    				</li>
+    			    		    	</ul>
+    </nav>
+</section><div class="sep"></div>
+<section class="slider">
+  <div class="banner_conteiner">  		
+	<div class="banner banner_fallback" data-banner-id="18"><a  href="http://bonitofashion.com/index.php?rt=r/extension/banner_manager/click&amp;banner_id=18" ><img src="http://bonitofashion.com/image/thumbnails/18/76/banner_fallback_jpg-100194-x.jpg" title="Fall back banner for small screen resolutions" alt="Fall back banner for small screen resolutions"></a></div>		<div id="banner_slides">		
+		
+			<div class="oneByOne_item banner" data-banner-id="8">
+	<p>
+	<img alt="" class="wp1_3 slide1_bot" src="storefront/view/default/image/banner_image_1.png" /> <span class="txt1">HTML5 Responsive Storefront to look great on</span> <span class="txt2">ALL Screen Sizes</span> <span class="txt3 short">Natively responsive template implemented with bootstrap library and HTML5. Will look good on most mobile devices and tablets.</span> <span class="txt4 txt4up"><a class="btn btn-wht" href="">Try on your device!</a></span></p>
+		
+			</div>
+		
+			<div class="oneByOne_item banner" data-banner-id="9">
+	<p>
+	<img alt="" class="wp1_3 wp1_left slide2_bot" src="storefront/view/default/image/banner_image_2.png" /> <span class="txt1 blue txt_right2">Highly flexible layout on any page</span> <span class="txt2 blue txt_right2">SEO Friendly</span> <span class="txt2 blue txt_right2">Fast Loading</span> <span class="txt4 txt_right2 txt4up"><a class="btn btn-wht" href="#">Try Now!</a></span></p>
+		
+			</div>
+		
+			<div class="oneByOne_item banner" data-banner-id="10">
+	<p>
+	<img alt="" class="wp1_3 slide2_bot" src="storefront/view/default/image/banner_image_3.png" /> <span class="txt1">Feature rich with smart UI</span> <span class="txt2">Easy &amp; fun to manage</span> <span class="txt3">Feature reach shopping cart application right out of the box. Standard features allow to set up complete eCommerce site with all the tools needed to sell products online.</span> <span class="txt4"><a class="btn btn-wht" href="#">Install Now!</a></span></p>
+		
+			</div>
+		
+			<div class="oneByOne_item banner" data-banner-id="11">
+	<p>
+	<img alt="" class="wp1_3 slide3_bot" src="storefront/view/default/image/banner_image_4.png" /> <span class="txt1 blue">Stay in control</span> <span class="txt2 blue">Easy updates</span> <span class="txt3 short">Upgrade right from admin. Backward supportability in upgrades and automatic backups. Easy extension download with one step installation.</span> <span class="txt4 txt4up"><a class="btn btn-wht" href="#">Get Yours!</a></span></p>
+		
+			</div>
+		
+			<div class="oneByOne_item banner" data-banner-id="17">
+	<p>
+	<img alt="" class="wp1_3 slide2_bot" src="storefront/view/default/image/banner_image_5.png" /> <span class="txt1">Application and data security</span> <span class="txt2">Secure Solution</span> <span class="txt3">Very secure solution with up to date industry security practices and inline with PCI compliance. Customer information protection with data encryption</span> <span class="txt4"><a class="btn btn-wht" href="#">Install Now!</a></span></p>
+		
+			</div>
+			
+				
+		</div>    
+  </div>
+</section><div class="sep"></div>
+
+
+	  	</div>
+	</div>
+<!-- header_bottom blocks placeholder -->
+
+<div id="maincontainer">
+
+  
+
+	<div class="container-fluid">
+		
+				<div class="col-md-12 col-xs-12 mt20">
+				<!-- content top blocks placeholder -->
+		<section class="row mt40">
+	<div class="container-fluid">
+		<!-- Section Start-->
+	<section class="container otherddetails">
+	<div class="otherddetailspart">
+		<div class="innerclass free">
+			<h2>
+				Free shipping</h2>
+			All over in world over $200</div>
+	</div>
+	<div class="otherddetailspart">
+		<div class="innerclass payment">
+			<h2>
+				Easy Payment</h2>
+			Payment Gatway support</div>
+	</div>
+	<div class="otherddetailspart">
+		<div class="innerclass shipping">
+			<h2>
+				24hrs Shipping</h2>
+			For All US States</div>
+	</div>
+	<div class="otherddetailspart">
+		<div class="innerclass choice">
+			<h2>
+				Large Variety</h2>
+			50,000+ Products</div>
+	</div>
+	</section> <!-- Section End-->			</div>
+</section>
+		<!-- content top blocks placeholder (EOF) -->
+				
+		<div class="">
+		<section class="contentpanel">
+	<div class="welcome_msg">
+		Welcome to web store!	</div>
+</section>		</div>
+		 
+				<!-- content bottom blocks placeholder -->
+		<section id="featured" class="row mt40">
+	<div class="container-fluid">
+				<div class="block_frame block_frame_featured"
+			 id="block_frame_featured_1769">
+			<h1 class="heading1"><span class="maintext">Featured</span><span
+						class="subtext">See Our Most featured Products</span></h1>
+			
+			<ul class="thumbnails list-inline">
+				<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=50"
+						   title="Skinsheen Bronzer Stick">Skinsheen Bronzer Stick</a>
+					</div>
+				</div>
+				<div class="thumbnail">
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=50"><img src="http://bonitofashion.com/image/thumbnails/18/6f/az_demo_product_01_jpg-100089-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=50">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=50#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="50" href="#" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="oneprice">?30/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+					<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=51"
+						   title="BeneFit Girl Meets Pearl">BeneFit Girl Meets Pearl</a>
+					</div>
+				</div>
+				<div class="thumbnail">
+											<span class="sale tooltip-test"></span>
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=51"><img src="http://bonitofashion.com/image/thumbnails/18/6b/az_demo_product_02_jpg-100026-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=51">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=51#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="51" href="#" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="pricenew">?19/-</div>
+									<div class="priceold">?30/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+					<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=52"
+						   title="Benefit Bella Bamba">Benefit Bella Bamba</a>
+					</div>
+				</div>
+				<div class="thumbnail">
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=52"><img src="http://bonitofashion.com/image/thumbnails/18/6b/az_demo_product_02_3_jpg-100029-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=52">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=52#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="52" href="#" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="oneprice">?28/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+					<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=53"
+						   title="Tropiques Minerale Loose Bronzer">Tropiques Minerale Loose Bronzer</a>
+					</div>
+				</div>
+				<div class="thumbnail">
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=53"><img src="http://bonitofashion.com/image/thumbnails/18/6f/az_demo_product_03_jpg-100094-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=53">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=53#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="53" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=53" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="oneprice">?39/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+		</ul>
+					</div>
+		</div>
+</section>
+<div class="sep"></div>
+  
+<section id="latest" class="row mt40">
+	<div class="container-fluid">
+				<div class="block_frame block_frame_latest"
+			 id="block_frame_latest_1770">
+			<h1 class="heading1"><span class="maintext">Latest Products</span><span
+						class="subtext">See New Products</span></h1>
+			
+			<ul class="thumbnails list-inline">
+				<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=50"
+						   title="Skinsheen Bronzer Stick">Skinsheen Bronzer Stick</a>
+					</div>
+				</div>
+				<div class="thumbnail">
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=50"><img src="http://bonitofashion.com/image/thumbnails/18/6f/az_demo_product_01_jpg-100089-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=50">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=50#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="50" href="#" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="oneprice">?30/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+					<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=51"
+						   title="BeneFit Girl Meets Pearl">BeneFit Girl Meets Pearl</a>
+					</div>
+				</div>
+				<div class="thumbnail">
+											<span class="sale tooltip-test"></span>
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=51"><img src="http://bonitofashion.com/image/thumbnails/18/6b/az_demo_product_02_jpg-100026-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=51">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=51#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="51" href="#" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="pricenew">?19/-</div>
+									<div class="priceold">?30/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+					<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=52"
+						   title="Benefit Bella Bamba">Benefit Bella Bamba</a>
+					</div>
+				</div>
+				<div class="thumbnail">
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=52"><img src="http://bonitofashion.com/image/thumbnails/18/6b/az_demo_product_02_3_jpg-100029-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=52">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=52#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="52" href="#" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="oneprice">?28/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+					<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=53"
+						   title="Tropiques Minerale Loose Bronzer">Tropiques Minerale Loose Bronzer</a>
+					</div>
+				</div>
+				<div class="thumbnail">
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=53"><img src="http://bonitofashion.com/image/thumbnails/18/6f/az_demo_product_03_jpg-100094-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=53">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=53#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="53" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=53" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="oneprice">?39/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+		</ul>
+					</div>
+		</div>
+</section><div class="sep"></div>
+  
+<section id="bestseller" class="row mt40">
+	<div class="container-fluid">
+				<div class="block_frame block_frame_bestsellers"
+			 id="block_frame_bestsellers_1771">
+			<h1 class="heading1"><span class="maintext">Bestsellers</span><span
+						class="subtext">See Best Selling Products</span></h1>
+			
+			<ul class="thumbnails list-inline">
+				<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=104"
+						   title="Calvin Klein Obsession For Women EDP Spray">Calvin Klein Obsession For Women EDP Spray</a>
+					</div>
+				</div>
+				<div class="thumbnail">
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=104"><img src="http://bonitofashion.com/image/thumbnails/18/74/az_demo_product_54_1_jpg-100160-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=104">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=104#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="104" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=104" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="oneprice">?49/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+					<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=69"
+						   title="Seaweed Conditioner">Seaweed Conditioner</a>
+					</div>
+				</div>
+				<div class="thumbnail">
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=69"><img src="http://bonitofashion.com/image/thumbnails/18/6f/az_demo_product_19_jpg-100082-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=69">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=69#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="69" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=69" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="oneprice">?19/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+					<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=78"
+						   title="ck IN2U Eau De Toilette Spray for Him">ck IN2U Eau De Toilette Spray for Him</a>
+					</div>
+				</div>
+				<div class="thumbnail">
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=78"><img src="http://bonitofashion.com/image/thumbnails/18/70/az_demo_product_28_jpg-100109-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=78">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=78#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="78" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=78" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="oneprice">?29/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+					<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=61"
+						   title="Color Design Eye Brightening All in One 5 Shadow &amp; Liner Palette">Color Design Eye Brightening All in One 5 Shadow &amp; Liner Palette</a>
+					</div>
+				</div>
+				<div class="thumbnail">
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=61"><img src="http://bonitofashion.com/image/thumbnails/18/6c/az_demo_product_11_1_jpg-100032-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=61">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=61#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="61" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=61" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="oneprice">?48/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+		</ul>
+								</div>
+	</div>
+</section><div class="sep"></div>
+  
+<section id="special" class="row mt40">
+    <div class="container-fluid">
+		<div class="block_frame block_frame_special"
+					 id="block_frame_special_1772">
+      <h1 class="heading1"><span class="maintext">Specials</span><span class="subtext">See Products On Sale</span></h1>
+
+	<ul class="thumbnails list-inline">
+				<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=65"
+						   title="Absolue Eye Precious Cells">Absolue Eye Precious Cells</a>
+					</div>
+				</div>
+				<div class="thumbnail">
+											<span class="sale tooltip-test"></span>
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=65"><img src="http://bonitofashion.com/image/thumbnails/18/6a/az_demo_product_15_jpg-100011-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=65">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=65#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="65" href="#" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="pricenew">?89/-</div>
+									<div class="priceold">?105/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+					<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=68"
+						   title="Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15">Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15</a>
+					</div>
+				</div>
+				<div class="thumbnail">
+											<span class="sale tooltip-test"></span>
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=68"><img src="http://bonitofashion.com/image/thumbnails/18/6a/az_demo_product_18_jpg-100013-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=68">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=68#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="68" href="#" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="pricenew">?35/-</div>
+									<div class="priceold">?42/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+					<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=80"
+						   title="Acqua Di Gio Pour Homme">Acqua Di Gio Pour Homme</a>
+					</div>
+				</div>
+				<div class="thumbnail">
+											<span class="sale tooltip-test"></span>
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=80"><img src="http://bonitofashion.com/image/thumbnails/18/6a/az_demo_product_30_jpg-100014-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=80">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=80#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="80" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=80" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="pricenew">?45/-</div>
+									<div class="priceold">?59/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+					<li class="col-md-3 col-sm-6 col-xs-12">
+				<div class="fixed_wrapper">
+					<div class="fixed">
+						<a class="prdocutname" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=81"
+						   title="Armani Eau de Toilette Spray ">Armani Eau de Toilette Spray </a>
+					</div>
+				</div>
+				<div class="thumbnail">
+											<span class="sale tooltip-test"></span>
+															<a href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=81"><img src="http://bonitofashion.com/image/thumbnails/18/6b/az_demo_product_31_jpg-100025-250x250.jpg" width="250"   alt=""  /></a>
+
+					<div class="shortlinks">
+						<a class="details" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=81">View</a>
+													<a class="compare" href="http://bonitofashion.com/index.php?rt=product/product&amp;product_id=81#review">Write Review</a>
+																	</div>
+											<div class="pricetag jumbotron">
+							<span class="spiral"></span>
+														<a data-id="81" href="#" class="productcart">Add to Cart</a>
+							
+							<div class="price">
+																	<div class="pricenew">?49/-</div>
+									<div class="priceold">?61/-</div>
+															</div>
+						</div>
+									</div>
+			</li>
+		</ul>
+</div>
+	</div>
+</section><div class="sep"></div>
+  
+<section id="banner_banner_block_1773" class="banner container mt20">
+    <div class="container-fluid">
+<div class="pull-left mr10" data-banner-id="13"><a href="http://bonitofashion.com/index.php?rt=r/extension/banner_manager/click&amp;banner_id=13" ><img src="http://bonitofashion.com/image/thumbnails/18/75/smbanner_jpg-100188-x.jpg" title="" alt=""></a></div><div class="pull-left mr10" data-banner-id="14"><a href="http://bonitofashion.com/index.php?rt=r/extension/banner_manager/click&amp;banner_id=14" ><img src="http://bonitofashion.com/image/thumbnails/18/75/smbanner_jpg-100188-x.jpg" title="" alt=""></a></div><div class="pull-left mr10" data-banner-id="15"><a href="http://bonitofashion.com/index.php?rt=r/extension/banner_manager/click&amp;banner_id=15" ><img src="http://bonitofashion.com/image/thumbnails/18/75/smbanner_jpg-100188-x.jpg" title="" alt=""></a></div><div class="pull-left mr10" data-banner-id="16"><a href="http://bonitofashion.com/index.php?rt=r/extension/banner_manager/click&amp;banner_id=16" ><img src="http://bonitofashion.com/image/thumbnails/18/75/smbanner_jpg-100188-x.jpg" title="" alt=""></a></div>	</div>
+</section><div class="sep"></div>
+  
+<!-- Popular Brands-->
+<section id="popularbrands" class="container-fluid mt40">
+    <div class="container-fluid">
+		<div class="block_frame block_frame_listing_block"
+					 id="block_frame_listing_block_1774">
+      <h1 class="heading1"><span class="maintext">Brands Scrolling List</span><span class="subtext"></span></h1>
+    <div class="brandcarousalrelative">
+    <ul id="brandcarousal">
+	<li><div class="image"><a href="http://bonitofashion.com/index.php?rt=product/manufacturer&amp;manufacturer_id=12"><img class="internal" src="http://bonitofashion.com/image/thumbnails/18/71/mf_benefit_logo_black_jpg-100117-250x250.jpg" alt="Benefit" /></a></div><div style="clear: both;"></div></li><li><div class="image"><a href="http://bonitofashion.com/index.php?rt=product/manufacturer&amp;manufacturer_id=17"><img class="internal" src="http://bonitofashion.com/image/thumbnails/18/71/mf_pantene_logo_jpg-100120-250x250.jpg" alt="Pantene" /></a></div><div style="clear: both;"></div></li><li><div class="image"><a href="http://bonitofashion.com/index.php?rt=product/manufacturer&amp;manufacturer_id=11"><img class="internal" src="http://bonitofashion.com/image/thumbnails/18/71/mf_mac_logo_jpg-100118-250x250.jpg" alt="M·A·C" /></a></div><div style="clear: both;"></div></li><li><div class="image"><a href="http://bonitofashion.com/index.php?rt=product/manufacturer&amp;manufacturer_id=15"><img class="internal" src="http://bonitofashion.com/image/thumbnails/18/71/mf_lancome_logo_gif-100119-250x250.gif" alt="Lancôme" /></a></div><div style="clear: both;"></div></li><li><div class="image"><a href="http://bonitofashion.com/index.php?rt=product/manufacturer&amp;manufacturer_id=20"><img class="internal" src="http://bonitofashion.com/image/thumbnails/18/73/demo_mf_gucci_jpg-100153-250x250.jpg" alt="Gucci" /></a></div><div style="clear: both;"></div></li><li><div class="image"><a href="http://bonitofashion.com/index.php?rt=product/manufacturer&amp;manufacturer_id=19"><img class="internal" src="http://bonitofashion.com/image/thumbnails/18/71/mf_armani_logo_gif-100122-250x250.gif" alt="Giorgio Armani" /></a></div><div style="clear: both;"></div></li><li><div class="image"><a href="http://bonitofashion.com/index.php?rt=product/manufacturer&amp;manufacturer_id=18"><img class="internal" src="http://bonitofashion.com/image/thumbnails/18/71/mf_dove_logo_jpg-100121-250x250.jpg" alt="Dove" /></a></div><div style="clear: both;"></div></li><li><div class="image"><a href="http://bonitofashion.com/index.php?rt=product/manufacturer&amp;manufacturer_id=13"><img class="internal" src="http://bonitofashion.com/image/thumbnails/18/71/mf_calvin_klein_jpg-100116-250x250.jpg" alt="Calvin Klein" /></a></div><div style="clear: both;"></div></li><li><div class="image"><a href="http://bonitofashion.com/index.php?rt=product/manufacturer&amp;manufacturer_id=14"><img class="internal" src="http://bonitofashion.com/image/thumbnails/18/71/mf_Bvlgari_jpg-100115-250x250.jpg" alt="Bvlgari" /></a></div><div style="clear: both;"></div></li><li><div class="image"><a href="http://bonitofashion.com/index.php?rt=product/manufacturer&amp;manufacturer_id=16"><img class="internal" src="http://bonitofashion.com/image/thumbnails/18/71/mf_sephora_ba_logo_black_jpg-100114-250x250.jpg" alt="Sephora" /></a></div><div style="clear: both;"></div></li>  
+   </ul>
+   <div class="clearfix"></div>
+   <a id="prev" class="prev" href="#">&lt;</a>
+   <a id="next" class="next" href="#">&gt;</a>  
+   </div> 
+	</div>
+	</div>
+</section>
+<!-- End Popular Brands-->
+<div class="sep"></div>
+  
+		<!-- content bottom blocks placeholder (EOF) -->
+				</div>
+
+			</div><!-- content container -->
+
+</div>
+<!-- /maincontainer -->
+
+
+<!-- footer blocks placeholder -->
+<div id="footer">
+	<!-- Footer -->
+<footer>
+	<!-- footer blocks placeholder -->
+	<section class="footersocial">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-3">
+					<div class="footer_block">
+		<div class="block_frame block_frame_html_block"
+		 id="block_frame_html_block_1775">
+		<h2>About Us</h2>
+				<p>
+	AbanteCart is a free eCommerce solution for merchants to provide ability creating online business and sell products or services online. AbanteCart application is built and supported by experienced enthusiasts that are passionate about their work and contribution to rapidly evolving eCommerce industry. AbanteCart is more than just a shopping cart, it is rapidly growing eCommerce platform with many benefits.</p>
+			</div>
+</div>				</div>
+				<div class="col-md-3">
+					<div class="footer_block">
+		<div class="block_frame block_frame_html_block"
+		 id="block_frame_html_block_1776">
+		<h2>Contact Us</h2>
+				<ul class="contact">	<li><span class="phone"> </span>+123 456 7890, +123 456 7890</li>	<li><span class="mobile"> </span>+123 456 7890, +123 456 78900</li>	<li><span class="email"> </span>help at abantecart.com</li>	<li><span class="email"> </span>help at abantecart.com</li></ul>			</div>
+</div>				</div>
+				<div class="col-md-3">
+					<div class="footer_block">
+		<div class="block_frame block_frame_html_block"
+		 id="block_frame_html_block_1777">
+		<h2>Testimonials</h2>
+				<div style="font-family: 'Open Sans', sans-serif;" class="flexslider" id="testimonialsidebar">
+	<ul class="slides">
+		<li>
+			" I was working with many shopping carts, free and hosted for my clients. There is always something missing. In abantecart I find this gap to be much less. Interface is very easy to use and support is very responsive. This is considering its is free. Go abantecart go!"<br />
+			<span class="pull-left orange">By : TopShop on reviewcentre.com</span></li>
+		<li>
+			" Without a doubt the best cart I have used. The title says it all - abantecart is undoubtedly the best I have used. I'm not an expert in site setup, so something this great looking and easy to use is absolutely perfect ... "<br />
+			<span class="pull-left orange">By : johnstenson80 on venturebeat.com</span></li>
+		<li>
+			" Will not regret using this cart. All good is already mentioned, I want to add my experience with support. My problems with some configuration were resolved quick. Faster than paid shopping cart we had before."<br />
+			<span class="pull-left orange">By : shopper23 at bestshoppingcartreviews.com</span></li>
+		<li>
+			" Wow! Abante Cart is really a catch! What a nice experience it was for me. I mean, to have all these features so direct, so quick and easy was really essential for my website. I was able to add some features and a cart to my website in no time ..."<br />
+			<span class="pull-left orange">By : EcommerceSport at hotscripts.com</span></li>
+		<li>
+			" Love the cart. I installed it a while back and use it since when. Some features a hidden, but fun to discover them."<br />
+			<span class="pull-left orange">By : Liz Wattkins at shopping-cart-reviews.com</span></li>
+
+	</ul>
+</div>
+			</div>
+</div>				</div>
+				<div class="col-md-3">
+					<div class="footer_block">
+<h2>Newsletter Signup</h2>
+<section id="newslettersignup">
+	<div class="pull-left newsletter">Sign up to Our Newsletter &amp; get attractive Offers by subscribing to our newsletters.</div>
+	<div class="pull-right">
+		<form id="subscribeFrm" role="form" action="http://bonitofashion.com/index.php?rt=account/subscriber" method="get" enctype="multipart/form-data"  >			<div class="input-group">
+								<input type="hidden" name="rt" value="account/subscriber">
+								<input type="text" placeholder="Subscribe to Newsletter" name="email" id="appendedInputButton" class="form-control">
+				<span class="input-group-btn">
+					<button class="btn btn-orange" type="submit">Subscribe</button>
+				</span>
+			</div>
+		</form>
+	</div>
+</section>
+</div>				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="footerlinks">
+		<div class="container-fluid">
+			<div class="pull-left">
+				<div class="info">
+	<ul class="info_links_footer">
+								<li><div class="dropdown">
+					<a href="http://bonitofashion.com/index.php?rt=content/content&amp;content_id=1">About Us</a>
+							</div></li>
+							<li><div class="dropdown">
+					<a href="http://bonitofashion.com/index.php?rt=content/content&amp;content_id=2">Privacy Policy</a>
+							</div></li>
+							<li><div class="dropdown">
+					<a href="http://bonitofashion.com/index.php?rt=content/content&amp;content_id=3">Return Policy</a>
+							</div></li>
+							<li><div class="dropdown">
+					<a href="http://bonitofashion.com/index.php?rt=content/content&amp;content_id=4">Shipping</a>
+							</div></li>
+					<li><a href="http://bonitofashion.com/index.php?rt=content/contact">Contact</a></li>
+		<li><a href="http://bonitofashion.com/index.php?rt=content/sitemap">Sitemap</a></li>
+					<li><a href="http://bonitofashion.com/index.php?rt=account/login">Log In</a></li>
+					</ul>
+</div>			</div>
+			<div class="pull-right">
+				<div class="footer_block">
+			      <div class="social_icons">
+        <a href="http://www.facebook.com/AbanteCart" target="_blank" title="Facebook" class="facebook">Facebook</a>
+        <a href="https://twitter.com/abantecart" target="_blank" title="Twitter" class="twitter">Twitter</a>
+        <a href="#" title="Linkedin" class="linkedin">Linkedin</a>
+        <a href="#" title="rss" class="rss">rss</a>
+        <a href="#" target="_blank" title="Googleplus" class="googleplus">Googleplus</a>
+        <a href="#" target="_blank" title="Skype" class="skype">Skype</a>
+        <a href="#" target="_blank" title="Flickr" class="flickr">Flickr</a>
+      </div>
+		</div>			</div>
+		</div>
+	</section>
+	<section class="copyrightbottom align_center">
+		<div class="container-fluid">
+			<div class="pull-left mt10">
+				<div class="b_block flt_right payment">
+	<img alt="payments" src="storefront/view/default/image/payment.gif">
+</div>			</div>
+			<div class="pull-right align_center">
+				Powered By  <a href="http://www.abantecart.com" onclick="window.open(this.href);return false;" title="Ideal OpenSource E-commerce Solution">AbanteCart</a>				<br />
+	    		Web Store Name &copy; 2015				
+			</div>
+			<div class="pull-right mr20 mt10">
+				<div class="b_block flt_right payment">
+	<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+    	<div class="inline">
+		<input type="hidden" name="cmd" value="_s-xclick" />
+		<input type="hidden" name="hosted_button_id" value="YUDUXTP8GED58" />
+		<input type="image" src="http://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" name="submit" alt="Donate to AbanteCart Project and Help build better eCommerce application" />
+		<img alt="" src="http://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+        </div>
+	</form>
+</div>			</div>
+		</div>
+	</section>
+	<a id="gotop" href="#">Back to top</a>
+</footer>
+</div><!-- container-fixed -->
+
+<div id="msgModal" class="modal fade">
+<div class="modal-dialog">
+<div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close callback-btn" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3></h3>
+  </div>
+  <div class="modal-body">
+  </div>
+</div>
+</div>  
+</div>
+
+<!--
+AbanteCart is open source software and you are free to remove the Powered By AbanteCart if you want, but its generally accepted practise to make a small donatation.
+Please donate via PayPal to donate@abantecart.com
+//-->
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript" src="storefront/view/default/javascript/bootstrap.min.js"></script>
+<script type="text/javascript" src="storefront/view/default/javascript/respond.min.js"></script>
+<script type="text/javascript" src="storefront/view/default/javascript/bootstrap-tooltip.js"></script>
+<script type="text/javascript" src="storefront/view/default/javascript/bootstrap-modal.js"></script>
+<script type="text/javascript" defer src="storefront/view/default/javascript/jquery.flexslider.js"></script>
+<script type="text/javascript" src="storefront/view/default/javascript/cloud-zoom.1.0.2.min.js"></script>
+<script type="text/javascript" src="storefront/view/default/javascript/jquery.validate.js"></script>
+<script type="text/javascript" src="storefront/view/default/javascript/jquery.carouFredSel-6.1.0-packed.js"></script>
+<script type="text/javascript" src="storefront/view/default/javascript/jquery.mousewheel.min.js"></script>
+<script type="text/javascript" src="storefront/view/default/javascript/jquery.touchSwipe.min.js"></script>
+<script type="text/javascript" src="storefront/view/default/javascript/jquery.ba-throttle-debounce.min.js"></script>
+<script type="text/javascript" src="storefront/view/default/javascript/jquery.onebyone.min.js"></script>
+<script type="text/javascript" defer src="storefront/view/default/javascript/custom.js"></script>
+
+
+	<script type="text/javascript">
+
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', '59329598']);
+		_gaq.push(['_trackPageview']);
+
+		
+		(function () {
+			var ga = document.createElement('script');
+			ga.type = 'text/javascript';
+			ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(ga, s);
+		})();
+
+	</script>
+
+
+	<script type="text/javascript" src="extensions/banner_manager/storefront/view/default/javascript/banner_manager.js"></script>
+</div>
+
+</body></html>
