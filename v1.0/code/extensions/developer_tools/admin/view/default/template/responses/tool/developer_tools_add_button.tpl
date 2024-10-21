@@ -1,1 +1,0 @@
-<a id="add_<?php echo $id;?>" class="add" style="vertical-align: bottom; padding-bottom: 3px;">&nbsp;</a>

@@ -1,0 +1,44 @@
+name: "tagged-release"
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build:
+    name: Upload Release Asset
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build project
+        run: |
+          cd ..
+          rm -rf ./developer_tools/.github
+          rm -rf ./developer_tools/.gitignore
+          rm -rf ./developer_tools/.git
+          zip -x ".*" -r developer_tools ./developer_tools
+          tar -czvf developer_tools.tar.gz  developer_tools
+      - name: Create Release
+        id: create_release
+        uses: ncipollo/release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Directory listing
+        run: |
+          cd ..
+          ls -la
+      - name: Upload Release Asset Zip
+        id: upload-release-asset
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.PUBLISH_TOKEN }}
+          files: |
+            ../developer_tools.zip
+            ../developer_tools.tar.gz
