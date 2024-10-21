@@ -15,11 +15,12 @@ jobs:
       - name: Build project
         run: |
           cd ..
-          rm -rf ./developer_tools/.github
-          rm -rf ./developer_tools/.gitignore
-          rm -rf ./developer_tools/.git
-          zip -x ".*" -r developer_tools ./developer_tools_extension
-          tar -czvf developer_tools.tar.gz  developer_tools_extension
+          rm -rf ./developer_tools_extension/.github
+          rm -rf ./developer_tools_extension/.gitignore
+          rm -rf ./developer_tools_extension/.git
+          rename ./developer_tools_extension ./developer_tools
+          zip -x ".*" -r developer_tools ./developer_tools
+          tar -czvf developer_tools.tar.gz  developer_tools
       - name: Create Release
         id: create_release
         uses: ncipollo/release-action@v1
