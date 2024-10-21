@@ -1,23 +1,23 @@
 <?php
 
-/*------------------------------------------------------------------------------
-  $Id$
-
-  AbanteCart, Ideal OpenSource Ecommerce Solution
-  http://www.AbanteCart.com
-
-  Copyright © 2011-2021 Belavier Commerce LLC
-
-  This source file is subject to Open Software License (OSL 3.0)
-  License details is bundled with this package in the file LICENSE.txt.
-  It is also available at this URL:
-  <http://www.opensource.org/licenses/OSL-3.0>
-
- UPGRADE NOTE:
-   Do not edit or add to this file if you wish to upgrade AbanteCart to newer
-   versions in the future. If you wish to customize AbanteCart for your
-   needs please refer to http://www.AbanteCart.com for more information.
-------------------------------------------------------------------------------*/
+/*
+ *   $Id$
+ *
+ *   AbanteCart, Ideal OpenSource Ecommerce Solution
+ *   http://www.AbanteCart.com
+ *
+ *   Copyright © 2011-2024 Belavier Commerce LLC
+ *
+ *   This source file is subject to Open Software License (OSL 3.0)
+ *   License details is bundled with this package in the file LICENSE.txt.
+ *   It is also available at this URL:
+ *   <http://www.opensource.org/licenses/OSL-3.0>
+ *
+ *  UPGRADE NOTE:
+ *    Do not edit or add to this file if you wish to upgrade AbanteCart to newer
+ *    versions in the future. If you wish to customize AbanteCart for your
+ *    needs please refer to http://www.AbanteCart.com for more information.
+ */
 if (!defined('DIR_CORE') || !IS_ADMIN) {
     header('Location: static_pages/');
 }
@@ -56,14 +56,14 @@ class ControllerTaskDeveloperToolsLanguage extends AController
         }
 
         if (!$step_info) {
-            $error_text = 'Cannot run task step. Looks like task_id '.$task_id.' does not contain step_id '.$step_id;
+            $error_text = 'Cannot run task step. Looks like task_id ' . $task_id . ' does not contain step_id ' . $step_id;
             $this->_return_error($error_text);
         }
 
         $tm->updateStep($step_id, ['last_time_run' => date('Y-m-d H:i:s')]);
 
         if (!$step_info['settings']) {
-            $error_text = 'Cannot run task step_id'.$step_id.'. Unknown settings for it.';
+            $error_text = 'Cannot run task step_id' . $step_id . '. Unknown settings for it.';
             $this->_return_error($error_text);
         }
 
@@ -78,7 +78,7 @@ class ControllerTaskDeveloperToolsLanguage extends AController
 
         $definitions = $this->language->ReadXmlFile($source_file);
         //for common xml file exclude translations
-        if (basename($destination_file) == $step_settings['language_extension_directory'].'.xml') {
+        if (basename($destination_file) == $step_settings['language_extension_directory'] . '.xml') {
             $exclude_keys = [
                 'code',
                 'direction',
@@ -97,7 +97,7 @@ class ControllerTaskDeveloperToolsLanguage extends AController
             foreach ($definitions as $def_key => $def_value) {
                 if (in_array($def_key, $exclude_keys)) {
                     //todo: think how to get excluded keys from system locale etc
-                    $translate_result = $step_settings['language_extension_'.$def_key];
+                    $translate_result = $step_settings['language_extension_' . $def_key];
                     if ($def_key == 'code') {
                         $translate_result = $dst_language_code;
                     }
@@ -110,11 +110,6 @@ class ControllerTaskDeveloperToolsLanguage extends AController
                         'strict'
                     );
                 }
-                if (version_compare(VERSION, '1.2.10', '<')) {
-                    if ($def_value == $translate_result) {
-                        $translate_result = '';
-                    }
-                }
 
                 if ($translate_result) {
                     $new_definitions[$def_key] = $translate_result;
@@ -124,14 +119,14 @@ class ControllerTaskDeveloperToolsLanguage extends AController
                 * if at least one definition have no translation - skip file.
                 */
                 if ($def_key && !$translate_result) {
-                    $task_step_text_result = 'Error: Definition '.$def_key.' from file '.$source_file
-                        .' has been not translated! Interrupt translation of file.';
+                    $task_step_text_result = 'Error: Definition ' . $def_key
+                        . ' from file ' . $source_file
+                        . ' has been not translated! Interrupt translation of file.';
                     $this->log->write($task_step_text_result);
                     $this->_return_error($task_step_text_result);
                     return null;
                 }
-
-                usleep(1000);
+                sleep(1);
             }
         }
 
@@ -140,7 +135,7 @@ class ControllerTaskDeveloperToolsLanguage extends AController
             $step_result = $this->model_tool_developer_tools->saveLanguageXML($destination_file, $new_definitions);
             if (!$step_result) {
                 $this->messages->saveNotice(
-                    'Developer Tools Notice of Translation ("'.$destination_file.'")',
+                    'Developer Tools Notice of Translation ("' . $destination_file . '")',
                     implode('<br>', $this->model_tool_developer_tools->error)
                 );
             }
@@ -155,7 +150,7 @@ class ControllerTaskDeveloperToolsLanguage extends AController
                 ]
             );
             $task_step_text_result = sizeof($new_definitions)
-                .' definitions of file '.$destination_file.' have been translated.';
+                . ' definitions of file ' . $destination_file . ' have been translated.';
         } else {
             $step_result = false;
         }
@@ -169,7 +164,7 @@ class ControllerTaskDeveloperToolsLanguage extends AController
         $this->response->setOutput(
             AJson::encode(
                 [
-                    'result' => $step_result,
+                    'result'  => $step_result,
                     'message' => $task_step_text_result
                 ]
             )

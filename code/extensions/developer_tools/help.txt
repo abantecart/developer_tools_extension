@@ -4,7 +4,7 @@
 This extension was contributes by AbanteCart team to help developers quickly get into building extensions for AbanteCart without dealing with tedious file and settings organizational work. 
 </p>
 <p>
-Features included in version 1.2. 
+Features included in version 1.4.
 <ul>
 <li>Create and manage projects (Each extension settings can be saved as a project)
 <li>Create controllers, models, templates and more
@@ -23,5 +23,5 @@ These can cause conflicts and slow AbanteCart performance.
 </p>
 
 <p>
-Everyone is welcome to help and contribute into these tools development. Join <a href="https://github.com/abantecart/developer_tools_extension">Github</a> and let's make AbanteCart extension development easy and fun for everyone. 
+Everyone is welcome to help and contribute into these tool development. Join <a href="https://github.com/abantecart/developer_tools_extension">Github</a> and let's make AbanteCart extension development easy and fun for everyone.
 </p>

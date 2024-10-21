@@ -1,301 +1,364 @@
 <?php
-/*------------------------------------------------------------------------------
-  $Id$
-
-  AbanteCart, Ideal OpenSource Ecommerce Solution
-  http://www.AbanteCart.com
-
-  Copyright © 2015 Belavier Commerce LLC
-
-  This source file is subject to Open Software License (OSL 3.0)
-  License details is bundled with this package in the file LICENSE.txt.
-  It is also available at this URL:
-  <http://www.opensource.org/licenses/OSL-3.0>
-
- UPGRADE NOTE:
-   Do not edit or add to this file if you wish to upgrade AbanteCart to newer
-   versions in the future. If you wish to customize AbanteCart for your
-   needs please refer to http://www.AbanteCart.com for more information.
-------------------------------------------------------------------------------*/
-if(!defined('DIR_CORE')){
-	header('Location: static_pages/');
+/*
+ *   $Id$
+ *
+ *   AbanteCart, Ideal OpenSource Ecommerce Solution
+ *   http://www.AbanteCart.com
+ *
+ *   Copyright © 2011-2024 Belavier Commerce LLC
+ *
+ *   This source file is subject to Open Software License (OSL 3.0)
+ *   License details is bundled with this package in the file LICENSE.txt.
+ *   It is also available at this URL:
+ *   <http://www.opensource.org/licenses/OSL-3.0>
+ *
+ *  UPGRADE NOTE:
+ *    Do not edit or add to this file if you wish to upgrade AbanteCart to newer
+ *    versions in the future. If you wish to customize AbanteCart for your
+ *    needs please refer to http://www.AbanteCart.com for more information.
+ */
+if (!defined('DIR_CORE')) {
+    header('Location: static_pages/');
 }
 
 /**
  * Class ControllerPagesToolDeveloperToolsLanguages
  * @property ModelToolDeveloperTools $model_tool_developer_tools
  */
-class ControllerPagesToolDeveloperToolsLanguages extends AController{
-	public $data = array();
+class ControllerPagesToolDeveloperToolsLanguages extends AController
+{
 
-	public function main(){
+    public function main()
+    {
 
-		$prj_id = $this->session->data['dev_tools_prj_id'];
-		if(!$prj_id){
-			redirect($this->html->getSecureURL('tool/developer_tools'));
-		}
+        $prj_id = $this->session->data['dev_tools_prj_id'];
+        if (!$prj_id) {
+            redirect($this->html->getSecureURL('tool/developer_tools'));
+        }
 
-		$this->loadModel('tool/developer_tools');
-		$this->loadLanguage('developer_tools/developer_tools');
+        $this->loadModel('tool/developer_tools');
+        $this->loadLanguage('developer_tools/developer_tools');
 
-		$language_files = $this->model_tool_developer_tools->getLanguageFiles($prj_id);
+        $language_files = $this->model_tool_developer_tools->getLanguageFiles($prj_id);
 
-		if(!$language_files){
-			$this->session->data['warning'] = 'Project does not contain language files. To add it please use project <a href="'.$this->html->getSecureURL('tool/developer_tools/edit').'">edit form</a>.';
-			redirect($this->html->getSecureURL('tool/developer_tools/edit'));
-		}
+        if (!$language_files) {
+            $this->session->data['warning'] = 'Project does not contain language files. To add it please use project '
+                . '<a href="' . $this->html->getSecureURL('tool/developer_tools/edit') . '">edit form</a>.';
+            redirect($this->html->getSecureURL('tool/developer_tools/edit'));
+        }
 
-		$this->data['heading_title'] = $this->language->get('developer_tools_text_languages');
-		$this->document->setTitle( $this->data['heading_title'] );
-		$this->document->initBreadcrumb(array(
-				'href'      => $this->html->getSecureURL('index/home'),
-				'text'      => $this->language->get('text_home'),
-				'separator' => false));
-		$this->document->addBreadcrumb(array(
-				'href'      => $this->html->getSecureURL('tool/developer_tools'),
-				'text'      => $this->language->get('developer_tools_name').' - '.$this->data['heading_title'],
-				'separator' => ' :: ',
-				'current'   => true));
+        $this->data['heading_title'] = $this->language->get('developer_tools_text_languages');
+        $this->document->setTitle($this->data['heading_title']);
+        $this->document->initBreadcrumb(
+            [
+                'href'      => $this->html->getSecureURL('index/home'),
+                'text'      => $this->language->get('text_home'),
+                'separator' => false
+            ]
+        );
+        $this->document->addBreadcrumb(
+            [
+                'href'      => $this->html->getSecureURL('tool/developer_tools'),
+                'text'      => $this->language->get('developer_tools_name') . ' - ' . $this->data['heading_title'],
+                'separator' => ' :: ',
+                'current'   => true
+            ]
+        );
 
-		$this->data = $this->model_tool_developer_tools->getProjectConfig($prj_id);
+        $this->data = $this->model_tool_developer_tools->getProjectConfig($prj_id);
 
-		//load tabs controller
-		$tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs', array('project'));
-		$this->data['dev_tabs'] = $tabs_obj->dispatchGetOutput();
-		$tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs/prjtabs', array('languages'));
-		$this->data['prj_tabs'] = $tabs_obj->dispatchGetOutput();
+        //load tabs controller
+        $tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs', ['project']);
+        $this->data['dev_tabs'] = $tabs_obj->dispatchGetOutput();
+        $tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs/prjtabs', ['languages']);
+        $this->data['prj_tabs'] = $tabs_obj->dispatchGetOutput();
 
-		$this->data['cancel'] = $this->html->getSecureURL('developer_tools_name');
+        $this->data['cancel'] = $this->html->getSecureURL('developer_tools_name');
 
-		$this->data['action'] = $this->html->getSecureURL('tool/developer_tools/create');
-		$this->data['heading_title'] = $this->language->get('developer_tools_name');
-		$this->data['update'] = '';
-		$form = new AForm('ST');
+        $this->data['action'] = $this->html->getSecureURL('tool/developer_tools/create');
+        $this->data['heading_title'] = $this->language->get('developer_tools_name');
+        $this->data['update'] = '';
+        $form = new AForm('ST');
 
-		$form->setForm(
-				array('form_name' => 'extLangFrm',
-				      'update'    => $this->data['update'],
-				));
-		$this->data['form']['id'] = 'extLangFrm';
-		$this->data['form']['form_open'] = $form->getFieldHtml(
-				array('type'   => 'form',
-				      'name'   => 'extLangFrm',
-				      'action' => $this->data['action'],
-				));
-		$this->data['form']['submit'] = $form->getFieldHtml(
-				array('type'  => 'button',
-				      'name'  => 'submit',
-				      'text'  => $this->language->get('button_save'),
-				      'style' => 'button1',
-				));
-		$this->data['form']['cancel'] = $form->getFieldHtml(
-				array('type'  => 'button',
-				      'name'  => 'cancel',
-				      'text'  => $this->language->get('button_cancel'),
-				      'style' => 'button2',
-				));
+        $form->setForm(
+            [
+                'form_name' => 'extLangFrm',
+                'update'    => $this->data['update'],
+            ]
+        );
+        $this->data['form']['id'] = 'extLangFrm';
+        $this->data['form']['form_open'] = $form->getFieldHtml(
+            [
+                'type'   => 'form',
+                'name'   => 'extLangFrm',
+                'action' => $this->data['action'],
+            ]
+        );
+        $this->data['form']['submit'] = $form->getFieldHtml(
+            [
+                'type'  => 'button',
+                'name'  => 'submit',
+                'text'  => $this->language->get('button_save'),
+                'style' => 'button1',
+            ]
+        );
+        $this->data['form']['cancel'] = $form->getFieldHtml(
+            [
+                'type'  => 'button',
+                'name'  => 'cancel',
+                'text'  => $this->language->get('button_cancel'),
+                'style' => 'button2',
+            ]
+        );
 
-		$filenames = array('admin' => array(), 'storefront' => array());
-		foreach($language_files as $section => $language){
-			foreach($language as $lang => $file){
-				foreach($file as $filename){
-					//prevent duplicates
-					if(in_array($filename, $filenames[$section])){
-						continue;
-					}
-					$this->data['form']['fields'][$section][$lang][] = array(
-							'text' => $filename,
-					        'href' => $this->html->getSecureUrl('tool/developer_tools_languages/edit',
-							                                    '&block=' . $filename . '&section=' . $section));
-					$filenames[$section][] = $filename;
-				}
-			}
-		}
+        $filenames = ['admin' => [], 'storefront' => []];
+        foreach ($language_files as $section => $language) {
+            foreach ($language as $lang => $file) {
+                foreach ($file as $filename) {
+                    //prevent duplicates
+                    if (in_array($filename, $filenames[$section])) {
+                        continue;
+                    }
+                    $this->data['form']['fields'][$section][$lang][] = [
+                        'text' => $filename,
+                        'href' => $this->html->getSecureUrl(
+                            'tool/developer_tools_languages/edit',
+                            '&block=' . $filename . '&section=' . $section
+                        )
+                    ];
+                    $filenames[$section][] = $filename;
+                }
+            }
+        }
 
-		$this->data['tab_admin_languages_section'] = $this->language->get('developer_tools_tab_admin_languages_section');
-		$this->data['tab_storefront_languages_section'] = $this->language->get('developer_tools_tab_storefront_languages_section');
+        $this->data['tab_admin_languages_section'] = $this->language->get('developer_tools_tab_admin_languages_section');
+        $this->data['tab_storefront_languages_section'] = $this->language->get('developer_tools_tab_storefront_languages_section');
 
-		$this->data['text_languages'] = $this->language->get('developer_tools_text_languages');
-		$this->view->batchAssign($this->data);
-		$this->processTemplate('pages/tool/developer_tools_languages.tpl');
-	}
+        $this->data['text_languages'] = $this->language->get('developer_tools_text_languages');
+        $this->view->batchAssign($this->data);
+        $this->processTemplate('pages/tool/developer_tools_languages.tpl');
+    }
 
+    public function edit()
+    {
 
-	public function edit(){
+        $prj_id = $this->session->data['dev_tools_prj_id'];
+        if (!$prj_id) {
+            redirect($this->html->getSecureURL('tool/developer_tools'));
+        }
 
-		$prj_id = $this->session->data['dev_tools_prj_id'];
-		if(!$prj_id){
-			redirect($this->html->getSecureURL('tool/developer_tools'));
-		}
+        $this->loadModel('tool/developer_tools');
+        $this->loadLanguage('developer_tools/developer_tools');
 
-		$this->loadModel('tool/developer_tools');
-		$this->loadLanguage('developer_tools/developer_tools');
+        $config = $this->model_tool_developer_tools->getProjectConfig($prj_id);
 
-		$config = $this->model_tool_developer_tools->getProjectConfig($prj_id);
+        if ($this->request->is_POST()) {
+            foreach ($this->request->post['keys'] as $language_name => $values) {
+                if (!is_array($values)) {
+                    continue;
+                }
 
-		if($this->request->is_POST()){
+                $path = DIR_EXT . $config['extension_txt_id']
+                    . DS . $this->request->get['section']
+                    . DS . 'language'
+                    . DS . $language_name
+                    . DS . $this->request->get['block'];
+                // for language extensions
+                if ($language_name == $config['extension_txt_id']) {
+                    $path = DIR_EXT . $config['extension_txt_id']
+                        . DS . $this->request->get['section']
+                        . DS . 'language'
+                        . DS . $this->request->get['block'];
+                }
 
-			foreach($this->request->post['keys'] as $language_name => $values){
+                foreach ($values as &$val) {
+                    $val = trim(html_entity_decode($val, ENT_QUOTES, 'UTF-8'));
+                }
 
-				if(!is_array($values)){ continue; }
+                $this->model_tool_developer_tools->saveLanguageXML($path, $values);
+                if ($this->model_tool_developer_tools->error) {
+                    $this->messages->saveNotice(
+                        'Developer Tools Notice ("' . $this->request->get['block'] . '")',
+                        implode('<br>', $this->model_tool_developer_tools->error)
+                    );
+                }
+                $lm = new ALanguageManager($this->registry);
+                $block = str_replace('.xml', '', $this->request->get['block']);
+                $block = str_replace('/', '_', $block);
 
-				$path = DIR_EXT . $config['extension_txt_id'] . '/' . $this->request->get['section'] . '/language/' . $language_name . '/' . $this->request->get['block'];
-				// for language extensions
-				if($language_name == $config['extension_txt_id']){
-					$path = DIR_EXT . $config['extension_txt_id'] . '/' . $this->request->get['section'] . '/language/' . $this->request->get['block'];
-				}
+                $langs = $lm->getAvailableLanguages();
+                foreach ($langs as $lang) {
+                    $lm->definitionAutoLoad($lang['language_id'], $this->request->get['section'], $block);
+                }
+                $this->data['success'] = $this->language->get('developer_tools_text_language_file_edit_success');
+            }
+            redirect(
+                $this->html->getSecureURL(
+                    'tool/developer_tools_languages/edit',
+                    '&block=' . $this->request->get['block'] . '&section=' . $this->request->get['section']
+                )
+            );
+        }
 
-				foreach($values as &$val){
-					$val = trim(html_entity_decode($val, ENT_QUOTES, 'UTF-8'));
-				}
+        $language_files = $this->model_tool_developer_tools->getLanguageFiles($prj_id);
 
-				$this->model_tool_developer_tools->saveLanguageXML($path, $values);
-				if($this->model_tool_developer_tools->error){
-					$this->messages->saveNotice('Developer Tools Notice ("' . $this->request->get['block'] . '")', implode('<br>', $this->model_tool_developer_tools->error));
-				}
-				$lm = new ALanguageManager($this->registry);
-				$block = str_replace('.xml', '', $this->request->get['block']);
-				$block = str_replace('/', '_', $block);
+        if (!$language_files) {
+            $this->session->data['warning'] = 'Project does not contain language files. To add it please use project '
+                . '<a href="' . $this->html->getSecureURL('tool/developer_tools/edit') . '">edit form</a>.';
+            redirect($this->html->getSecureURL('tool/developer_tools/edit'));
+        }
 
-				$langs = $lm->getAvailableLanguages();
-				foreach($langs as $lang){
-					$lm->definitionAutoLoad($lang['language_id'], $this->request->get['section'], $block);
-				}
-				$this->data['success'] = $this->language->get('developer_tools_text_language_file_edit_success');
-			}
-			redirect($this->html->getSecureURL('tool/developer_tools_languages/edit', '&block=' . $this->request->get['block'] . '&section=' . $this->request->get['section']));
-		}
+        //load tabs controller
+        $tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs', ['project']);
+        $this->data['dev_tabs'] = $tabs_obj->dispatchGetOutput();
+        $tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs/prjtabs', ['languages']);
+        $this->data['prj_tabs'] = $tabs_obj->dispatchGetOutput();
 
-		$language_files = $this->model_tool_developer_tools->getLanguageFiles($prj_id);
+        $this->data['cancel'] = $this->html->getSecureURL('developer_tools_name');
+        $this->data['action'] = $this->html->getSecureURL(
+            'tool/developer_tools_languages/edit',
+            '&block=' . $this->request->get['block'] . '&section=' . $this->request->get['section']
+        );
+        $this->data['heading_title'] = $this->language->get('developer_tools_name');
+        $this->data['update'] = '';
+        $form = new AForm('HT');
 
-		if(!$language_files){
-			$this->session->data['warning'] = 'Project does not contain language files. To add it please use project <a href="'.$this->html->getSecureURL('tool/developer_tools/edit').'">edit form</a>.';
-			redirect($this->html->getSecureURL('tool/developer_tools/edit'));
-		}
+        $form->setForm(
+            [
+                'form_name' => 'extLanguageFrm',
+                'update'    => $this->data['update'],
+            ]
+        );
+        $this->data['form']['id'] = 'extLanguageFrm';
+        $this->data['form']['form_open'] = $form->getFieldHtml(
+            [
+                'type'   => 'form',
+                'name'   => 'extLanguageFrm',
+                'action' => $this->data['action'],
+            ]
+        );
+        $this->data['form']['submit'] = $form->getFieldHtml(
+            [
+                'type' => 'button',
+                'name' => 'submit',
+                'text' => $this->language->get('button_save')
+            ]
+        );
+        $this->data['form']['cancel'] = $form->getFieldHtml(
+            [
+                'type' => 'button',
+                'name' => 'cancel',
+                'text' => $this->language->get('button_cancel')
+            ]
+        );
 
-		//load tabs controller
-		$tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs', array('project'));
-		$this->data['dev_tabs'] = $tabs_obj->dispatchGetOutput();
-		$tabs_obj = $this->dispatch('pages/tool/developer_tools_tabs/prjtabs', array('languages'));
-		$this->data['prj_tabs'] = $tabs_obj->dispatchGetOutput();
+        $pathes = $all_keys = []; // pathes to xml-file
+        foreach ($language_files as $section => $language) {
+            if ($section == $this->request->get['section'])
+                foreach ($language as $lang => $file) {
+                    $languages[] = $lang;
+                    $pathes[$lang] = [
+                        'path' => '',
+                        'keys' => []
+                    ];
 
-		$this->data['cancel'] = $this->html->getSecureURL('developer_tools_name');
-		$this->data['action'] = $this->html->getSecureURL(
-									'tool/developer_tools_languages/edit',
-									'&block=' . $this->request->get['block'] . '&section=' . $this->request->get['section']);
-		$this->data['heading_title'] = $this->language->get('developer_tools_name');
-		$this->data['update'] = '';
-		$form = new AForm('HT');
+                    foreach ($file as $filename) {
+                        if ($filename == $this->request->get['block']
+                            || (
+                                $lang == $config['extension_txt_id']
+                                && $lang . '/' . $filename == $this->request->get['block']
+                            )
+                        ) {
+                            $path = $section . DS . 'language' . DS . $lang . DS . $this->request->get['block'];
+                            // for language extensions write
+                            if ($lang == $config['extension_txt_id']) {
+                                $path = $section . DS . 'language' . DS . $this->request->get['block'];
+                            }
+                            $keys = [];
+                            if (is_file(DIR_EXT . $config['extension_txt_id'] . DS . $path)
+                                && filesize(DIR_EXT . $config['extension_txt_id'] . DS . $path)
+                            ) {
+                                $xml = simplexml_load_file(DIR_EXT . $config['extension_txt_id'] . DS . $path);
+                                foreach ($xml->definition as $def) {
+                                    $keys[trim((string)$def->key)] = trim((string)$def->value);
+                                }
+                                // collect key names from all language variants
+                                $all_keys = array_merge($all_keys, array_keys($keys));
+                            }
 
-		$form->setForm(
-				array('form_name' => 'extLanguageFrm',
-				      'update'    => $this->data['update'],
-				));
-		$this->data['form']['id'] = 'extLanguageFrm';
-		$this->data['form']['form_open'] = $form->getFieldHtml(
-				array('type'   => 'form',
-				      'name'   => 'extLanguageFrm',
-				      'action' => $this->data['action'],
-				));
-		$this->data['form']['submit'] = $form->getFieldHtml(
-				array('type'  => 'button',
-				      'name'  => 'submit',
-				      'text'  => $this->language->get('button_save'),
-				      'style' => 'button1',
-				));
-		$this->data['form']['cancel'] = $form->getFieldHtml(
-				array('type'  => 'button',
-				      'name'  => 'cancel',
-				      'text'  => $this->language->get('button_cancel'),
-				      'style' => 'button2',
-				));
+                            $pathes[$lang] = [
+                                'path' => $path,
+                                'keys' => $keys
+                            ];
+                            break;
+                        }
+                    }
+                }
+        }
+        $all_keys = array_unique($all_keys);
 
-		$pathes = $all_keys = array(); // pathes to xml-file
-		foreach($language_files as $section => $language){
-			if($section == $this->request->get['section'])
-				foreach($language as $lang => $file){
-					$languages[] = $lang;
-					$pathes[$lang] = array('path' => '',
-					                       'keys' => array());
+        foreach ($all_keys as $key) {
+            if (!$key) continue;
+            foreach ($languages as $language_name) {
+                $this->data['form']['fields'][$key][] = $language_name;
+                $this->data['form']['fields'][$key][] = $form->getFieldHtml(
+                    [
+                        'type'  => 'textarea',
+                        'name'  => 'keys[' . $language_name . '][' . $key . ']',
+                        'value' => $pathes[$language_name]['keys'][$key],
+                        'style' => 'large-field'
+                    ]
+                );
+            }
 
-					foreach($file as $filename){
+        }
+        // build prototype for new key form elements
+        $this->data['form']['proto']['newkey'] = $form->getFieldHtml(
+            [
+                'type'  => 'input',
+                'name'  => 'newkey',
+                //use prefix for all language definitions of extension to prevent collision with core
+                'value' => $config['extension_txt_id'] . '_',
+                'attr'  => '  autocomplete="off" '
+            ]
+        );
 
-						if($filename == $this->request->get['block']
-								|| ($lang == $config['extension_txt_id'] && $lang . '/' . $filename == $this->request->get['block'])
-						){
-							$path = $section . '/language/' . $lang . '/' . $this->request->get['block'];
-							// for language extensions write
-							if($lang == $config['extension_txt_id']){
-								$path = $section . '/language/' . $this->request->get['block'];
-							}
-							$keys = array();
-							if(is_file(DIR_EXT . $config['extension_txt_id'] . '/' . $path)
-									&& filesize(DIR_EXT . $config['extension_txt_id'] . '/' . $path)
-							){
-								$xml = simplexml_load_file(DIR_EXT . $config['extension_txt_id'] . '/' . $path);
-								foreach($xml->definition as $def){
-									$keys[trim((string)$def->key)] = trim((string)$def->value);
-								}
-								// collect key names from all language variants
-								$all_keys = array_merge($all_keys, array_keys($keys));
-							}
+        foreach ($languages as $language_name) {
+            $this->data['form']['proto']['field'][] = $language_name;
+            $this->data['form']['proto']['field'][] = $form->getFieldHtml(
+                [
+                    'type'  => 'textarea',
+                    'name'  => 'keys[' . $language_name . '][]',
+                    'value' => '',
+                    'attr'  => ' basename="keys[' . $language_name . ']" '
+                ]
+            );
+        }
 
-							$pathes[$lang] = array('path' => $path,
-							                       'keys' => $keys);
-							break;
-						}
-					}
-				}
-		}
-		$all_keys = array_unique($all_keys);
+        $this->data['heading_title'] = $this->language->get('developer_tools_name')
+            . ' - ' . $this->language->get('developer_tools_text_language_file_edit')
+            . ' - ' . $this->request->get['block'];
+        $this->document->setTitle($this->data['heading_title']);
+        $this->document->initBreadcrumb(
+            [
+                'href'      => $this->html->getSecureURL('index/home'),
+                'text'      => $this->language->get('text_home'),
+                'separator' => false
+            ]
+        );
+        $this->document->addBreadcrumb(
+            [
+                'href'      => $this->html->getSecureURL('tool/developer_tools_languages'),
+                'text'      => $this->language->get('developer_tools_name')
+                    . ' - ' . $this->language->get('developer_tools_text_languages'),
+                'separator' => ' :: ',
+                'current'   => true
+            ]
+        );
 
-		foreach($all_keys as $key){
-			if(!$key) continue;
-			foreach($languages as $language_name){
-				$this->data['form']['fields'][$key][] = $language_name;
-				$this->data['form']['fields'][$key][] = $form->getFieldHtml(
-						array('type'  => 'textarea',
-						      'name'  => 'keys[' . $language_name . '][' . $key . ']',
-						      'value' => $pathes[$language_name]['keys'][$key],
-						      'style' => 'large-field'
-						));
-			}
+        $this->data['languages'] = $languages;
 
-		}
-		// build prototype for new key form elements
-		$this->data['form']['proto']['newkey'] = $form->getFieldHtml(
-				array('type'  => 'input',
-				      'name'  => 'newkey',
-				      'value' => $config['extension_txt_id'].'_', //use prefix for all language definitions of extension to prevent collision with core
-				      'attr'  => '  autocomplete="off" '
-				)
-		);
-
-		foreach($languages as $language_name){
-			$this->data['form']['proto']['field'][] = $language_name;
-			$this->data['form']['proto']['field'][] = $form->getFieldHtml(
-					array('type'  => 'textarea',
-					      'name'  => 'keys[' . $language_name . '][]',
-					      'value' => '',
-					      'attr'  => ' basename="keys[' . $language_name . ']" '
-					));
-		}
-
-		$this->data['heading_title'] = $this->language->get('developer_tools_name') .' - '.$this->language->get('developer_tools_text_language_file_edit') . ' - ' . $this->request->get['block'];
-		$this->document->setTitle( $this->data['heading_title'] );
-		$this->document->initBreadcrumb(array(
-				'href'      => $this->html->getSecureURL('index/home'),
-				'text'      => $this->language->get('text_home'),
-				'separator' => false));
-		$this->document->addBreadcrumb(array(
-				'href'      => $this->html->getSecureURL('tool/developer_tools_languages'),
-				'text'      => $this->language->get('developer_tools_name') .' - '.$this->language->get('developer_tools_text_languages'),
-				'separator' => ' :: ',
-				'current'   => true));
-
-		$this->data['languages'] = $languages;
-
-		$this->view->batchAssign($this->data);
-		$this->processTemplate('pages/tool/developer_tools_language_edit.tpl');
-	}
+        $this->view->batchAssign($this->data);
+        $this->processTemplate('pages/tool/developer_tools_language_edit.tpl');
+    }
 }

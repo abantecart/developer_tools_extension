@@ -1,22 +1,22 @@
 <?php
-/*------------------------------------------------------------------------------
-  $Id$
-
-  AbanteCart, Ideal OpenSource Ecommerce Solution
-  http://www.AbanteCart.com
-
-  Copyright © 2015 Belavier Commerce LLC
-
-  This source file is subject to Open Software License (OSL 3.0)
-  License details is bundled with this package in the file LICENSE.txt.
-  It is also available at this URL:
-  <http://www.opensource.org/licenses/OSL-3.0>
-
- UPGRADE NOTE:
-   Do not edit or add to this file if you wish to upgrade AbanteCart to newer
-   versions in the future. If you wish to customize AbanteCart for your
-   needs please refer to http://www.AbanteCart.com for more information.
-------------------------------------------------------------------------------*/
+/*
+ *   $Id$
+ *
+ *   AbanteCart, Ideal OpenSource Ecommerce Solution
+ *   http://www.AbanteCart.com
+ *
+ *   Copyright © 2011-2024 Belavier Commerce LLC
+ *
+ *   This source file is subject to Open Software License (OSL 3.0)
+ *   License details is bundled with this package in the file LICENSE.txt.
+ *   It is also available at this URL:
+ *   <http://www.opensource.org/licenses/OSL-3.0>
+ *
+ *  UPGRADE NOTE:
+ *    Do not edit or add to this file if you wish to upgrade AbanteCart to newer
+ *    versions in the future. If you wish to customize AbanteCart for your
+ *    needs please refer to http://www.AbanteCart.com for more information.
+ */
 if (!defined('DIR_CORE')){
 	header('Location: static_pages/');
 }
@@ -25,7 +25,7 @@ require_once(DIR_EXT . 'developer_tools/core/lib/array2xml.php');
  * @property ALayoutManager $lm
  */
 class ModelToolDeveloperToolsLayoutXml extends Model{
-	public $error = array ();
+	public $error = [];
 	private $placeholder_block_id;
 	private $template_id_src;
 
@@ -33,25 +33,26 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 		$this->template_id_src = $src_template_id;
 
 		$layouts = $this->getLayoutsByTemplate($src_template_id);
-		$xml_data = array ();
+		$xml_data = [];
 		foreach ($layouts as $i => $layout){
 			$layout_id = $layout['layout_id'];
-			$xml_data['layout'][$i] = array ('name'        => $layout['layout_name'],
-			                                 'template_id' => $dst_template_id,
-			                                 'type'        => $this->_getTextLayoutType($layout['layout_type'])
-			);
+			$xml_data['layout'][$i] = [
+                'name'        => $layout['layout_name'],
+                'template_id' => $dst_template_id,
+                'type'        => $this->_getTextLayoutType($layout['layout_type'])
+            ];
 			//note: layout can be orphan and do not assigned to any pages and do not contains any blocks
 			$pages = $this->_getLayoutPages4Xml($layout_id);
 			if($pages){
-				$xml_data['layout'][$i]['pages'] = array ('page' => $pages);
+				$xml_data['layout'][$i]['pages'] = ['page' => $pages];
 			}else{
-				$xml_data['layout'][$i]['pages'] = array ();
+				$xml_data['layout'][$i]['pages'] = [];
 			}
 			$blocks = $this->_getLayoutBlocks4Xml($layout_id);
 			if($blocks){
 				$xml_data['layout'][$i]['blocks'] = $blocks;
 			}else{
-				$xml_data['layout'][$i]['blocks'] = array();
+				$xml_data['layout'][$i]['blocks'] = [];
 			}
 		}
 
@@ -92,7 +93,7 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 
 	public function getLayoutsByTemplate($template_id){
 		$template_id = trim($template_id);
-		if (!$template_id) return array ();
+		if (!$template_id) return [];
 		$result = $this->db->query("SELECT *
 						FROM " . $this->db->table('layouts') . "
 						WHERE template_id='" . $template_id . "'");
@@ -104,17 +105,12 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 		switch($int_type){
 			case 0:
 				return 'Default';
-				break;
-			case 1:
-				return 'Active';
-				break;
-			case 2:
+            case 2:
 				return 'Draft';
-				break;
-			case 3:
+            case 3:
 				return 'Template';
-				break;
-			default:
+            case 1:
+            default:
 				return 'Active';
 		}
 	}
@@ -124,10 +120,9 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 	 * */
 	private function _getLayoutPages4Xml($layout_id){
 		$layout_id = (int)$layout_id;
-		if (!$layout_id) return array ();
+		if (!$layout_id) return [];
 
 		// do trick for bug in layout db-data structure for 1.2.9
-	//	if(VERSION == '1.2.9'){
 			$sql = "SELECT page_id 
 					FROM ".$this->db->table('pages')."
 					WHERE controller = 'pages/checkout/cart'";
@@ -150,8 +145,8 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 					}
 				}
 			}
-		//}
-		$output = array ();
+
+		$output = [];
 		$sql = "SELECT pl.page_id,
 						p.controller, p.key_param, p.key_value,
 						pd.language_id,
@@ -179,22 +174,24 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 				$output[$row['page_id']]['key_value'] = $row['key_value'];
 			}
 			if ($row['language_id']){
-				$output[$row['page_id']]['page_descriptions']['page_description'][$i] = array ('language' => $row['language_name'],
-				                                                                               'name'     => array ('@cdata' => $row['name']));
+				$output[$row['page_id']]['page_descriptions']['page_description'][$i] = [
+                    'language' => $row['language_name'],
+                    'name'     => ['@cdata' => $row['name']]
+                ];
 				if ($row['title']){
-					$output[$row['page_id']]['page_descriptions']['page_description'][$i]['title'] = array ('@cdata' => $row['title']);
+					$output[$row['page_id']]['page_descriptions']['page_description'][$i]['title'] = ['@cdata' => $row['title']];
 				}
 				if ($row['seo_url']){
-					$output[$row['page_id']]['page_descriptions']['page_description'][$i]['seo_url'] = array ('@cdata' => $row['seo_url']);
+					$output[$row['page_id']]['page_descriptions']['page_description'][$i]['seo_url'] = ['@cdata' => $row['seo_url']];
 				}
 				if ($row['keywords']){
-					$output[$row['page_id']]['page_descriptions']['page_description'][$i]['keywords'] = array ('@cdata' => $row['keywords']);
+					$output[$row['page_id']]['page_descriptions']['page_description'][$i]['keywords'] = ['@cdata' => $row['keywords']];
 				}
 				if ($row['description']){
-					$output[$row['page_id']]['page_descriptions']['page_description'][$i]['descriptions'] = array ('@cdata' => $row['description']);
+					$output[$row['page_id']]['page_descriptions']['page_description'][$i]['descriptions'] = ['@cdata' => $row['description']];
 				}
 				if ($row['content']){
-					$output[$row['page_id']]['page_descriptions']['page_description'][$i]['content'] = array ('@cdata' => $row['content']);
+					$output[$row['page_id']]['page_descriptions']['page_description'][$i]['content'] = ['@cdata' => $row['content']];
 				}
 			}
 		}
@@ -206,8 +203,8 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 	private function _getLayoutBlocks4Xml($layout_id, $parent_instance_id = 0){
 		$layout_id = (int)$layout_id;
 		$parent_instance_id = (int)$parent_instance_id;
-		if (!$layout_id) return array ();
-		$output = array ();
+		if (!$layout_id) return [];
+		$output = [];
 		$sql = "SELECT *
 				FROM " . $this->db->table('block_layouts'). " bl
 				WHERE bl.layout_id = " . $layout_id . " AND parent_instance_id = " . $parent_instance_id . "
@@ -243,7 +240,7 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 			   LEFT JOIN " . $this->db->table('blocks') . " as pb ON (pb.block_id = bt.parent_block_id)
 			   WHERE b.block_id = " . $block_id;
 		$result = $this->db->query($sql);
-		$output = array ();
+		$output = [];
 		foreach ($result->rows as $row){
 			$output['block_txt_id'] = $row['block_txt_id'];
 			if( $this->template_id_src != 'default' || versionCompare(VERSION,'1.2.4', '<') ){
@@ -251,9 +248,10 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 			}
 
 			if (($this->template_id_src != 'default'  || versionCompare(VERSION,'1.2.4', '<')) && $this->placeholder_block_id == $row['parent_block_id']){
-				$output['templates']['template'][] = array (
+				$output['templates']['template'][] = [
 						'parent_block'  => $row['parent_block_txt_id'],
-						'template_name' => $row['template']);
+						'template_name' => $row['template']
+                ];
 				// if we found needed template - interrupting loop
 				break;
 			}
@@ -272,7 +270,7 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 				ORDER BY bd.language_id";
 		$result = $this->db->query($sql);
 		if (!$result->num_rows){
-			return array ();
+			return [];
 		}
 
 		$output['custom_block_txt_id'] = preformatTextID($result->rows[0]['name']) . "_" . $custom_block_id;
@@ -283,14 +281,15 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 		$output['kind'] = 'custom';
 		$output['type'] = $result->rows[0]['base_block_txt_id'];
 		foreach ($result->rows as $row){
-			$output['block_descriptions']['block_description'][] = array (
-					'language'      => $row['language_name'],
-					'name'          => array ('@cdata' => $row['name']),
-					'title'         => array ('@cdata' => $row['title']),
-					'block_wrapper' => array ('@cdata' => $row['block_wrapper']),
-					'block_framed'  => array ('@cdata' => $row['block_framed']),
-					'description'   => array ('@cdata' => $row['description']),
-					'content'       => array ('@cdata' => $row['content']));
+			$output['block_descriptions']['block_description'][] = [
+                'language'      => $row['language_name'],
+                'name'          => ['@cdata' => $row['name']],
+                'title'         => ['@cdata' => $row['title']],
+                'block_wrapper' => ['@cdata' => $row['block_wrapper']],
+                'block_framed'  => ['@cdata' => $row['block_framed']],
+                'description'   => ['@cdata' => $row['description']],
+                'content'       => ['@cdata' => $row['content']]
+            ];
 		}
 		$placeholder = $this->_getBlockInfo4Xml($this->placeholder_block_id);
 		$output['installed']['placeholder'][] = $placeholder['block_txt_id'];

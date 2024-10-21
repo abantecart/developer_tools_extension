@@ -1,22 +1,22 @@
 <?php
-/*------------------------------------------------------------------------------
-  $Id$
-
-  AbanteCart, Ideal OpenSource Ecommerce Solution
-  http://www.AbanteCart.com
-
-  Copyright © 2015 Belavier Commerce LLC
-
-  This source file is subject to Open Software License (OSL 3.0)
-  License details is bundled with this package in the file LICENSE.txt.
-  It is also available at this URL:
-  <http://www.opensource.org/licenses/OSL-3.0>
-
- UPGRADE NOTE:
-   Do not edit or add to this file if you wish to upgrade AbanteCart to newer
-   versions in the future. If you wish to customize AbanteCart for your
-   needs please refer to http://www.AbanteCart.com for more information.
-------------------------------------------------------------------------------*/
+/*
+ *   $Id$
+ *
+ *   AbanteCart, Ideal OpenSource Ecommerce Solution
+ *   http://www.AbanteCart.com
+ *
+ *   Copyright © 2011-2024 Belavier Commerce LLC
+ *
+ *   This source file is subject to Open Software License (OSL 3.0)
+ *   License details is bundled with this package in the file LICENSE.txt.
+ *   It is also available at this URL:
+ *   <http://www.opensource.org/licenses/OSL-3.0>
+ *
+ *  UPGRADE NOTE:
+ *    Do not edit or add to this file if you wish to upgrade AbanteCart to newer
+ *    versions in the future. If you wish to customize AbanteCart for your
+ *    needs please refer to http://www.AbanteCart.com for more information.
+ */
 if (!defined('DIR_CORE')){
 	header('Location: static_pages/');
 }
@@ -30,17 +30,20 @@ require_once(DIR_EXT . "developer_tools/core/lib/array2xml.php");
  * @property ModelToolBackup $model_tool_backup
  */
 class ModelToolDeveloperTools extends Model{
-	public $error = array ();
-	private $copied = array (); // array with copied files or directories by method _copyDir. do not forget reset it after method call!!!
-	private $sections = array ('admin', 'storefront');
+	public $error = [];
 
-	/**
-	 * @param array $data
-	 * @return bool
-	 * @throws AException
-	 */
-	public function generateExtension($data = array ()){
-		$project_xml = $config_xml = array ();
+    // array with copied files or directories by method _copyDir. do not forget reset it after method call!!!
+    protected $copied = [];
+	protected $sections = ['admin', 'storefront'];
+
+    /**
+     * @param array $data
+     * @return bool
+     * @throws AException
+     * @throws DOMException
+     */
+	public function generateExtension($data = []){
+		$project_xml = $config_xml = [];
 		//when clone template
 		if (has_value($data['clone_method'])){
 			$project_xml['clone_method'] = $data['clone_method'];
@@ -114,10 +117,10 @@ class ModelToolDeveloperTools extends Model{
 		//GENERATING PHP FILES
 		// do by letters M.V.C. order
 		//MODELS
-		$models = array (
-				'admin'      => array (),
-				'storefront' => array ()
-		);
+		$models = [
+            'admin'      => [],
+            'storefront' => []
+        ];
 		foreach ($this->sections as $section){
 			if (!isset($data[$section . '_model_routes'])) continue;
 			foreach ($data[$section . '_model_routes'] as $k => $route){
@@ -156,16 +159,16 @@ class ModelToolDeveloperTools extends Model{
 					}
 					$rt = str_replace('.php', '', $file);
 					$models[$section][] = $route . '/' . $rt;
-					$project_xml['models'][$section][] = array ('route' => $route, 'file' => $rt);
+					$project_xml['models'][$section][] = ['route' => $route, 'file' => $rt];
 				}
 			}
 		}
 
 
 		// VIEWS (tpl-files)
-		$views = array ('admin' => array (), 'storefront' => array ());
+		$views = ['admin' => [], 'storefront' => []];
 		foreach ($this->sections as $section){
-			foreach (array ('page', 'response') as $ctrl_type){
+			foreach (['page', 'response'] as $ctrl_type){
 				if (!isset($data[$section . '_' . $ctrl_type . '_view_routes'])) continue;
 				foreach ($data[$section . '_' . $ctrl_type . '_view_routes'] as $k => $route){
 					$file = trim($data[$section . '_' . $ctrl_type . '_view_files'][$k], '\/ ');
@@ -182,16 +185,16 @@ class ModelToolDeveloperTools extends Model{
 							file_put_contents($dir . '/' . $file, '');
 						}
 						$views[$section][$ctrl_type][] = $route_prefix . '/' . $route . '/' . $file;
-						$project_xml['views'][$section][] = array ('route' => $route_prefix . '/' . $route, 'file' => $file);
+						$project_xml['views'][$section][] = ['route' => $route_prefix . '/' . $route, 'file' => $file];
 					}
 				}
 			}
 		}
 
 		// Controllers
-		$controllers = array ('admin' => array (), 'storefront' => array ());
+		$controllers = ['admin' => [], 'storefront' => []];
 		foreach ($this->sections as $section){
-			foreach (array ('page', 'response', 'block', 'form', 'common', 'api', 'task') as $ctrl_type){
+			foreach (['page', 'response', 'block', 'form', 'common', 'api', 'task'] as $ctrl_type){
 				if (!isset($data[$section . '_' . $ctrl_type . '_controller_routes'])){
 					continue;
 				}
@@ -232,17 +235,17 @@ class ModelToolDeveloperTools extends Model{
 						}
 						$rt = str_replace('.php', '', $file);
 						$controllers[$section][$ctrl_type][] = $route_prefix . '/' . $route . '/' . $rt;
-						$project_xml['controllers'][$section][] = array ('route' => $route_prefix . '/' . $route, 'file' => $file);
+						$project_xml['controllers'][$section][] = ['route' => $route_prefix . '/' . $route, 'file' => $file];
 					}
 				}
 			}
 		}
 		unset($pre_content);
 		// LANGUAGE files for extension translates
-		$languages = array ('admin' => array (), 'storefront' => array ());
+		$languages = ['admin' => [], 'storefront' => []];
 		//NOTE! unacceptable extension without at least one admin language file
 		if (!$data['extension_admin_language_files']){
-			$data['extension_admin_language_files'] = array ('english');
+			$data['extension_admin_language_files'] = ['english'];
 			//add help note for language-extension
 			if(!$data['help_note'] && $data['extension_type'] == 'language'){
 				$data['help_note'] = '<b>Attention!</b> Please enable extension and enable language in System->Localizations-><a href="#admin#rt=localisation/language">Languages</a>.'
@@ -289,15 +292,17 @@ class ModelToolDeveloperTools extends Model{
 			}elseif ($project_xml['extension_type'] == 'language'){
 				$project_xml['language_extension_code'] = strtolower($data['language_extension_code']);
 				$project_xml['language_extension_direction'] = strtolower($data['language_extension_direction']);
-				$fields = array('name',
-								'directory',
-								'locale',
-								'date_format_short',
-								'date_format_long',
-								'time_format',
-								'time_format_short',
-								'decimal_point',
-								'thousand_point');
+				$fields = [
+                    'name',
+                    'directory',
+                    'locale',
+                    'date_format_short',
+                    'date_format_long',
+                    'time_format',
+                    'time_format_short',
+                    'decimal_point',
+                    'thousand_point'
+                ];
 
 				foreach($fields as $field_name){
 					$project_xml['language_extension_'.$field_name] = $data['language_extension_'.$field_name];
@@ -336,7 +341,7 @@ class ModelToolDeveloperTools extends Model{
 
 		$data['help_note'] = trim($data['help_note']);
 		$project_xml['help_note'] = $data['help_note'];
-		$config_xml['note'] = $data['help_note'] ? true : false;
+		$config_xml['note'] = (bool)$data['help_note'];
 		$project_xml['help_url'] = (string)$data['help_url'];
 
 		// extension icon
@@ -362,13 +367,15 @@ class ModelToolDeveloperTools extends Model{
 		$project_xml['priority'] = $config_xml['priority'] = (int)$data['priority'];
 
 
-		$config_xml['settings'] = array (
-				'item' => array (
-						'@attributes'   => array (
-								'id' => $data['extension_txt_id'] . "_status"),
-						'type'          => 'checkbox',
-						'default_value' => '0')
-		);
+		$config_xml['settings'] = [
+				'item' => [
+                    '@attributes'   => [
+								'id' => $data['extension_txt_id'] . "_status"
+                    ],
+                    'type'          => 'checkbox',
+                    'default_value' => '0'
+                ]
+        ];
 		$config_xml['note'] = $data['help_note'] ? true : false;
 
 		if ($data['help_file']){
@@ -408,7 +415,7 @@ class ModelToolDeveloperTools extends Model{
 			$this->_clone_template_settings($data);
 
 			//enable
-			$em->editSetting($project_xml['extension_txt_id'], array ($project_xml['extension_txt_id'] . '_status' => 1));
+			$em->editSetting($project_xml['extension_txt_id'], [$project_xml['extension_txt_id'] . '_status' => 1]);
 		}
 
 		return true;
@@ -547,8 +554,8 @@ $this->cache->remove("localization");';
 	 */
 	public function saveMainFileByProjectConfig($prj_config){
 		// make parameters for main.php build
-		$views = $controllers = $models = $languages = array ();
-		$mvcs = array ('models', 'views', 'controllers', 'languages');
+		$views = $controllers = $models = $languages = [];
+		$mvcs = ['models', 'views', 'controllers', 'languages'];
 		foreach ($this->sections as $section){
 			foreach ($mvcs as $mvc){
 				$list = (array)$prj_config[$mvc][$section];
@@ -564,14 +571,16 @@ $this->cache->remove("localization");';
 			}
 		}
 
-		$main_file_params = array ('extension_name'  => $prj_config['extension_txt_id'],
-		                           'header_comment'  => $prj_config['header_comment'],
-		                           'hook_class_name' => $prj_config['hook_class_name'],
-		                           'hook_file'       => $prj_config['hook_file'],
-		                           'controllers'     => $controllers,
-		                           'models'          => $models,
-		                           'views'           => $views,
-		                           'languages'       => $languages);
+		$main_file_params = [
+            'extension_name'  => $prj_config['extension_txt_id'],
+            'header_comment'  => $prj_config['header_comment'],
+            'hook_class_name' => $prj_config['hook_class_name'],
+            'hook_file'       => $prj_config['hook_file'],
+            'controllers'     => $controllers,
+            'models'          => $models,
+            'views'           => $views,
+            'languages'       => $languages
+        ];
 		$this->_write_main_file($main_file_params);
 	}
 
@@ -582,13 +591,13 @@ $this->cache->remove("localization");';
 	 * @param array $data
 	 * @return mixed
 	 */
-	private function _prepareData($key, $value, $data = array ()){
+	private function _prepareData($key, $value, $data = []){
 		switch($key){
 			case 'extension_txt_id':
 				$value = strtolower(preformatTextID($value));
 				break;
 			case 'copy_default':
-				$value = in_array($data['extension_type'], array ('template', 'language')) && $value == 1 ? true : false;
+				$value = (in_array($data['extension_type'], ['template', 'language']) && $value == 1);
 				break;
 			case 'header_comment':
 				$value = trim($value);
@@ -597,7 +606,7 @@ $this->cache->remove("localization");';
 				$value = str_replace("\n\nif (! defined ( 'DIR_CORE' )) {\n header ( 'Location: static_pages/' );\n}\n\n", '', $value);
 				$value = trim($value);
 
-				$value = str_replace(array ('<?php', '?>'), '', $value);
+				$value = str_replace(['<?php', '?>'], '', $value);
 				if ($value){
 					if (substr($value, 0, 2) != '/*'){
 						$value = '/*' . $value;
@@ -695,7 +704,7 @@ $this->cache->remove("localization");';
 	 */
 	private function _replicate_default_dir_tree_(&$project_xml){
 
-		if (!in_array($project_xml['extension_type'], array ('template', 'language'))){
+		if (!in_array($project_xml['extension_type'], ['template', 'language'])){
 			return false;
 		}
 		if ($project_xml['extension_type'] == 'template'){
@@ -731,7 +740,7 @@ $this->cache->remove("localization");';
 			$this->error[] = 'Cannot create directory ' . $template_dir;
 		}
 		$this->_chmod_R($template_dir, 0777, 0777);
-		$this->copied = array ();
+		$this->copied = [];
 
 		$clone_method = $project_xml['clone_method'];
 		if ($clone_method == 'full_clone'){
@@ -749,7 +758,7 @@ $this->cache->remove("localization");';
 			}
 		}
 		// get tpl list
-		$exists_views = array ();
+		$exists_views = [];
 		$project_xml['views']['storefront'] = (array)$project_xml['views']['storefront'];
 		foreach ($project_xml['views']['storefront'] as $item){
 			$exists_views[] = $item['route'] . '/' . $item['file'];
@@ -761,12 +770,14 @@ $this->cache->remove("localization");';
 			} elseif (is_file($item['filename']) && pathinfo($item['filename'], PATHINFO_EXTENSION) == 'tpl'){
 				$rt = str_replace($template_dir . '/template/', '', $item['filename']);
 				if (!in_array($rt, $exists_views)){
-					$project_xml['views']['storefront'][] = array ('route' => pathinfo($rt, PATHINFO_DIRNAME),
-					                                               'file'  => pathinfo($rt, PATHINFO_BASENAME));
+					$project_xml['views']['storefront'][] = [
+                        'route' => pathinfo($rt, PATHINFO_DIRNAME),
+                        'file'  => pathinfo($rt, PATHINFO_BASENAME)
+                    ];
 				}
 			}
 		}
-		$this->copied = array ();
+		$this->copied = [];
 		//copy settings of default template into db
 		$sql = "INSERT INTO " . $this->db->table('settings') . " (`group`,`store_id`, `key`, `value`,`date_added`)
 				SELECT '" . $project_xml['extension_txt_id'] . "' as `group`,
@@ -840,12 +851,12 @@ $this->cache->remove("localization");';
 		if($src_language_name == 'english'){
 			$menu = new AMenu_Storefront('storefront');
 			$all_items = $menu->getMenuItems();
-			$items = array();
+			$items = [];
 			foreach($all_items as $section){
 				$items = array_merge($items,$section);
 			}
 
-			$lang_keys = array();
+			$lang_keys = [];
 			$languages = $this->language->getAvailableLanguages();
 			foreach($languages as $lang){
 				if($lang['name'] = $src_language_name){
@@ -935,22 +946,23 @@ $this->cache->remove("localization");';
 	 * @param array $data
 	 * @return bool
 	 */
-	public function saveConfigXml($data = array ()){
+	public function saveConfigXml($data = []){
 		$dir = DIR_EXT . $data['extension_txt_id'] . '/';
-		$xml_data = array (
-				'id'           => $data['extension_txt_id'],
-				'version'      => $data['version'],
-				'type'         => $data['extension_type'],
-				'category'     => $data['category'],
-				'cartversions' => array ('item' => $data['cartversions']),
-				'priority'     => $data['priority'],
-				'dependencies' => $data['dependencies'],
-				'settings'     => $data['settings']);
+		$xml_data = [
+            'id'           => $data['extension_txt_id'],
+            'version'      => $data['version'],
+            'type'         => $data['extension_type'],
+            'category'     => $data['category'],
+            'cartversions' => ['item' => $data['cartversions']],
+            'priority'     => $data['priority'],
+            'dependencies' => $data['dependencies'],
+            'settings'     => $data['settings']
+        ];
 		if ($data['extension_type'] == 'template'){
-			$xml_data['additional_settings'] = array ('@cdata' => 'setting/setting&active=appearance');
+			$xml_data['additional_settings'] = ['@cdata' => 'setting/setting&active=appearance'];
 		}
 		if ($data['preview']){
-			$xml_data['preview'] = array ('item' => $data['preview']);
+			$xml_data['preview'] = ['item' => $data['preview']];
 		}
 		if ($data['note']){
 			$xml_data['note'] = 'true';
@@ -989,15 +1001,16 @@ $this->cache->remove("localization");';
 	 * @param string $language_name
 	 * @return bool|null
 	 */
-	private function _save_base_language_xml($data = array (), $language_name){
+	private function _save_base_language_xml($data = [], $language_name){
 		$path = DIR_EXT . $data['extension_txt_id'] . '/admin/language/' . $language_name . '/' . $data['extension_txt_id'] . '/' . $data['extension_txt_id'] . '.xml';
 		if (is_file($path)){
 			return null;
 		}
 
-		$content = array (
+		$content = [
 				$data['extension_txt_id'] . '_name' => $data['extension_title'],
-				$data['extension_txt_id'] . '_note' => $data['help_note']);
+				$data['extension_txt_id'] . '_note' => $data['help_note']
+        ];
 		return $this->saveLanguageXML($path, $content);
 	}
 
@@ -1006,12 +1019,12 @@ $this->cache->remove("localization");';
 	 * @param array $data
 	 * @return bool
 	 */
-	public function saveLanguageXML($path, $data = array ()){
-		$xml_data = array ('definition' => array ());
+	public function saveLanguageXML($path, $data = []){
+		$xml_data = ['definition' => []];
 		foreach ($data as $key => $value){
 			$value = trim($value);
 			if ($key){
-				$xml_data['definition'][] = array ('key' => $key, 'value' => array ('@cdata' => $value));
+				$xml_data['definition'][] = ['key' => $key, 'value' => ['@cdata' => $value]];
 				if (!$value){
 					$this->error[] = 'Empty Language Definition value with key "' . $key . '" was given for save file ' . $path;
 				}
@@ -1046,7 +1059,7 @@ $this->cache->remove("localization");';
 	 * @param array $data
 	 * @return bool
 	 */
-	public function saveProjectXml($data = array ()){
+	public function saveProjectXml($data = []){
 		$dir = DIR_EXT . 'developer_tools/projects/';
 		if (!is_dir($dir)){
 			mkdir($dir, 0777, true);
@@ -1056,8 +1069,8 @@ $this->cache->remove("localization");';
 			return false;
 		}
 
-		$xml_data = array (
-				'extension' => array (
+		$xml_data = [
+				'extension' => [
 						'extension_type'   => $data['extension_type'],
 						'copy_default'     => $data['copy_default'],
 						'extension_txt_id' => $data['extension_txt_id'],
@@ -1065,11 +1078,12 @@ $this->cache->remove("localization");';
 						'category'         => $data['category'],
 						'version'          => $data['version'],
 						'priority'         => $data['priority']
-				));
+                ]
+        ];
 
 		if($data['extension_type'] == 'language'){
 
-			$fields = array(
+			$fields = [
 							'name',
 							'code',
 							'directory',
@@ -1080,7 +1094,8 @@ $this->cache->remove("localization");';
 							'time_format',
 							'time_format_short',
 							'decimal_point',
-							'thousand_point');
+							'thousand_point'
+            ];
 
 			foreach($fields as $field_name){
 				$xml_data['extension']['language_extension_'.$field_name] = $data['language_extension_'.$field_name];
@@ -1098,20 +1113,20 @@ $this->cache->remove("localization");';
 		}
 		$xml_data['extension']['install_php'] = $data['install_php'] ? '1' : '0';
 		$xml_data['extension']['install_sql'] = $data['install_sql'] ? '1' : '0';
-		$xml_data['extension']['help_note'] = array ('@cdata' => $data['help_note']);
+		$xml_data['extension']['help_note'] = ['@cdata' => $data['help_note']];
 		if ($data['help_file']){
-			$xml_data['extension']['help_file'] = array ('@cdata' => $data['help_file']);
+			$xml_data['extension']['help_file'] = ['@cdata' => $data['help_file']];
 		}
 		if ($data['help_url']){
-			$xml_data['extension']['help_url'] = array ('@cdata' => $data['help_url']);
+			$xml_data['extension']['help_url'] = ['@cdata' => $data['help_url']];
 		}
 		if ($data['icon']){
-			$xml_data['extension']['icon'] = array ('@cdata' => $data['icon']);
+			$xml_data['extension']['icon'] = ['@cdata' => $data['icon']];
 		}
 		$xml_data['extension']['icon_default'] = (int)$data['icon_default'];
 		//$xml_data['extension']['preview' => array('item'=>$data['preview']);
 		if ($data['header_comment']){
-			$xml_data['extension']['header_comment'] = array ('@cdata' => $data['header_comment']);
+			$xml_data['extension']['header_comment'] = ['@cdata' => $data['header_comment']];
 		}
 		$xml_data['extension']['route'] = $data['route'];
 		if ($data['hook_file']){
@@ -1120,20 +1135,20 @@ $this->cache->remove("localization");';
 		}
 
 		if ($data['languages']['admin']){
-			$xml_data['extension']['languages']['admin'] = array ('item' => $data['languages']['admin']);
+			$xml_data['extension']['languages']['admin'] = ['item' => $data['languages']['admin']];
 		}
 		//controllers
 		if ($data['controllers']['admin']){
-			$xml_data['extension']['controllers']['admin'] = array ('item' => $data['controllers']['admin']);
+			$xml_data['extension']['controllers']['admin'] = ['item' => $data['controllers']['admin']];
 		}
 
 		//model
 		if ($data['models']['admin']){
-			$xml_data['extension']['models']['admin'] = array ('item' => $data['models']['admin']);
+			$xml_data['extension']['models']['admin'] = ['item' => $data['models']['admin']];
 		}
 		//views
 		if ($data['views']['admin']){
-			$xml_data['extension']['views']['admin'] = array ('item' => $data['views']['admin']);
+			$xml_data['extension']['views']['admin'] = ['item' => $data['views']['admin']];
 		}
 		/*
 		 * STOREFRONT
@@ -1141,20 +1156,20 @@ $this->cache->remove("localization");';
 
 		// languages
 		if ($data['languages']['storefront']){
-			$xml_data['extension']['languages']['storefront'] = array ('item' => $data['languages']['storefront']);
+			$xml_data['extension']['languages']['storefront'] = ['item' => $data['languages']['storefront']];
 		}
 		//controllers
 		if ($data['controllers']['storefront']){
-			$xml_data['extension']['controllers']['storefront'] = array ('item' => $data['controllers']['storefront']);
+			$xml_data['extension']['controllers']['storefront'] = ['item' => $data['controllers']['storefront']];
 		}
 
 		//model
 		if ($data['models']['storefront']){
-			$xml_data['extension']['models']['storefront'] = array ('item' => $data['models']['storefront']);
+			$xml_data['extension']['models']['storefront'] = ['item' => $data['models']['storefront']];
 		}
 		//views
 		if ($data['views']['storefront']){
-			$xml_data['extension']['views']['storefront'] = array ('item' => $data['views']['storefront']);
+			$xml_data['extension']['views']['storefront'] = ['item' => $data['views']['storefront']];
 		}
 
 
@@ -1181,7 +1196,7 @@ $this->cache->remove("localization");';
 	 * @param array $data
 	 * @return bool|string
 	 */
-	public function generatePackage($data = array ()){
+	public function generatePackage($data = []){
 		$project_info = $this->getProjectConfig($this->session->data['dev_tools_prj_id']);
 		$extension = $project_info['extension_txt_id'];
 		if (!$extension){
@@ -1225,12 +1240,12 @@ $this->cache->remove("localization");';
 		$this->_copyDir(DIR_EXT . $extension, $package_directory . '/code/extensions/' . $extension);
 
 		// build package.xml
-		$xml_data = array (
+		$xml_data = [
 				'id'         => $extension,
 				'type'       => 'extension',
 				'version'    => $data['version'],
 				'minversion' => $data['version']
-		);
+        ];
 		if ($data['cartversions']){
 			foreach ($data['cartversions'] as &$ver){
 				$ver = explode('.', $ver);
@@ -1238,9 +1253,9 @@ $this->cache->remove("localization");';
 			}
 			unset($ver);
 
-			$xml_data['cartversions'] = array ('item' => $data['cartversions']);
+			$xml_data['cartversions'] = ['item' => $data['cartversions']];
 		}
-		$xml_data['package_content'] = array ('extensions' => array ('extension' => $extension));
+		$xml_data['package_content'] = ['extensions' => ['extension' => $extension]];
 		$xml = Array2XML::createXML('package', $xml_data);
 		$xml = $xml->saveXML();
 
@@ -1320,10 +1335,10 @@ $this->cache->remove("localization");';
 		} elseif (file_exists($src) && !file_exists($dst)){
 			if ($copy_file_content){
 				$result = copy($src, $dst);
-				$this->copied[] = array ('result' => $result, 'filename' => $dst);
+				$this->copied[] = ['result' => $result, 'filename' => $dst];
 			} else{
 				$result = touch($dst);
-				$this->copied[] = array ('result' => $result, 'filename' => $dst);
+				$this->copied[] = ['result' => $result, 'filename' => $dst];
 			}
 			chmod($dst, 0777);
 		}
@@ -1335,16 +1350,18 @@ $this->cache->remove("localization");';
 	 * @return array
 	 */
 	public function getProjectList(){
-		$projects = $prj = array ();
+		$projects = $prj = [];
 		if (is_dir(DIR_EXT . 'developer_tools/projects')){
 			$projects = glob(DIR_EXT . 'developer_tools/projects/*.xml');
 			foreach ($projects as $project){
 				$update_date = date($this->language->get('date_format_short') . ' ' . $this->language->get('time_format'), filemtime($project));
-				$id = str_replace(array ('dev_tools_project_', '.xml'), '', $project);
+				$id = str_replace(['dev_tools_project_', '.xml'], '', $project);
 				$id = pathinfo($id, PATHINFO_BASENAME);
-				$prj[filemtime($project)] = array ('id'          => $id,
-				                                   'update_date' => $update_date,
-				                                   'file'        => $project);
+				$prj[filemtime($project)] = [
+                    'id'          => $id,
+                    'update_date' => $update_date,
+                    'file'        => $project
+                ];
 			}
 			ksort($prj);
 			$projects = array_reverse($prj);
@@ -1360,7 +1377,7 @@ $this->cache->remove("localization");';
 	public function getProjectConfig($prj_id){
 		$file_name = DIR_EXT . 'developer_tools/projects/dev_tools_project_' . $prj_id . '.xml';
 		$xml = file_get_contents($file_name);
-		$xml_array = array ();
+		$xml_array = [];
 		if ($xml){
 			$xml_array = XML2Array::createArray($xml);
 			if (!$xml_array){
@@ -1374,12 +1391,12 @@ $this->cache->remove("localization");';
 				}
 			}
 			// remove item tag from arrays
-			$mvcs = array ('models', 'views', 'controllers', 'languages');
+			$mvcs = ['models', 'views', 'controllers', 'languages'];
 			foreach ($this->sections as $section){
 				foreach ($mvcs as $mvc){
 					$item = $xml_array[$mvc][$section]['item'];
 					if (is_array($item) && is_string(key($item))){
-						$item = array ($item);
+						$item = [$item];
 					}
 					$xml_array[$mvc][$section] = $item;
 				}
@@ -1397,7 +1414,7 @@ $this->cache->remove("localization");';
 	 * @return array
 	 */
 	public function getLanguageFiles($prj_id){
-		$output = array ();
+		$output = [];
 
 
 		$config = $this->getProjectConfig($prj_id);
@@ -1445,7 +1462,7 @@ $this->cache->remove("localization");';
 	 * @return array
 	 */
 	private function _get_xml_files($pattern){
-		$files = array ();
+		$files = [];
 		foreach (glob($pattern . '/*') as $dir){
 			if (is_file($dir)){
 				if (pathinfo($dir, PATHINFO_EXTENSION) == 'xml'){
@@ -1467,7 +1484,7 @@ $this->cache->remove("localization");';
 				WHERE block_id NOT IN (SELECT block_id FROM " . $this->db->table('custom_blocks') . ")
 				ORDER BY block_id";
 		$result = $this->db->query($sql);
-		$output = array ();
+		$output = [];
 		foreach ($result->rows as $row){
 			$output[$row['block_id']] = $row['block_txt_id'];
 		}
@@ -1482,7 +1499,7 @@ $this->cache->remove("localization");';
 	 */
 	public function getGenericBlocksTemplates($path){
 		$files = $this->_glob_recursive($path . '*');
-		$output = array();
+		$output = [];
 		foreach ($files as $k => $file){
 			if (is_dir($file) || (!is_int(strpos($file, '/template/blocks')) && !is_int(strpos($file, '/template/common')))){
 				unset($files[$k]);
@@ -1513,7 +1530,7 @@ $this->cache->remove("localization");';
 	public function getDefaultGenericBlocksTemplates(){
 		$path = DIR_ROOT . '/storefront/view/default/template/';
 		$files = $this->_glob_recursive($path . '*');
-		$output = array();
+		$output = [];
 		foreach ($files as $k => $file){
 			if (is_dir($file) || (!is_int(strpos($file, '/template/blocks')) && !is_int(strpos($file, '/template/common')))){
 				unset($files[$k]);
@@ -1530,7 +1547,7 @@ $this->cache->remove("localization");';
 	 * @return bool
 	 * @throws AException
 	 */
-	public function cloneCoreTemplate($data = array ()){
+	public function cloneCoreTemplate($data = []){
 		//when clone template
 		if (has_value($data['clone_method'])){
 			$project_xml['clone_method'] = $data['clone_method'];
@@ -1584,7 +1601,7 @@ $this->cache->remove("localization");';
 
 		//and finally set template as default for current store
 		$current_store_id = !isset($this->session->data['current_store_id']) ? 0 : $this->session->data['current_store_id'];
-		$this->model_setting_setting->editSetting('appearance', array ('config_storefront_template' => $template_txt_id), $current_store_id);
+		$this->model_setting_setting->editSetting('appearance', ['config_storefront_template' => $template_txt_id], $current_store_id);
 		return true;
 	}
 
@@ -1605,7 +1622,7 @@ $this->cache->remove("localization");';
 			$result = $this->db->query("SELECT DISTINCT `store_id`
 										FROM " . $this->db->table("settings") . "
 									    WHERE `group` = '" . $this->db->escape($settings_group) . "'");
-			$store_ids = array ();
+			$store_ids = [];
 			$current_store_id = $this->session->data['current_store_id'];
 			foreach ($result->rows as $row){
 				if ($row['store_id'] == $current_store_id){
