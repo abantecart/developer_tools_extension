@@ -15,6 +15,7 @@ jobs:
       - name: Build project
         run: |
           cd ..
+          ls
           rm -rf ./developer_tools/.github
           rm -rf ./developer_tools/.gitignore
           rm -rf ./developer_tools/.git
