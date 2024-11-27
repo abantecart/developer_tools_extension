@@ -20,7 +20,7 @@
 if (!defined('DIR_CORE')){
 	header('Location: static_pages/');
 }
-require_once(DIR_EXT . 'developer_tools/core/lib/array2xml.php');
+require_once(DIR_EXT . 'developer_tools'.DS.'core'.DS.'lib'.DS.'array2xml.php');
 /**
  * @property ALayoutManager $lm
  */
@@ -41,7 +41,7 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
                 'template_id' => $dst_template_id,
                 'type'        => $this->_getTextLayoutType($layout['layout_type'])
             ];
-			//note: layout can be orphan and do not assigned to any pages and do not contains any blocks
+			//note: layout can be orphan
 			$pages = $this->_getLayoutPages4Xml($layout_id);
 			if($pages){
 				$xml_data['layout'][$i]['pages'] = ['page' => $pages];
@@ -60,11 +60,11 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 		$xml = $xml->saveXML();
 
 		$core_path = $path;
-		if(substr($core_path, -11) == '/layout.xml') {
+		if( str_ends_with( $core_path, DS.'layout.xml') ) {
 			$core_path = substr($core_path, 0, -11);
 		}
 
-		$path = !$path ? DIR_EXT . $dst_template_id . '/layout.xml' : $core_path . '/layout.xml';
+		$path = !$path ? DIR_EXT . $dst_template_id . DS.'layout.xml' : $core_path . DS  . 'layout.xml';
 
 		if ($xml){
 			$result = file_put_contents($path, $xml);
@@ -230,24 +230,23 @@ class ModelToolDeveloperToolsLayoutXml extends Model{
 	private function _getBlockInfo4Xml($block_id){
 		$block_id = (int)$block_id;
 		$sql = "SELECT b.block_id as block_id,
-				       b.block_txt_id as block_txt_id,
-				            b.controller as controller,
-				            bt.parent_block_id as parent_block_id,
-				            bt.template as template,
-				            pb.block_txt_id as parent_block_txt_id
+				    b.block_txt_id as block_txt_id,
+                    b.controller as controller,
+                    bt.parent_block_id as parent_block_id,
+                    bt.template as template,
+                    pb.block_txt_id as parent_block_txt_id
 			   FROM " . $this->db->table('blocks')." as b
-			   LEFT JOIN " . $this->db->table('block_templates') . " as bt ON (b.block_id = bt.block_id)
-			   LEFT JOIN " . $this->db->table('blocks') . " as pb ON (pb.block_id = bt.parent_block_id)
+			   LEFT JOIN " . $this->db->table('block_templates') . " as bt 
+			        ON (b.block_id = bt.block_id  AND bt.parent_block_id = ".$this->placeholder_block_id.")
+			   LEFT JOIN " . $this->db->table('blocks') . " as pb 
+			        ON (pb.block_id = bt.parent_block_id)
 			   WHERE b.block_id = " . $block_id;
 		$result = $this->db->query($sql);
 		$output = [];
 		foreach ($result->rows as $row){
 			$output['block_txt_id'] = $row['block_txt_id'];
-			if( $this->template_id_src != 'default' || versionCompare(VERSION,'1.2.4', '<') ){
-				$output['controller'] = $row['controller'];
-			}
-
-			if (($this->template_id_src != 'default'  || versionCompare(VERSION,'1.2.4', '<')) && $this->placeholder_block_id == $row['parent_block_id']){
+			$output['controller'] = $row['controller'];
+			if ( $this->placeholder_block_id == $row['parent_block_id']){
 				$output['templates']['template'][] = [
 						'parent_block'  => $row['parent_block_txt_id'],
 						'template_name' => $row['template']

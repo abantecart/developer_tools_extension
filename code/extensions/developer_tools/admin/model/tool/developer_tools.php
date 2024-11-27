@@ -350,13 +350,17 @@ class ModelToolDeveloperTools extends Model{
 			if ($this->request->files['icon']['error']){
 				$this->error[] = getTextUploadError($this->request->files['icon']['error']);
 			}
-			if ($this->request->files['icon']['type'] == 'image/png' && $this->request->files['icon']['size'] > 0){
+			if ( in_array($this->request->files['icon']['type'], ['image/webp','image/jpg','image/jpeg','image/gif','image/png'])
+                 && $this->request->files['icon']['size'] > 0
+            ){
+                $iconFileExt = pathinfo($this->request->files['icon']["name"], PATHINFO_EXTENSION);
 				if (!is_dir($extension_directory . '/image')){
 					mkdir($extension_directory . '/image', 0777);
 				}
-				move_uploaded_file($this->request->files['icon']["tmp_name"], $extension_directory . '/image/icon.png');
+				move_uploaded_file($this->request->files['icon']["tmp_name"], $extension_directory . '/image/icon.'.$iconFileExt);
+                $project_xml['icon'] = 'icon.'.$iconFileExt;
 			}
-			$project_xml['icon'] = 'icon.png';
+
 		}
 
 		$project_xml['version'] = $config_xml['version'] = $data['version'];
@@ -644,9 +648,7 @@ $this->cache->remove("localization");';
 		// build main.php
 		$content = $data['header_comment'];
 		$tab = '    ';
-		$content .= $data['hook_file'] ? "\nif(!class_exists('" . $data['hook_class_name'] . "')){\n" .
-				$tab . "include_once('core/" . $data['hook_file'] . "');\n"
-				. "}\n" : "";
+		$content .= $data['hook_file'] ? "\n" . $tab . "require_once(DIR_EXT.'" . $data['extension_name'] . "'.DS.'core'.DS.'" . $data['hook_file'] . "');\n" : "";
 
 		$content .= "\$controllers = array(\n" . $tab . "'storefront' => array(";
 		if ($data['controllers']['storefront']){
